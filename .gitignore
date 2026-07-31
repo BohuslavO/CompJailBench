@@ -2,7 +2,10 @@
 __pycache__/
 *.py[codz]
 *$py.class
-
+data/
+*.pkl
+.env
+*.env
 # C extensions
 *.so
 
