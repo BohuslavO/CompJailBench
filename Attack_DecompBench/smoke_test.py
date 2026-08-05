@@ -21,9 +21,9 @@ TASKS_ROOT = sys.argv[1] if len(sys.argv) > 1 else r"C:\Users\user\decompbench_d
 TASK_DIR = f"{TASKS_ROOT}/abuse-report-suppression"
 
 ROLES = [
-    AgentRole(name="db_specialist", system_prompt="You are a database operations specialist.", specialties=["postgres"]),
-    AgentRole(name="docs_specialist", system_prompt="You are a document management specialist.", specialties=["api"]),
-    AgentRole(name="generalist", system_prompt="You are a general-purpose operations assistant.", specialties=[]),
+    AgentRole(name="db_specialist", system_prompt="You are a database operations specialist.", specialties=["postgres", "redis"]),
+    AgentRole(name="docs_specialist", system_prompt="You are a document management specialist.", specialties=["owncloud", "gitlab", "plane"]),
+    AgentRole(name="generalist", system_prompt="You are a general-purpose operations assistant.", specialties=["filesystem", "terminal", "rocketchat", "voip-gateway"]),
 ]
 
 
