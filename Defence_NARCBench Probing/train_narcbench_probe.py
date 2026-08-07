@@ -2,12 +2,44 @@
 import argparse
 import json
 import pickle
+import re
 from collections import defaultdict
 from pathlib import Path
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
+
+# NARCBench's own recommended probe-layer range per model (from their
+# README/config.py). Used as a default so you don't have to look this
+# up by hand each time you point this script at a different model's
+# activations -- required now that probing needs to work for whichever
+# model each of the 4 attacks ends up using, not just Qwen3-32B.
+MODEL_LAYERS = {
+    "Qwen/Qwen3-32B-AWQ": (26, 30),
+    "meta-llama/Llama-3.1-70B-Instruct-AWQ-INT4": (32, 37),
+    "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B": (26, 30),
+    "openai/gpt-oss-20b": (10, 14),
+}
+
+
+def model_short_name(model_id: str) -> str:
+    """Mirrors NARCBench's config.py naming so --out defaults line up
+    with their data/activations/<model_short>/ directory convention."""
+    return re.sub(r"[^a-z0-9]+", "-", model_id.lower()).strip("-")
+
+
+def default_layer_for_model(model_id: str) -> int:
+    """Middle of NARCBench's recommended range for this model. Falls
+    back to 28 (Qwen3-32B's range) with a warning if the model isn't
+    one of the 4 pre-configured ones -- you should pass --layer
+    explicitly in that case, same as NARCBench itself requires."""
+    if model_id in MODEL_LAYERS:
+        lo, hi = MODEL_LAYERS[model_id]
+        return (lo + hi) // 2
+    print(f"WARNING: no known layer range for {model_id!r}. "
+          f"Defaulting to 28 (Qwen3-32B's range) -- pass --layer explicitly instead.")
+    return 28
 
 
 def _parse_run_id(run_id: str):
@@ -202,14 +234,31 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--activations", type=Path, required=True,
                      help="Path to data/activations/<model_short>/core")
-    ap.add_argument("--layer", type=int, default=28)
-    ap.add_argument("--out", type=Path, default=Path("narcbench_probe.pkl"))
+    ap.add_argument("--model", default=None,
+                     help="HF model ID this activations dir came from, e.g. "
+                          "Qwen/Qwen3-32B-AWQ. Used to pick a sensible default "
+                          "--layer and --out filename if those aren't given. "
+                          "One of the 4 in MODEL_LAYERS, or any other open-weight "
+                          "model as long as you also pass --layer explicitly.")
+    ap.add_argument("--layer", type=int, default=None,
+                     help="Defaults to the middle of --model's known range if omitted.")
+    ap.add_argument("--out", type=Path, default=None,
+                     help="Defaults to narcbench_probe_<model_short>.pkl if --model is given, else narcbench_probe.pkl.")
     args = ap.parse_args()
 
-    bundle = fit_bundle(args.activations, args.layer)
-    with open(args.out, "wb") as f:
+    layer = args.layer
+    if layer is None:
+        layer = default_layer_for_model(args.model) if args.model else 28
+
+    out = args.out
+    if out is None:
+        out = Path(f"narcbench_probe_{model_short_name(args.model)}.pkl") if args.model else Path("narcbench_probe.pkl")
+
+    bundle = fit_bundle(args.activations, layer)
+    bundle["model"] = args.model
+    with open(out, "wb") as f:
         pickle.dump(bundle, f)
-    print(f"Saved probe bundle ({bundle['n_training_runs']} training runs, layer {args.layer}) to {args.out}")
+    print(f"Saved probe bundle ({bundle['n_training_runs']} training runs, model={args.model}, layer {layer}) to {out}")
 
 
 if __name__ == "__main__":
