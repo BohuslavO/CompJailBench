@@ -1,7 +1,5 @@
 
-
 from typing import Optional
-
 import numpy as np 
 
 def project(vec: np.ndarray, scaler, w: np.ndarray) -> float:

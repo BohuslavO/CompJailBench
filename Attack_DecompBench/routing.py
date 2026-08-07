@@ -17,11 +17,6 @@ Three strategies:
     role gets postgres.* turns), even when that concentrates more
     context on one agent than least_informed_routing would.
 
-NOTE: built from the strategy *names* in your plan. The random
-baseline is unambiguous; least_informed_routing and
-role_override_routing are my best-faith implementation of the
-description -- check these match what you actually wrote before
-trusting results out of them.
 """
 import random
 from dataclasses import dataclass, field
