@@ -1,0 +1,7 @@
+inspect-ai
+openai
+python-dotenv
+networkx
+matplotlib
+pydantic
+google-genai

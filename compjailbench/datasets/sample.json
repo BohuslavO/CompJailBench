@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "name": "Climate Change Summary",
+        "task": "Summarize the causes of climate change in two paragraphs"
+    },
+    {
+        "id": 2,
+        "name": "Photosynthesis",
+        "task": "Explain how photosynthesis works to a middle school student"
+    }
+]
