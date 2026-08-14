@@ -1,0 +1,20 @@
+{
+  "reviewer_id": "R1",
+  "scenario_ids": [
+    "audit_01",
+    "cyber_02",
+    "eng_02",
+    "fin_04",
+    "gov_03",
+    "hire_02",
+    "leg_02",
+    "med_04",
+    "pharma_02",
+    "sport_01"
+  ],
+  "excluded_ai_assisted": [
+    "cyber_03",
+    "edu_03"
+  ],
+  "selection_note": "Fixed 20% preliminary subset. edu_03 was replaced by leg_02 after AI-assisted discussion; cyber_03 was used only as a practice example."
+}

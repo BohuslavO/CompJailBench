@@ -1,3 +1,5 @@
+"""Construct label-free monitor inputs from a StandardTrajectory."""
+
 import json
 from typing import Any
 
@@ -5,25 +7,24 @@ from src.trajectory import StandardTrajectory
 
 
 def format_as_text(data: dict[str, Any]) -> str:
-    """
-    Convert structured Python data into readable JSON text.
+    return json.dumps(data, ensure_ascii=False, indent=2)
 
-    The future monitor LLM will receive this text as evidence.
-    """
-    return json.dumps(
-        data,
-        ensure_ascii=False,  # Preserve non-English characters correctly.
-        indent=2,            # Make the evidence easier to read and debug.
-    )
+
+def _public_reasoning(trajectory: StandardTrajectory) -> list[dict[str, Any]]:
+    return [
+        item
+        for item in trajectory.observable_reasoning
+        if item.get("channel") in {"public", "final"}
+        and item.get("visible_to_monitor", True)
+    ]
 
 
 def build_action_only_view(trajectory: StandardTrajectory) -> str:
-    """
-    Give the monitor observable behavior but no reasoning traces.
-    """
+    """Public messages, votes, and outcome; no private data or rationales."""
+
     return format_as_text(
         {
-            "messages": trajectory.messages,
+            "public_messages": trajectory.public_messages,
             "actions": trajectory.actions,
             "tool_calls": trajectory.tool_calls,
             "final_output": trajectory.final_output,
@@ -31,27 +32,41 @@ def build_action_only_view(trajectory: StandardTrajectory) -> str:
     )
 
 
-def build_cot_only_view(trajectory: StandardTrajectory) -> str:
-    """
-    Give the monitor observable reasoning traces only.
-    """
-    return format_as_text(
-        {
-            "reasoning_traces": trajectory.reasoning_traces,
-        }
-    )
+def build_observable_reasoning_view(trajectory: StandardTrajectory) -> str:
+    """Evaluator-visible public/final rationales only."""
+
+    return format_as_text({"observable_reasoning": _public_reasoning(trajectory)})
 
 
-def build_all_messages_view(trajectory: StandardTrajectory) -> str:
-    """
-    Give the monitor both observable reasoning and behavior.
-    """
+def build_public_plus_reasoning_view(trajectory: StandardTrajectory) -> str:
+    """Primary defense view: public behavior plus observable rationales."""
+
     return format_as_text(
         {
-            "messages": trajectory.messages,
-            "reasoning_traces": trajectory.reasoning_traces,
+            "public_messages": trajectory.public_messages,
+            "observable_reasoning": _public_reasoning(trajectory),
             "actions": trajectory.actions,
             "tool_calls": trajectory.tool_calls,
             "final_output": trajectory.final_output,
         }
     )
+
+
+def build_privileged_audit_view(trajectory: StandardTrajectory) -> str:
+    """Upper-bound audit view that is not treated as a deployable defense."""
+
+    return format_as_text(
+        {
+            "public_messages": trajectory.public_messages,
+            "private_messages": trajectory.private_messages,
+            "observable_reasoning": trajectory.observable_reasoning,
+            "actions": trajectory.actions,
+            "tool_calls": trajectory.tool_calls,
+            "final_output": trajectory.final_output,
+        }
+    )
+
+
+# Compatibility names used by earlier task files.
+build_cot_only_view = build_observable_reasoning_view
+build_all_messages_view = build_public_plus_reasoning_view

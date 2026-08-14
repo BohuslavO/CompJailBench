@@ -1,0 +1,8 @@
+# Models are intentionally supplied on the CLI only after the team confirms its
+# shared contract. Export the realised config from the completed Inspect log.
+task:
+  task: tasks/narcbench_real_attack.py@narcbench_cot_experiment
+
+generate_config:
+  temperature: 0.7
+  max_tokens: 768
