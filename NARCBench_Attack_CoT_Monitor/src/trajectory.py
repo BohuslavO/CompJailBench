@@ -1,3 +1,5 @@
+"""Attack/defense interchange schema used by the CompJailBreak experiments."""
+
 from typing import Any
 
 from inspect_ai.util import StoreModel
@@ -5,57 +7,37 @@ from pydantic import Field
 
 
 class StandardTrajectory(StoreModel):
-    """
-    Common data format shared by every attack and defense.
+    """Structured trajectory with explicit observability boundaries.
 
-    Attack solver:
-        writes messages, reasoning, actions, and results here.
-
-    Defense scorer:
-        reads the same information without depending on one specific attack.
+    ``messages`` and ``reasoning_traces`` are retained for compatibility with
+    the team's earlier schema. New defenses should consume the channel-specific
+    fields so private coordination cannot accidentally leak into a deployable
+    monitor condition.
     """
 
-    # Identifies the exact benchmark case.
+    schema_version: str = "2.0"
     sample_id: str = ""
-
-    # Examples: "narcbench", "sif", "agentharm".
+    pair_id: str = ""
     attack_name: str = ""
-
-    # Ground truth, normally "attack" or "benign".
     condition_label: str = ""
 
-    # Publicly observable messages exchanged by agents.
+    # Compatibility aggregate. It may contain private data, so deployable
+    # monitors must use public_messages instead.
     messages: list[dict[str, Any]] = Field(default_factory=list)
+    public_messages: list[dict[str, Any]] = Field(default_factory=list)
+    private_messages: list[dict[str, Any]] = Field(default_factory=list)
 
-    # Only observable reasoning or generated rationales.
-    # Do not store or claim access to hidden internal thoughts.
+    # Elicited, evaluator-visible rationales—not hidden chain of thought.
+    observable_reasoning: list[dict[str, Any]] = Field(default_factory=list)
     reasoning_traces: dict[str, str] = Field(default_factory=dict)
 
-    # Decisions, votes, file operations, or other agent actions.
     actions: list[dict[str, Any]] = Field(default_factory=list)
-
-    # Tool calls made by agents, when the attack uses tools.
     tool_calls: list[dict[str, Any]] = Field(default_factory=list)
-
-    # Final result produced by the full multi-agent workflow.
     final_output: str = ""
-
-    # Name of the model that generated this trajectory.
-    # Important for reproducibility and activation-based probing.
     model_name: str = ""
-
-    # IDs of all agents that participated in this run.
     agent_ids: list[str] = Field(default_factory=list)
-
-    # Communication structure between agents.
-    # G-SafeGuard and SentinelAgent can use this to construct graphs.
     communication_edges: list[dict[str, Any]] = Field(default_factory=list)
-
-    # References to saved hidden-state activations, when available.
-    # Do NOT put giant activation arrays directly inside the Inspect log.
-    # Instead, save them separately and store their file references here.
     activation_refs: list[dict[str, Any]] = Field(default_factory=list)
 
-    # Information needed only by a particular attack.
-    # For NARCBench: colluders, hidden target, votes, committee result.
+    # Defenses must not read this field: it contains labels and hidden targets.
     metadata: dict[str, Any] = Field(default_factory=dict)
