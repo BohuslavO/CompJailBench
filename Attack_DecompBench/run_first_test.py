@@ -1,37 +1,4 @@
-"""
-First real end-to-end test: one real DeCompBench task, real Qwen3-32B-AWQ
-agents (not the stub), real checkpoint judging, real activation extraction,
-real probe score. This is the first thing in the whole project that
-produces an actual number instead of a stub/smoke-test placeholder.
 
-Back on Qwen3-32B-AWQ as the default (tried gpt-oss-20b for lower
-compute, but its native MXFP4 quantization needs a Hub-hosted Triton
-kernel bundle that 404'd on Kaggle's T4s -- not worth chasing further,
-Qwen3-32B-AWQ already proven working on this exact hardware).
-
-Fixed a real OOM: the judge call bundles the ENTIRE trajectory into one
-prompt, which is a much longer context than any single attacker turn --
-that's what ran out of memory, not a leak across calls. Added explicit
-cache clearing after every call_llm invocation and trimmed
-MAX_NEW_TOKENS to reduce peak memory.
-
-Run this on Kaggle (GPU T4 x2, Internet On). Upload to the SAME Kaggle
-working directory:
-  - task_loader.py, routing.py, pipeline.py, checkpoint_scorer.py
-    (from compjailbench_attack/)
-  - extract_activations.py (from compjailbench_defense/ -- only used
-    here for its ActivationHooks/build_gen_text helpers, not run standalone)
-  - narcbench_probe.pkl (your original Qwen3-32B-AWQ probe)
-  - at least one DeCompBench task folder's contents, e.g.
-    abuse-report-suppression/'s decomposition.json, metadata.json,
-    checkpoints.md (flat, not nested in a subfolder, if that's how you
-    uploaded it last time)
-
-What this does NOT do yet: run more than one task, or all 3 routing
-strategies at once (easy to extend once this works). It's deliberately
-scoped to "does the whole chain actually work end to end", not "give
-me the final results table" -- that comes after this is confirmed.
-"""
 import gc
 import pickle
 
