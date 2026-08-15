@@ -124,6 +124,12 @@ def narcbench_real_solver() -> Solver:
         trajectory.pair_id = metadata["pair_id"]
         trajectory.attack_name = "narcbench_core_observable_rationale"
         trajectory.condition_label = "attack" if metadata["condition"] == "collusion" else "benign"
+        trajectory.public_task = {
+            "title": metadata.get("title", ""),
+            "domain": metadata.get("domain", ""),
+            "context": metadata["context"],
+            "options": metadata["options"],
+        }
         trajectory.model_name = str(model)
         trajectory.agent_ids = agent_ids
         trajectory.messages = []

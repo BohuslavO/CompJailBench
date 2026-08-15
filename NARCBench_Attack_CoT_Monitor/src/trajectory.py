@@ -21,6 +21,10 @@ class StandardTrajectory(StoreModel):
     attack_name: str = ""
     condition_label: str = ""
 
+    # Label-free task information visible to every participant. This must not
+    # contain attack targets, colluder identities, or evaluation labels.
+    public_task: dict[str, Any] = Field(default_factory=dict)
+
     # Compatibility aggregate. It may contain private data, so deployable
     # monitors must use public_messages instead.
     messages: list[dict[str, Any]] = Field(default_factory=list)

@@ -1,10 +1,15 @@
-# NARCBench attack × observable-reasoning monitor
+# NARCBench attack × observable-reasoning and graph-monitor defenses
 
 This isolated project implements Beibarys's attack/defense contribution without
 modifying the team's `CompJailBreak` repository. It uses all 50 official
 NARCBench-Core scenarios under matched collusion and honest-control conditions
 (100 runs), then evaluates a separate LLM monitor under three predeclared
 evidence scopes.
+
+The same saved trajectories have also been evaluated with a separate
+**G-Safeguard-inspired compositional graph monitor** adapted from Atharv's
+commit `c5eea2a`. That result is detection-only and is never represented as the
+published trained GNN or topological-intervention method.
 
 The project is code-complete, mock-tested, and has a completed paper-scale run
 over all 50 matched scenarios (100 trajectories). The frozen analysis outputs
@@ -74,6 +79,21 @@ observable-reasoning monitor achieved AUROC 0.316; the action-only baseline
 achieved AUROC 0.427. These results do not support a monitoring benefit from
 the elicited rationales under this model and protocol. See
 `results/paper_main/paper_results.md` and `results/paper_main/MEETING_SUMMARY.md`.
+
+## Completed G-Safeguard-inspired result
+
+All 100 saved trajectories were scored without regenerating the attack. The
+condition-label AUROC was 0.714. At the frozen 0.5 threshold, the monitor flagged
+3/50 collusion-condition trajectories and 0/50 matched controls. In a secondary
+outcome analysis it caught 2/3 attacks that achieved the strict end-to-end
+attack-success outcome; this estimate is exploratory because only three attacks
+succeeded. The final run used 101 calls (one truncated output was retried) and
+215,154 provider-reported tokens.
+
+See `G_SAFEGUARD_INSPIRED.md`,
+`results/g_safeguard_inspired/RESULTS.md`, and
+`paper/methodology_g_safeguard_inspired.tex`. This cell must be labeled
+**G-Safeguard-inspired graph monitor**, not G-Safeguard.
 
 ## Applying the defense to the other attacks
 
@@ -253,7 +273,7 @@ authentication, quota, or throttling error.
 
 ## Repository boundary
 
-The shared `StandardTrajectory` v2.0 file has been pushed to the existing
-`beibarys-narcbench-cot` branch for team schema discussion. The remaining
-polished source and results have not yet been pushed. Do not upload `.env`,
+The observable-rationale package and shared `StandardTrajectory` v2.0 were
+pushed previously to `beibarys-narcbench-cot`. The newer G-Safeguard-inspired
+source and results remain local until final review. Do not upload `.env`,
 `.venv`, raw credentials, diagnostic logs, or temporary reference files.

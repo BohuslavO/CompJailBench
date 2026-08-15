@@ -5,6 +5,12 @@ attack-agnostic: attack owners populate the shared fields, and the monitor
 constructs label-free evidence views without reading `metadata`, hidden targets,
 colluder identities, or private messages.
 
+`public_task` is an optional label-free dictionary for task context visible to
+all agents. It must never contain attack targets, colluder identities, or
+evaluation labels. The observable-rationale monitor does not require it, while
+the separate graph monitor uses it to interpret whether the final aggregation
+departs from the stated task evidence.
+
 The cross-attack scorer uses the frozen prompt profile `general_v2`. Existing
 NARCBench results were produced by the narrower `narcbench_v1` prompt and remain
 a valid model-specific result, but they must be rescored with `general_v2`

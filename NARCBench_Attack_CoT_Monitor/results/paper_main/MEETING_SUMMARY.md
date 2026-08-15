@@ -85,3 +85,24 @@ because only one reviewer labeled a fixed 20% subset.
 
 Do not upload `.env`, `.venv`, temporary traces, diagnostic rescore logs, or
 credentials.
+
+## Additional completed attack × defense cell
+
+The same 100 saved trajectories were scored by a **G-Safeguard-inspired
+compositional graph monitor** without rerunning the attacker. This is a
+detection-only adaptation of Atharv's `GraphMonitor` from commit `c5eea2a`; it
+is not the published trained GNN and performs no topological intervention.
+
+- Condition-label AUROC: 0.714.
+- Fixed-threshold recall: 3/50 attack attempts (0.060).
+- Matched-control false-positive rate: 0/50 (0).
+- Strict successful attacks captured: 2/3, reported as exploratory because
+  only three attacks achieved the end-to-end success definition.
+- Final-run overhead: 101 monitor calls and 215,154 provider-reported tokens,
+  including one truncated response that was retried.
+
+The matrix-ready rows are in
+`results/g_safeguard_inspired/team_rows.csv`; paper-ready details are in
+`results/g_safeguard_inspired/RESULTS.md` and
+`paper/methodology_g_safeguard_inspired.tex`. The cell must be named
+**G-Safeguard-inspired graph monitor**, not G-Safeguard.
