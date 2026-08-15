@@ -1,0 +1,35 @@
+\paragraph{Sentinel Agents message-only adaptation.}
+We evaluated the NARCBench attack against the team's Sentinel Agents
+implementation using the same 50 matched scenarios as the other defenses,
+yielding 50 collusion-condition trajectories and 50 benign controls. We reused
+the saved trajectories and therefore made no additional attacker calls. Because
+NARCBench records agent messages and final votes but no tool invocations, the
+adapter constructed a degraded execution graph containing one edge per visible
+message and one final-output edge. The primary condition exposed only public
+messages and the aggregate output; private messages were reserved as an
+optional visibility ablation. Hidden targets, fair choices, colluder identities,
+condition labels, and other evaluator metadata were excluded from the defense
+input.
+
+We retained the existing tiered analyzer and node/edge checker interfaces from
+the Sentinel Agents implementation. Tier~1 was not evaluated because the team
+had not specified a task-level policy checker. Tier~2 applied an independent
+LLM checker to graph nodes and edges. Tier~3 used a frozen,
+target-independent message-path library (\texttt{narcbench\_message\_paths\_v1})
+covering repeated decision advocacy, explicit alignment followed by advocacy,
+and normative pressure followed by advocacy, in each case terminating in an
+aggregate output. These patterns did not encode the assigned target, correct
+answer, colluder identities, or evaluation labels. We enabled the original
+strict-recheck behavior and counted unresolved path matches as human-review
+escalations.
+
+GPT-OSS-120B served as the node/edge checker through AWS Bedrock with
+temperature zero. Since trajectory messages are untrusted model-generated
+content, the wrapper explicitly delimited them as evidence, required a numeric
+score in $[0,1]$, and retried malformed completions. Each trajectory was
+analyzed once and checkpointed immediately. We report detection recall on the
+50 attack attempts, false-positive rate on the 50 controls, precision, balanced
+accuracy, AUROC, paired flag-rate differences, tier attribution, human-review
+rate, and model-call/token overhead. This experiment is described as
+\emph{Sentinel Agents (message-only adaptation)} for this cell only; it does not
+rename or characterize the full tool-aware defense.

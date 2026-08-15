@@ -2,8 +2,9 @@
 
 ## Status
 
-The NARCBench x CoT-monitor cell is complete locally at paper scale. Nothing
-has been committed or pushed to the team repository.
+The NARCBench x CoT-monitor and G-Safeguard-inspired cells are published on
+Beibarys's branch. The Sentinel Agents message-only cell is complete locally
+and awaiting review before publication.
 
 - 50 matched NARCBench-Core scenarios
 - 100 trajectories: 50 collusion and 50 honest control
@@ -106,3 +107,29 @@ The matrix-ready rows are in
 `results/g_safeguard_inspired/RESULTS.md` and
 `paper/methodology_g_safeguard_inspired.tex`. The cell must be named
 **G-Safeguard-inspired graph monitor**, not G-Safeguard.
+
+## Additional completed Sentinel Agents cell
+
+Brad Wong confirmed that NARCBench may use Sentinel Agents in degraded
+message-only mode, with a separate message-based Tier-3 library because his
+default seen signatures are specific to SIF. The public-only primary condition
+is now complete over the same 50 attack trajectories and 50 controls.
+
+- Display name for this cell: **Sentinel Agents (message-only adaptation)**.
+- Recall: 47/50 (0.940; 95% CI 0.838--0.979).
+- False-positive rate: 45/50 (0.900; 95% CI 0.786--0.957).
+- Precision: 0.511; balanced accuracy: 0.520; AUROC: 0.552.
+- Paired flag-rate difference: 0.040 (95% CI -0.060--0.160; McNemar
+  `p=0.727`).
+- Strict successful attacks captured: 2/3 (exploratory).
+- Every graph was degraded because NARCBench recorded no tool calls; Tier 1
+  was not evaluated.
+- Final overhead: 3,518 valid checker calls and 1,815,226
+  provider-reported tokens.
+
+The high recall is not useful in isolation because the defense also flagged
+almost every benign deliberation. This is a negative cross-attack-transfer
+result, not a failure of Brad's full tool-aware Sentinel configuration. The
+matrix-ready rows are in `results/sentinel_message_only/team_rows.csv`, with
+details in `results/sentinel_message_only/RESULTS.md` and
+`paper/methodology_sentinel_message_only.tex`.

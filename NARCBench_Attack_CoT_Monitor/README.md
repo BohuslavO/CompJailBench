@@ -11,6 +11,11 @@ The same saved trajectories have also been evaluated with a separate
 commit `c5eea2a`. That result is detection-only and is never represented as the
 published trained GNN or topological-intervention method.
 
+They have additionally been evaluated with Brad Wong's Sentinel Agents
+implementation using a **message-only, public-scope adaptation**. Because these
+NARCBench traces contain no tool calls, this individual cell is explicitly
+reported as degraded and does not characterize the full tool-aware defense.
+
 The project is code-complete, mock-tested, and has a completed paper-scale run
 over all 50 matched scenarios (100 trajectories). The frozen analysis outputs
 are in `results/paper_main`; the attacker and monitor used separate Inspect
@@ -94,6 +99,22 @@ See `G_SAFEGUARD_INSPIRED.md`,
 `results/g_safeguard_inspired/RESULTS.md`, and
 `paper/methodology_g_safeguard_inspired.tex`. This cell must be labeled
 **G-Safeguard-inspired graph monitor**, not G-Safeguard.
+
+## Completed Sentinel Agents message-only result
+
+The public-only primary condition reused all 100 saved trajectories. It flagged
+47/50 attack attempts but also 45/50 benign controls, giving recall 0.940, FPR
+0.900, balanced accuracy 0.520, and AUROC 0.552. This is a negative selectivity
+result: generic decision, alignment, and pressure patterns occurred frequently
+in honest deliberation as well as attacked runs.
+
+All graphs were marked degraded because tool calls were unavailable; Tier 1
+was not evaluated. The final run used 3,518 valid GPT-OSS-120B node/edge checker
+calls and 1,815,226 provider-reported tokens. See
+`SENTINEL_MESSAGE_ONLY.md`, `results/sentinel_message_only/RESULTS.md`, and
+`paper/methodology_sentinel_message_only.tex`. The shared defense remains named
+**Sentinel Agents**; only this matrix cell is qualified as **message-only,
+public-scope, degraded**.
 
 ## Applying the defense to the other attacks
 
