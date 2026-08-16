@@ -11,14 +11,39 @@ import csv
 from collections import defaultdict
 from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent
+
 FIELDS = ["contributor", "attack_method", "defense_method", "model", "task_id",
           "strategy", "condition", "metric_name", "metric_value", "n_samples", "run_id", "notes"]
+
+EXPECTED_ATTACK_METHODS = [
+    "agentharm",
+    "semantic_intent_fragmentation",
+    "narcbench_collusion",
+    "decompbench_routing",
+]
+EXPECTED_DEFENSE_METHODS = [
+    "g_safeguard_inspired_graph_monitor",
+    "sentinel_agents_message_only",
+    "cot_observable_reasoning_monitor",
+    "narcbench_probing",
+]
+DISPLAY_NAMES = {
+    "agentharm": "AgentHarm",
+    "semantic_intent_fragmentation": "Semantic Intent Fragmentation",
+    "narcbench_collusion": "NARCBench",
+    "decompbench_routing": "DeCompBench",
+    "g_safeguard_inspired_graph_monitor": "G-Safeguard*",
+    "sentinel_agents_message_only": "Sentinel Agents*",
+    "cot_observable_reasoning_monitor": "CoT monitor*",
+    "narcbench_probing": "NARCBench Probing",
+}
 
 
 def load_raw(raw_dir):
     rows = []
     for path in sorted(Path(raw_dir).glob("*.csv")):
-        with open(path, newline="") as f:
+        with open(path, newline="", encoding="utf-8-sig") as f:
             for r in csv.DictReader(f):
                 missing = [c for c in FIELDS if c not in r]
                 if missing:
@@ -44,13 +69,43 @@ def build_pivots(rows):
     return cells
 
 
+def ordered_methods(found, expected):
+    """Keep the agreed 4x4 axes first, then preserve any unrecognized methods."""
+    extras = sorted(set(found) - set(expected))
+    return list(expected) + extras
+
+
+def render_coverage_table(cells, attack_methods, defense_methods):
+    lines = ["## 4x4 coverage", ""]
+    header = "| attack \\ defense | " + " | ".join(
+        DISPLAY_NAMES.get(method, method) for method in defense_methods
+    ) + " |"
+    sep = "|---" * (len(defense_methods) + 1) + "|"
+    lines += [header, sep]
+    for attack in attack_methods:
+        row = [DISPLAY_NAMES.get(attack, attack)]
+        for defense in defense_methods:
+            data = cells.get((attack, defense), {})
+            row.append(f"data ({len(data)} metric(s))" if data else "—")
+        lines.append("| " + " | ".join(row) + " |")
+    lines += [
+        "",
+        "`—` means no result has been submitted for that attack-defense cell.",
+        "The asterisk marks a cell-specific adaptation: Beibarys's G-Safeguard result is an inspired detection-only baseline; Sentinel Agents is message-only/public/degraded; and the current CoT-monitor result uses the NARCBench-specific `narcbench_v1` prompt.",
+        "",
+    ]
+    return "\n".join(lines)
+
+
 def render_pivot_table(cells, attack_methods, defense_methods, metric_name, label):
     lines = [f"### {label}", ""]
-    header = "| attack \\ defense | " + " | ".join(defense_methods) + " |"
+    header = "| attack \\ defense | " + " | ".join(
+        DISPLAY_NAMES.get(method, method) for method in defense_methods
+    ) + " |"
     sep = "|---" * (len(defense_methods) + 1) + "|"
     lines += [header, sep]
     for am in attack_methods:
-        row = [am]
+        row = [DISPLAY_NAMES.get(am, am)]
         for dm in defense_methods:
             data = cells.get((am, dm), {}).get(metric_name)
             if not data:
@@ -74,8 +129,8 @@ def render_pivot_table(cells, attack_methods, defense_methods, metric_name, labe
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--raw-dir", default="raw")
-    ap.add_argument("--out", default="MATRIX.md")
+    ap.add_argument("--raw-dir", default=BASE_DIR / "raw")
+    ap.add_argument("--out", default=BASE_DIR / "MATRIX.md")
     args = ap.parse_args()
 
     rows = load_raw(args.raw_dir)
@@ -83,14 +138,16 @@ def main():
         print(f"No valid rows found in {args.raw_dir}/ -- nothing to build.")
         return
 
-    attack_methods = sorted({r["attack_method"] for r in rows})
-    defense_methods = sorted({r["defense_method"] for r in rows})
+    found_attacks = {r["attack_method"] for r in rows}
+    found_defenses = {r["defense_method"] for r in rows}
+    attack_methods = ordered_methods(found_attacks, EXPECTED_ATTACK_METHODS)
+    defense_methods = ordered_methods(found_defenses, EXPECTED_DEFENSE_METHODS)
     contributors = sorted({r["contributor"] for r in rows})
     metric_names = sorted({r["metric_name"] for r in rows})
 
     print(f"Loaded {len(rows)} rows from {args.raw_dir}/")
-    print(f"Attack methods seen ({len(attack_methods)}/4 expected): {attack_methods}")
-    print(f"Defense methods seen ({len(defense_methods)}/4 expected): {defense_methods}")
+    print(f"Attack methods seen ({len(found_attacks & set(EXPECTED_ATTACK_METHODS))}/4 expected): {sorted(found_attacks)}")
+    print(f"Defense methods seen ({len(found_defenses & set(EXPECTED_DEFENSE_METHODS))}/4 expected): {sorted(found_defenses)}")
     print(f"Contributors: {contributors}")
 
     cells = build_pivots(rows)
@@ -99,17 +156,19 @@ def main():
         "# CompJailBench 4x4 Results Matrix",
         "",
         f"Auto-generated by build_matrix.py from {len(rows)} rows across {len(contributors)} contributor(s).",
-        f"Attack methods present: {len(attack_methods)}/4. Defense methods present: {len(defense_methods)}/4.",
+        f"Attack methods present: {len(found_attacks & set(EXPECTED_ATTACK_METHODS))}/4. Defense methods present: {len(found_defenses & set(EXPECTED_DEFENSE_METHODS))}/4.",
         "",
         "Each cell shows mean(metric | attack) / mean(metric | benign_control), and the gap (Δ) between them.",
+        "For binary flag metrics, the attack mean is detection recall and the benign-control mean is the false-positive rate.",
         "Gap is a placeholder signal, not a validated AUROC -- see README.md.",
         "",
+        render_coverage_table(cells, attack_methods, defense_methods),
     ]
     for metric in metric_names:
         label = f"Metric: {metric}"
         out_lines.append(render_pivot_table(cells, attack_methods, defense_methods, metric, label))
 
-    Path(args.out).write_text("\n".join(out_lines))
+    Path(args.out).write_text("\n".join(out_lines), encoding="utf-8")
     print(f"\nWrote {args.out}")
 
 

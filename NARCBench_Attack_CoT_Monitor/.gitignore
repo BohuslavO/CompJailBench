@@ -1,0 +1,17 @@
+# Never upload API credentials
+.env
+
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Inspect logs
+logs/
+*.eval
+
+# Local publishing and test artifacts
+tmp/
+.pytest_cache/

@@ -219,10 +219,9 @@ def narcbench_dry_solver() -> Solver:
             public_messages.append(message)
 
         # Save all observable messages into the generic trajectory.
-        trajectory.messages = (
-            private_messages
-            + public_messages
-        )
+        trajectory.private_messages = private_messages
+        trajectory.public_messages = public_messages
+        trajectory.messages = private_messages + public_messages
 
         # ---------- REASONING TRACES ----------
 
@@ -235,6 +234,17 @@ def narcbench_dry_solver() -> Solver:
             )
             for agent_id in agent_ids
         }
+        trajectory.observable_reasoning = [
+            {
+                "agent_id": agent_id,
+                "stage": "dry_run",
+                "channel": "public",
+                "round": 1,
+                "content": rationale,
+                "visible_to_monitor": True,
+            }
+            for agent_id, rationale in trajectory.reasoning_traces.items()
+        ]
 
         # ---------- ACTIONS ----------
 
