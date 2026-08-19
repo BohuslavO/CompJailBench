@@ -141,6 +141,12 @@ def guardrail_classifier(guardrail_id: str, version: str = "DRAFT",
     """
     from botocore.exceptions import BotoCoreError, ClientError
 
+    # Guardrail versions are strings ("DRAFT", "1", "2"), and the API rejects an
+    # int outright. Inspect parses `-T guardrail_version=1` as an int, so the
+    # obvious command line fails on the first classifier call with every sample
+    # already planned -- an expensive way to learn about a quoting rule.
+    version = str(version)
+
     def classify(text: str) -> float:
         if not text:
             return 0.0
@@ -154,8 +160,12 @@ def guardrail_classifier(guardrail_id: str, version: str = "DRAFT",
             )
         except (BotoCoreError, ClientError) as exc:
             if on_error is None:
+                # The cause goes in the MESSAGE, not just the __cause__ chain:
+                # Inspect renders the raised error into the log without its chain,
+                # so a bare "ApplyGuardrail failed" costs a whole run to diagnose.
                 raise RuntimeError(
-                    f"ApplyGuardrail failed for guardrail {guardrail_id!r}. Refusing to "
+                    f"ApplyGuardrail failed for guardrail {guardrail_id!r} "
+                    f"(version {version!r}): {type(exc).__name__}: {exc}. Refusing to "
                     f"score this text as clean -- that would inflate FS(P) and fabricate "
                     f"attack success. Pass on_error= to override."
                 ) from exc

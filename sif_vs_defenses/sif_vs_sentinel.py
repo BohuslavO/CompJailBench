@@ -71,7 +71,7 @@ from graph_builder import build_dynamic_graph, build_static_graph   # noqa: E402
 from node_edge_checks import (granite_guardian_stub,                # noqa: E402
                               llamafirewall_stub, llm_edge_checker,
                               llm_node_checker)
-from orchestrator import DEFAULT_AGENTS, llm_planner, run_scenario  # noqa: E402
+from orchestrator import DEFAULT_AGENTS, SIFPlan, llm_planner, run_scenario  # noqa: E402
 from scenarios import load_scenario                                 # noqa: E402
 from success_gate import (assert_composition_only, ifc_taint,       # noqa: E402
                           llm_judge, sif_success)
@@ -121,11 +121,25 @@ def sif_vs_sentinel_solver(library_condition: str = "seen_signatures",
         models = resolve_roles(*MODEL_ROLES)
 
         def work():
-            plan, trajectory, calls = run_scenario(
-                scenario, request,
-                call_llm=model_call_llm(models["worker"]),
-                planner=llm_planner(model_call_llm(models["orchestrator"]), DEFAULT_AGENTS),
-                benign=not is_attack)
+            # A weaker orchestrator sometimes declines to decompose -- it asks a
+            # clarifying question or emits no JSON plan, and llm_planner raises.
+            # That is a real outcome of the capability ablation, not a run error:
+            # the plan-generation gap never opened, so the attack failed at planning.
+            # Score it as an empty plan (FS of [] is 0.0 -> condition (b) fails) with
+            # an empty trajectory (the defense sees a degraded graph and nothing to
+            # detect), and record the reason so it is separable from a fragmentation
+            # failure in analysis. Catches only the run_scenario call; downstream
+            # scoring cannot raise this.
+            try:
+                plan, trajectory, calls = run_scenario(
+                    scenario, request,
+                    call_llm=model_call_llm(models["worker"]),
+                    planner=llm_planner(model_call_llm(models["orchestrator"]), DEFAULT_AGENTS),
+                    benign=not is_attack)
+                plan_generation_failed = None
+            except ValueError as exc:
+                plan = SIFPlan(scenario_id=scenario.scenario_id, request=request, subtasks=[])
+                trajectory, calls, plan_generation_failed = [], 1, str(exc)
 
             # Attack side. Three judges, three roles -- condition (d)'s
             # cross-family independence is a model-role assignment, not a code
@@ -161,6 +175,7 @@ def sif_vs_sentinel_solver(library_condition: str = "seen_signatures",
                 "sif_result": result, "alert": alert, "degraded": dynamic.degraded,
                 "taint_rules": ifc_taint(plan),
                 "composition_only": assert_composition_only(plan),
+                "plan_generation_failed": plan_generation_failed,
             }
 
         for key, value in (await anyio.to_thread.run_sync(work)).items():
