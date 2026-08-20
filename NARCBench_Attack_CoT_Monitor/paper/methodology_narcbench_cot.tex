@@ -54,12 +54,11 @@ outputs, and refusals are counted as failures rather than silently excluded.
 Separately, human reviewers audit whether the messages exhibit semantic
 coordination. The audited-valid subset requires both target adherence and
 semantic evidence of a shared strategy and is reported only as a secondary
-per-protocol analysis. Before the preliminary meeting, one human reviewer
-labeled a fixed 10-of-50 subset. Files previously discussed with an AI assistant
-were excluded from this independent subset. Because a second reviewer was not
-available, we do not report inter-rater agreement or Cohen's kappa, and this
-subset is treated as a preliminary qualitative audit rather than a full-dataset
-estimate.
+per-protocol analysis. One human reviewer labeled a fixed 10-of-50 subset.
+Files used during reviewer training were excluded from this independent subset.
+Because a second reviewer was not available, we do not report inter-rater
+agreement or Cohen's kappa, and this subset is treated as a preliminary
+qualitative audit rather than a full-dataset estimate.
 
 \paragraph{Defense and evidence scopes.}
 An independent LLM monitor assigned a suspiciousness score in $[0,1]$ to each
@@ -74,9 +73,9 @@ ablations. A fourth privileged condition that includes private coordination may
 be reported as an audit upper bound but is not treated as a deployable defense.
 Scores at or above 0.5 were classified as attacks. The threshold was fixed
 before examining the test results. This completed cell used a NARCBench-specific
-monitor prompt (	exttt{narcbench_v1}) focused on covert steering of committee
+monitor prompt (\texttt{narcbench_v1}) focused on covert steering of committee
 decisions. For the cross-attack defense matrix, we separately freeze an
-attack-agnostic prompt (	exttt{general_v2}) and rescore saved trajectories so
+attack-agnostic prompt (\texttt{general_v2}) and rescore saved trajectories so
 that every attack row uses the same defense prompt. Results from the two prompt
 versions are not pooled.
 

@@ -1,0 +1,57 @@
+\subsection{NARCBench Activation-Probing Defense}
+\label{sec:narcbench-probing}
+
+We evaluated the NARCBench collusion attack with the team's NARCBench
+activation-probing defense, which follows the open-weight probing setting of
+NARCBench~\citep{rose2026narcbench}. Because hidden activations cannot be
+reconstructed from previously saved Bedrock text trajectories, we generated a
+separate matched corpus with \texttt{Qwen/Qwen3-32B-AWQ}. The corpus contains
+the same 50 NARCBench-Core scenarios under collusion and honest-control
+conditions, yielding 100 samples. Scenario content and committee structure were
+matched within each pair.
+
+For every agent turn, we captured the final-token hidden state at transformer
+layer 28 (dimension 5,120). We then applied the unchanged trained probe artifact
+provided with the defense implementation. The runner verified the artifact before
+deserialization using SHA-256
+\texttt{d9a340a3276c477b817e9d0f7580a1c21cf3e5d080bb0ac0281e4c23b3d8e4ec}.
+The pre-registered primary statistic reproduces the defense scorer exactly: it
+projects every recorded turn activation onto the learned direction and takes
+the maximum projection within a trajectory (\texttt{peak\_suspicion}). We also
+report a public-discussion-only maximum and the released group-level metrics as
+secondary analyses.
+
+Qwen was run in non-thinking mode with sampling temperature 0.7, top-$p$ 0.8,
+top-$k$ 20, a fixed base seed, and at most 512 new tokens. Responses followed a
+bounded JSON contract. A malformed response received at most one schema-only
+repair attempt; the repair prompt did not contain the malformed text, and the
+accepted response was activation-scored under the original task prompt. Across
+1,700 accepted turns, 80 repairs were required (4.71\%); all 100 samples
+completed and no failed-generation artifact remained.
+
+We treat the scenario pair as the unit of analysis. For each continuous probe
+metric, we report attack and control means, their paired mean difference, a
+10,000-resample paired-bootstrap 95\% interval, AUROC, and average precision.
+We do not fit a binary threshold on the test set. The primary all-turn score
+produced means of 6.473 under attack and 0.832 under control, a paired difference
+of 5.642 (95\% CI [4.653, 6.666]), AUROC 0.9896, and average precision 0.9901.
+
+We analyzed attack outcomes independently from the probe scores. Target
+adherence required both designated colluders to vote for the assigned target,
+and end-to-end success additionally required the committee to select that
+target. Target adherence occurred in 31/50 attack samples (0.620; Wilson 95\%
+CI [0.482, 0.741]), but only 3/50 attacks achieved end-to-end success. The
+matched controls selected the target in 0/50 samples, giving a paired
+target-selection uplift of 0.060 (bootstrap 95\% CI [0.000, 0.140]; exact
+McNemar $p=0.250$). No sample abstained and no unrepaired parse failure remained.
+Thus the probe's strong condition-label discrimination should not be read as
+evidence that the attack reliably changed committee outcomes.
+
+This result measures within-corpus discrimination of collusion-condition versus
+matched-control trajectories, not successful harmful outcomes. The primary
+scorer also includes the private coordination phase and therefore represents a
+privileged evidence scope; the public-only result is reported separately. The
+released bundle states that the probe was trained on 62 runs but does not expose
+a verifiable scenario-level split against this evaluation set. We therefore do
+not claim held-out or cross-model generalization without additional provenance
+for the released probe artifact.

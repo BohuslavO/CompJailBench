@@ -1,0 +1,51 @@
+{
+  "experiment": "NARCBench attack x NARCBench activation probing",
+  "completed_utc": "2026-08-18T10:01:09.047811+00:00",
+  "design": {
+    "matched_pairs": 50,
+    "samples": 100,
+    "attack_samples": 50,
+    "benign_controls": 50,
+    "activation_turns": 1700
+  },
+  "attack": "NARCBench collusion",
+  "defense": "NARCBench activation probing",
+  "generation_model": "Qwen/Qwen3-32B-AWQ",
+  "activation_layer": 28,
+  "activation_dimension": 5120,
+  "probe_sha256": "d9a340a3276c477b817e9d0f7580a1c21cf3e5d080bb0ac0281e4c23b3d8e4ec",
+  "probe_training_runs": 62,
+  "primary_metric": "peak_suspicion",
+  "aggregation": "turnwise maximum",
+  "decoding": {
+    "enable_thinking": false,
+    "do_sample": true,
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "top_k": 20,
+    "sampling_seed": 20260817,
+    "max_new_tokens": 512,
+    "max_format_retries": 1,
+    "cache_implementation": "dynamic_default"
+  },
+  "software": {
+    "inspect_ai": "0.3.251",
+    "gptqmodel": "7.3.2",
+    "transformers": "5.15.0",
+    "torch": "2.10.0+cu128",
+    "cuda_available": true,
+    "gpu_count": 2
+  },
+  "generation_diagnostics": {
+    "n_scored_turns": 1700,
+    "n_format_repairs": 80,
+    "format_repair_rate": 0.047058823529411764,
+    "n_generation_attempts": 1780,
+    "extra_generation_attempts": 80
+  },
+  "validation": {
+    "strict_full_validation": true,
+    "failed_generation_artifacts": 0,
+    "duplicate_raw_rows": 0
+  }
+}

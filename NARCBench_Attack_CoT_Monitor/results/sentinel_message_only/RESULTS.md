@@ -6,11 +6,11 @@ The public-only primary evaluation is complete. It reused the same 50 matched
 NARCBench scenarios used for the other defenses: 50 collusion-condition
 trajectories and 50 benign controls. The attacker was not rerun.
 
-Brad Wong's Sentinel Agents implementation at commit `e90d60c` supplied the
+The Sentinel Agents implementation at commit `e90d60c` supplied the
 tiered analyzer and node/edge checker interfaces. Because the NARCBench traces
 contain no tool calls, every execution graph was explicitly marked degraded.
 This result therefore applies only to the **message-only adaptation**, not to
-Brad's full tool-aware Sentinel Agents configuration.
+the full tool-aware Sentinel Agents configuration.
 
 ## Frozen configuration
 
@@ -18,7 +18,7 @@ Brad's full tool-aware Sentinel Agents configuration.
 - Tier 1: not evaluated because no agreed task-specification checker exists.
 - Tier 2: GPT-OSS-120B node and edge checkers through AWS Bedrock.
 - Tier 3: frozen target-independent `narcbench_message_paths_v1` signatures.
-- Strict recheck: enabled, matching Brad's default configuration.
+- Strict recheck: enabled, matching the pinned default configuration.
 - Unflagged Tier-3 paths: counted as human-review escalations.
 - Hidden target, fair answer, colluder identities, attack labels, and evaluator
   metadata were excluded from the defense graph.
@@ -77,7 +77,7 @@ coordination. The result is therefore negative evidence about cross-attack
 transfer, not evidence that the full Sentinel Agents design is ineffective.
 
 The tool-call layer was unavailable, Tier 1 was not evaluated, and the Tier-3
-message signatures were an adaptation for NARCBench rather than Brad's original
+message signatures were an adaptation for NARCBench rather than the original
 SIF signatures. The shared 4x4 table should retain the defense-column name
 **Sentinel Agents** and qualify this individual cell as **message-only,
 public-scope, degraded**.

@@ -91,7 +91,7 @@ def render_coverage_table(cells, attack_methods, defense_methods):
     lines += [
         "",
         "`—` means no result has been submitted for that attack-defense cell.",
-        "The asterisk marks a cell-specific adaptation: Beibarys's G-Safeguard result is an inspired detection-only baseline; Sentinel Agents is message-only/public/degraded; and the current CoT-monitor result uses the NARCBench-specific `narcbench_v1` prompt.",
+        "The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspired detection-only baseline; Sentinel Agents is message-only/public/degraded; and the current CoT-monitor result uses the NARCBench-specific `narcbench_v1` prompt.",
         "",
     ]
     return "\n".join(lines)

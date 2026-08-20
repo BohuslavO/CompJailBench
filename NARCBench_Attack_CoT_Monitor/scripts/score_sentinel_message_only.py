@@ -1,6 +1,6 @@
 """Score saved NARCBench trajectories with Sentinel Agents message-only mode.
 
-The teammate-owned analyzer and LLM node/edge checker factories are loaded from
+The shared analyzer and LLM node/edge checker factories are loaded from
 ``--sentinel-dir``. Each trajectory is analyzed once and checkpointed
 immediately, avoiding the repeated paid work performed by attaching several
 independent Inspect scorers to the same sample.

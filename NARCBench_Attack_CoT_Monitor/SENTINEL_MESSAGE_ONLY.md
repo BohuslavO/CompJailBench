@@ -1,8 +1,8 @@
 # NARCBench x Sentinel Agents: message-only adaptation
 
-This integration applies Brad Wong's existing `Defense_SentinelAgents`
-implementation to saved NARCBench trajectories. It does not rename or modify
-the team-wide Sentinel Agents defense.
+This integration applies the existing `Defense_SentinelAgents` implementation
+to saved NARCBench trajectories. It does not rename or modify the shared
+Sentinel Agents defense.
 
 ## Frozen primary configuration
 
@@ -10,7 +10,7 @@ the team-wide Sentinel Agents defense.
 - Secondary ablation: public plus private messages and final output.
 - Tool layer: unavailable; every graph is explicitly marked degraded.
 - Tier 1: not evaluated until a task-specification checker is agreed.
-- Tier 2: Brad's node/edge checks.
+- Tier 2: the released node/edge checks.
 - Tier 3: `narcbench_message_paths_v1`, frozen before model scoring.
 - Hidden targets, fair choices, colluder identities, condition labels, and
   evaluator metadata are excluded from the defense graph.
@@ -23,7 +23,7 @@ rate on the 50 matched controls must be reported.
 
 ## Validation command
 
-Run the adapter against the teammate-owned implementation without model calls:
+Run the adapter against the shared implementation without model calls:
 
 ```powershell
 python scripts/validate_sentinel_message_adapter.py `
@@ -34,7 +34,7 @@ python scripts/validate_sentinel_message_adapter.py `
 
 The output is an offline compatibility artifact, not a paper result. Paid
 scoring begins only after the adapter, evidence boundary, and fixed signatures
-pass validation against Brad's exact implementation.
+pass validation against the pinned implementation.
 
 ## Completed primary run
 

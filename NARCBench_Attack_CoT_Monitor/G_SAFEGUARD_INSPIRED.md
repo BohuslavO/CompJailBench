@@ -1,7 +1,7 @@
 # G-Safeguard-inspired compositional graph monitor
 
-This defense is a post-hoc, detection-only adaptation of the `GraphMonitor` in
-Atharv's repository commit `c5eea2a`. It is **not** the published G-Safeguard
+This defense is a post-hoc, detection-only adaptation of the `GraphMonitor`
+implementation in repository commit `c5eea2a`. It is **not** the published G-Safeguard
 system: it does not train a graph neural network, classify compromised agents,
 or prune communication edges during execution.
 

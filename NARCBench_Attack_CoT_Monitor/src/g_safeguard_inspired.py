@@ -1,4 +1,4 @@
-"""Post-hoc graph monitor adapted from Atharv's G-Safeguard-inspired baseline.
+"""Post-hoc graph monitor adapted from the shared G-Safeguard-inspired baseline.
 
 This is deliberately not presented as the published G-Safeguard system. It
 does not train a GNN or intervene in a live multi-agent execution. Instead, it

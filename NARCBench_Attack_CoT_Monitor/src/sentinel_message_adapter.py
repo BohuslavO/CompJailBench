@@ -1,4 +1,4 @@
-"""Message-only adapter for applying Brad Wong's Sentinel Agents to NARCBench.
+"""Message-only adapter for applying Sentinel Agents to NARCBench.
 
 The adapter does not modify or duplicate the Sentinel implementation. It turns
 the shared ``StandardTrajectory`` into the execution-graph classes supplied by
@@ -49,7 +49,7 @@ class SentinelBackend:
 
 
 def load_sentinel_backend(sentinel_dir: Path) -> SentinelBackend:
-    """Load the teammate-owned implementation from an explicit directory."""
+    """Load the shared implementation from an explicit directory."""
 
     sentinel_dir = sentinel_dir.resolve()
     required = (

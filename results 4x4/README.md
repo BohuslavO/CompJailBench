@@ -58,5 +58,7 @@ current NARCBench cells must retain the following limitations:
 - `cot_observable_reasoning_monitor` currently uses `narcbench_v1`; a
   `general_v2` cross-attack rescore remains pending if the team requires one
   common defense prompt.
-- NARCBench x NARCBench Probing remains empty until a compatible probing result
-  is produced.
+- `narcbench_probing` uses a separate self-hosted Qwen3-32B-AWQ run because the
+  Bedrock text trajectories do not contain compatible hidden activations. Its
+  primary `peak_suspicion` metric covers all recorded turns; public-only and
+  group-level probe metrics are reported separately.

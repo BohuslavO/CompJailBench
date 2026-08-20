@@ -33,7 +33,7 @@ never included in the monitor prompt.
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\score_standard_trajectories.py `
-  teammate_trajectories.jsonl `
+  attack_trajectories.jsonl `
   --output compatibility.jsonl `
   --validate-only
 ```
@@ -42,7 +42,7 @@ never included in the monitor prompt.
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\score_standard_trajectories.py `
-  teammate_trajectories.jsonl `
+  attack_trajectories.jsonl `
   --output cot_monitor_scores.jsonl `
   --model "PROVIDER/MONITOR_MODEL" `
   --max-concurrency 5

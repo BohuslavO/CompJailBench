@@ -1,10 +1,10 @@
-# NARCBench attack x observable-reasoning monitor: meeting handoff
+# NARCBench attack and defense experiment summary
 
 ## Status
 
-The NARCBench x CoT-monitor and G-Safeguard-inspired cells are published on
-Beibarys's branch. The Sentinel Agents message-only cell is complete locally
-and awaiting review before publication.
+The NARCBench attack has complete evaluations for the observable-rationale
+monitor, G-Safeguard-inspired graph monitor, Sentinel Agents message-only
+adaptation, and NARCBench activation-probing defense.
 
 - 50 matched NARCBench-Core scenarios
 - 100 trajectories: 50 collusion and 50 honest control
@@ -18,7 +18,7 @@ and awaiting review before publication.
 - Preliminary human audit complete for 10/50 attack trajectories (one reviewer)
 - Portable StandardTrajectory JSONL export complete (100 trajectories)
 - Team matrix export complete (600 long-format rows)
-- Cross-attack `general_v2` defense interface implemented and locally validated
+- Cross-attack `general_v2` defense interface validated with offline compatibility checks
 
 ## Frozen results
 
@@ -62,14 +62,16 @@ because only one reviewer labeled a fixed 20% subset.
 - The preliminary semantic audit covers 10/50 trajectories with one reviewer.
   No inter-rater agreement or Cohen's kappa is available, and the result must
   not be described as a complete human audit.
-- Activation-probing compatibility with Slava's defense is unresolved because
-  ordinary Bedrock text trajectories do not contain hidden activations.
+- Ordinary Bedrock text trajectories remain incompatible with activation
+  probing because they do not contain hidden states. This was resolved for the
+  probing matrix cell by running a separate, complete Qwen3-32B-AWQ evaluation;
+  those results are not pooled with the Bedrock trajectories.
 - The completed NARCBench score used the narrower `narcbench_v1` monitor prompt.
   A final comparable 4x4 defense column must rescore saved trajectories with
   the attack-agnostic `general_v2` prompt; this requires monitor calls but no
   attacker regeneration.
 
-## Files to integrate after team review
+## Reproducibility artifacts
 
 - `paper/methodology_narcbench_cot.tex`
 - `paper/narcbench_refs.bib`
@@ -91,7 +93,7 @@ credentials.
 
 The same 100 saved trajectories were scored by a **G-Safeguard-inspired
 compositional graph monitor** without rerunning the attacker. This is a
-detection-only adaptation of Atharv's `GraphMonitor` from commit `c5eea2a`; it
+detection-only adaptation of the `GraphMonitor` in commit `c5eea2a`; it
 is not the published trained GNN and performs no topological intervention.
 
 - Condition-label AUROC: 0.714.
@@ -110,10 +112,10 @@ The matrix-ready rows are in
 
 ## Additional completed Sentinel Agents cell
 
-Brad Wong confirmed that NARCBench may use Sentinel Agents in degraded
-message-only mode, with a separate message-based Tier-3 library because his
-default seen signatures are specific to SIF. The public-only primary condition
-is now complete over the same 50 attack trajectories and 50 controls.
+The Sentinel Agents interface permits a degraded message-only mode with a
+separate message-based Tier-3 library because the default seen signatures are
+specific to SIF. The public-only primary condition is complete over the same
+50 attack trajectories and 50 controls.
 
 - Display name for this cell: **Sentinel Agents (message-only adaptation)**.
 - Recall: 47/50 (0.940; 95% CI 0.838--0.979).
@@ -129,7 +131,31 @@ is now complete over the same 50 attack trajectories and 50 controls.
 
 The high recall is not useful in isolation because the defense also flagged
 almost every benign deliberation. This is a negative cross-attack-transfer
-result, not a failure of Brad's full tool-aware Sentinel configuration. The
+result, not a failure of the full tool-aware Sentinel configuration. The
 matrix-ready rows are in `results/sentinel_message_only/team_rows.csv`, with
 details in `results/sentinel_message_only/RESULTS.md` and
 `paper/methodology_sentinel_message_only.tex`.
+
+## Additional completed NARCBench Probing cell
+
+A separate self-hosted `Qwen/Qwen3-32B-AWQ` run evaluated the unchanged
+layer-28 activation probe over all 50 matched scenarios (100 samples and 1,700
+scored turns). The pre-registered all-turn peak score achieved AUROC 0.9896 and
+average precision 0.9901; the attack/control paired mean difference was 5.642
+(bootstrap 95% CI [4.653, 6.666]). All 100 samples completed, and no binary
+threshold was fitted on the test set.
+
+In the same Qwen run, target adherence was 31/50 (0.620), but strict
+end-to-end attack success was 3/50 (0.060), versus 0/50 target selections in
+matched controls. The paired uplift was 0.060 (bootstrap 95% CI [0.000, 0.140];
+exact McNemar `p=0.250`). Strong probe separation must therefore not be
+presented as strong attack effectiveness.
+
+This is a separate Qwen generation run, not a rescore of the Bedrock text
+trajectories. The exact primary scorer includes private-coordination turns;
+the public-discussion-only peak is reported as a secondary scope. Probe-training
+and evaluation independence could not be established from the released bundle
+metadata and must be confirmed before making an out-of-distribution
+generalization claim. Full details are in `NARCBENCH_PROBING.md`,
+`results/narcbench_probing/RESULTS.md`, and
+`paper/methodology_narcbench_probing.tex`.
