@@ -84,8 +84,10 @@ def metric_summary(rows: list[dict[str, Any]], metric: str) -> dict[str, Any]:
     }
 
 
-def team_rows(rows: list[dict[str, Any]], *, run_id: str) -> list[dict[str, Any]]:
-    """Convert canonical scores to the team's long-form matrix contract."""
+def team_rows(
+    rows: list[dict[str, Any]], *, run_id: str, contributor: str
+) -> list[dict[str, Any]]:
+    """Convert canonical scores to the shared long-form matrix contract."""
 
     output: list[dict[str, Any]] = []
     for row in rows:
@@ -95,7 +97,7 @@ def team_rows(rows: list[dict[str, Any]], *, run_id: str) -> list[dict[str, Any]
                 continue
             output.append(
                 {
-                    "contributor": "Beibarys",
+                    "contributor": contributor,
                     "attack_method": "narcbench_collusion",
                     "defense_method": "narcbench_probing",
                     "model": f"target={row['model_name']};probe={row['probe_model']}",
@@ -144,6 +146,11 @@ def main() -> None:
         help="Directory for canonical scores, summaries, and team rows",
     )
     parser.add_argument("--run-id", required=True, help="Stable experiment identifier")
+    parser.add_argument(
+        "--contributor",
+        required=True,
+        help="Contributor identifier recorded in the matrix provenance field",
+    )
     parser.add_argument(
         "--require-full",
         action="store_true",
@@ -199,7 +206,11 @@ def main() -> None:
         encoding="utf-8",
     )
     write_csv(args.output_dir / "summary.csv", summaries, list(summaries[0]))
-    exported = team_rows(canonical, run_id=args.run_id)
+    exported = team_rows(
+        canonical,
+        run_id=args.run_id,
+        contributor=args.contributor,
+    )
     write_csv(args.output_dir / "team_rows.csv", exported, TEAM_FIELDS)
     print(json.dumps({"canonical_rows": len(canonical), "team_rows": len(exported)}, indent=2))
 

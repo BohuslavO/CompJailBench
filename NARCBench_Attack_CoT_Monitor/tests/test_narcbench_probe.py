@@ -206,7 +206,11 @@ class ProbeAnalysisTests(unittest.TestCase):
         summary = metric_summary(canonical, "peak_suspicion")
         self.assertEqual(summary["roc_auc"], 1.0)
         self.assertEqual(summary["n_complete_pairs"], 2)
-        exported = team_rows(canonical, run_id="test")
+        exported = team_rows(
+            canonical,
+            run_id="test",
+            contributor="test-contributor",
+        )
         self.assertEqual(len(exported), 28)
 
 

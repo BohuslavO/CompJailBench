@@ -22,7 +22,7 @@ metadata are excluded. Labels are joined only after prediction.
 
 We apply a separate LLM judge (\texttt{openai/bedrock/gpt-oss-120b}) with
 temperature zero, low reasoning effort, and the frozen prompt version
-\texttt{atharv\_compositional\_leakage\_v1}. The judge returns a continuous
+\texttt{compositional\_leakage\_v1}. The judge returns a continuous
 suspiciousness score in $[0,1]$ and a one-sentence evidence statement. We freeze
 the decision threshold at 0.5. Expected cycles, bidirectional communication,
 and high connectivity are recorded as graph statistics but are not themselves

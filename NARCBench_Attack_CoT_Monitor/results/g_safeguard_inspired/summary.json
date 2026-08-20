@@ -2,7 +2,7 @@
   "defense_method": "g_safeguard_inspired_graph_monitor",
   "display_name": "G-Safeguard-inspired compositional graph monitor",
   "attack_method": "narcbench_collusion",
-  "prompt_version": "atharv_compositional_leakage_v1",
+  "prompt_version": "compositional_leakage_v1",
   "threshold": 0.5,
   "n_raw_rows": 101,
   "n_unique_samples": 100,

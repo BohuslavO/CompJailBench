@@ -249,7 +249,9 @@ def read_outcome_labels(path: Path) -> dict[str, dict[str, Any]]:
     return labels
 
 
-def team_rows(rows: list[dict[str, Any]], run_id: str) -> list[dict[str, Any]]:
+def team_rows(
+    rows: list[dict[str, Any]], run_id: str, contributor: str
+) -> list[dict[str, Any]]:
     output: list[dict[str, Any]] = []
     strategy = "public-utterance-graph-plus-final-output"
     token = strategy.replace("-", "_")
@@ -257,7 +259,7 @@ def team_rows(rows: list[dict[str, Any]], run_id: str) -> list[dict[str, Any]]:
         if row.get("status") != "scored" or row.get("truth") not in {"attack", "benign"}:
             continue
         common = {
-            "contributor": "Beibarys",
+            "contributor": contributor,
             "attack_method": "narcbench_collusion",
             "defense_method": "g_safeguard_inspired_graph_monitor",
             "model": (
@@ -315,6 +317,11 @@ def main() -> None:
     parser.add_argument("--summary-csv", type=Path, required=True)
     parser.add_argument("--team-rows", type=Path, required=True)
     parser.add_argument("--run-id", required=True)
+    parser.add_argument(
+        "--contributor",
+        required=True,
+        help="Contributor identifier recorded in the matrix provenance field",
+    )
     args = parser.parse_args()
 
     raw = read_rows(args.scores)
@@ -334,7 +341,7 @@ def main() -> None:
     )
     flat = flatten_summary(summary)
     write_csv(args.summary_csv, [flat], list(flat))
-    exported = team_rows(canonical, args.run_id)
+    exported = team_rows(canonical, args.run_id, args.contributor)
     write_csv(args.team_rows, exported, TEAM_FIELDS)
     print(
         json.dumps(

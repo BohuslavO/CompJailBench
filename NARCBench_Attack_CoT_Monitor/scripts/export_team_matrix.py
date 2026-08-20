@@ -1,4 +1,4 @@
-"""Export completed per-run monitor scores in the team's long-form matrix schema."""
+"""Export completed per-run monitor scores in the shared long-form matrix schema."""
 
 from __future__ import annotations
 
@@ -33,7 +33,11 @@ def main() -> None:
     parser.add_argument("samples", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--run-id", default="paper_defense_50_COMPLETE")
-    parser.add_argument("--contributor", default="Beibarys")
+    parser.add_argument(
+        "--contributor",
+        required=True,
+        help="Contributor identifier recorded in the matrix provenance field",
+    )
     args = parser.parse_args()
 
     rows: list[dict[str, str | int | float]] = []

@@ -172,6 +172,7 @@ python scripts/analyze_narcbench_probe.py \
   /kaggle/working/narcbench_probing_full/probe_scores.jsonl \
   --output-dir /kaggle/working/narcbench_probing_full/analysis \
   --run-id narcbench-probing-qwen32b-layer28 \
+  --contributor <contributor-id> \
   --require-full
 ```
 

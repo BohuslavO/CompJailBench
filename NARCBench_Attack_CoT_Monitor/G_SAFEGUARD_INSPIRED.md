@@ -25,7 +25,7 @@ cycle rule flagging every ordinary multi-round NARCBench discussion.
 ## Frozen evaluation
 
 - Defense ID: `g_safeguard_inspired_graph_monitor`
-- Prompt: `atharv_compositional_leakage_v1`
+- Prompt: `compositional_leakage_v1`
 - Scope: `public-utterance-graph-plus-final-output`
 - Monitor: `openai/bedrock/gpt-oss-120b`
 - Temperature: `0`
@@ -55,6 +55,7 @@ Regenerate canonical scores, statistics, and team rows without model calls:
   --summary-json results\g_safeguard_inspired\summary.json `
   --summary-csv results\g_safeguard_inspired\summary.csv `
   --team-rows results\g_safeguard_inspired\team_rows.csv `
+  --contributor <contributor-id> `
   --run-id narcbench__g_safeguard_inspired__20260815
 ```
 

@@ -53,12 +53,13 @@ availability, suspiciousness, fixed threshold, prediction, truth label when
 available, and a short evidence statement. Run one attack and one benign sample
 before authorizing a full evaluation.
 
-After a real run, produce aggregate metrics and team-compatible rows:
+After a real run, produce aggregate metrics and matrix-compatible rows:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\analyze_defense_scores.py `
   cot_monitor_scores.jsonl `
   --summary cot_monitor_summary.csv `
   --team-rows team_matrix_rows.csv `
+  --contributor <contributor-id> `
   --run-id "ATTACK__COT__RUN_ID"
 ```

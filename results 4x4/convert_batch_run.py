@@ -1,19 +1,18 @@
 """
 Converts a batch_run.py-shaped CSV (task,strategy,condition,n_checkpoints,
-n_passed,fjr,peak_suspicion,n_turns,error) into the shared team schema
+n_passed,fjr,peak_suspicion,n_turns,error) into the shared result schema
 defined in README.md.
 
-This is a worked example, not a universal converter -- everyone's raw
-pipeline output will look different. Copy this pattern for your own
-attack/defense's output shape.
+This is a worked example for one batch-output format. Adapt the field mapping
+for other attack and defense pipelines.
 
 Usage:
   python convert_batch_run.py results.csv \
-      --contributor slava \
+      --contributor example-contributor \
       --attack-method decompbench_routing \
       --defense-method narcbench_probing \
       --model qwen3-32b-awq \
-      --out raw/slava__decompbench_routing__narcbench_probing.csv
+      --out raw/example__decompbench_routing__narcbench_probing.csv
 """
 import argparse
 import csv

@@ -133,7 +133,11 @@ def main() -> None:
     parser.add_argument("scores", type=Path)
     parser.add_argument("--summary", type=Path, required=True)
     parser.add_argument("--team-rows", type=Path, required=True)
-    parser.add_argument("--contributor", default="Beibarys")
+    parser.add_argument(
+        "--contributor",
+        required=True,
+        help="Contributor identifier recorded in the matrix provenance field",
+    )
     parser.add_argument("--run-id", required=True)
     args = parser.parse_args()
 

@@ -10,7 +10,7 @@ class StandardTrajectory(StoreModel):
     """Structured trajectory with explicit observability boundaries.
 
     ``messages`` and ``reasoning_traces`` are retained for compatibility with
-    the team's earlier schema. New defenses should consume the channel-specific
+    the earlier shared schema. New defenses should consume the channel-specific
     fields so private coordination cannot accidentally leak into a deployable
     monitor condition.
     """

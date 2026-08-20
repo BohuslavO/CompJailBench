@@ -162,13 +162,15 @@ def summarize(
     }
 
 
-def team_rows(rows: list[dict[str, Any]], run_id: str) -> list[dict[str, Any]]:
+def team_rows(
+    rows: list[dict[str, Any]], run_id: str, contributor: str
+) -> list[dict[str, Any]]:
     exported = []
     for row in rows:
         if row.get("status") != "scored":
             continue
         common = {
-            "contributor": "Beibarys",
+            "contributor": contributor,
             "attack_method": "narcbench_collusion",
             "defense_method": "sentinel_agents_message_only",
             "model": f"target={row.get('target_model')};monitor={row.get('monitor_model')}",
@@ -211,6 +213,11 @@ def main() -> None:
     parser.add_argument("--trajectories", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--run-id", required=True)
+    parser.add_argument(
+        "--contributor",
+        required=True,
+        help="Contributor identifier recorded in the matrix provenance field",
+    )
     args = parser.parse_args()
 
     raw = read_jsonl(args.scores)
@@ -241,7 +248,7 @@ def main() -> None:
         "total_tokens": summary["usage"]["total_tokens"],
     }
     write_csv(args.output_dir / "summary.csv", [flat], list(flat))
-    exported = team_rows(canonical, args.run_id)
+    exported = team_rows(canonical, args.run_id, args.contributor)
     write_csv(args.output_dir / "team_rows.csv", exported, TEAM_FIELDS)
     print(
         json.dumps(
