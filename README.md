@@ -17,24 +17,15 @@ G-Safeguard-inspired, message-only Sentinel Agents, a non-default monitor prompt
 qualification is recorded in the corresponding CSV's `notes` column and must be preserved in any
 write-up drawing on it.
 
-## Team and contributions
-
-| Contributor | Attack | Defense |
-|---|---|---|
-| Slava | DeCompBench task-routing | NARCBench Probing |
-| Atharv | AgentHarm | G-Safeguard-inspired graph monitor |
-| Brad | Semantic Intent Fragmentation | Sentinel Agents |
-| Beibarys | NARCBench collusion | CoT observable-reasoning monitor |
-
 ## Repository layout
 
-- `Attack_DecompBench/` — DeCompBench-based task-routing attack (Slava).
-- `Defence_NARCBench Probing/` — activation-probing defense, reused from NARCBench (Slava).
-- `Attack_SemanticIntentFragmentation/` — Semantic Intent Fragmentation attack (Brad).
-- `Defense_SentinelAgents/` — graph-based SentinelAgent defense (Brad).
-- `compjailbench/` — AgentHarm attack and the G-Safeguard-inspired graph monitor (Atharv).
+- `Attack_DecompBench/` — DeCompBench-based task-routing attack.
+- `Defence_NARCBench Probing/` — activation-probing defense, reused from NARCBench.
+- `Attack_SemanticIntentFragmentation/` — Semantic Intent Fragmentation attack.
+- `Defense_SentinelAgents/` — graph-based SentinelAgent defense.
+- `compjailbench/` — AgentHarm attack and the G-Safeguard-inspired graph monitor.
 - `NARCBench_Attack_CoT_Monitor/` — isolated project for the NARCBench collusion attack and the
-  CoT observable-reasoning monitor (Beibarys). Has its own README and a `DEFENSE_INTERFACE.md`
+  CoT observable-reasoning monitor. Has its own README and a `DEFENSE_INTERFACE.md`
   contract that other attacks use to test against this defense.
 - `CompJailBench_Inspect/` — shared Inspect integration and trajectory converters
   (`StandardTrajectory`, `execution_trace`) used to run one contributor's attack through
