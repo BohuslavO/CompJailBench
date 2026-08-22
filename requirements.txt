@@ -1,0 +1,16 @@
+inspect-ai>=0.3.90
+inspect-evals @ git+https://github.com/UKGovernmentBEIS/inspect_evals
+openai>=1.40.0
+anthropic>=0.34.0
+networkx>=3.3
+pydantic>=2.7
+python-dotenv>=1.0.1
+tabulate>=0.9.0
+pandas>=2.2
+numpy>=1.26
+
+# Only required for the Probing / NARCBench defense (local, white-box, open-weight model).
+# Leave commented out until you have a local model host set up -- see defenses/probing.py.
+# torch>=2.3
+# transformers>=4.44
+# scikit-learn>=1.5
