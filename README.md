@@ -36,15 +36,6 @@ write-up drawing on it.
 - `sif_vs_defenses/`, `data/activations/` — supporting data and intermediate artifacts for the
   Semantic Intent Fragmentation attack.
 
-## What has been completed
-
-- All four attacks and all four defenses have a working, independently runnable implementation.
-- A shared trajectory schema (`StandardTrajectory`) and per-defense converters exist so an
-  attack owner does not need defense-specific code to get a compatibility check or a real score.
-- Every completed cell reports detection recall and false-positive rate (or the descriptive
-  suspiciousness gap where only a continuous score is available) against a matched
-  attack/benign-control design, not against attack samples alone.
-
 ## Adding a result
 
 1. Convert your attack's saved trajectories into the format the target defense expects (see
