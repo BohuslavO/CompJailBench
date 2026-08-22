@@ -1,2 +1,0 @@
-scope,prompt_version,n_total,n_scored,n_attack,n_benign,invalid,unavailable,n,tp,tn,fp,fn,accuracy,balanced_accuracy,recall,false_positive_rate,specificity,precision,roc_auc,average_precision,threshold,recall_ci95,fpr_ci95
-public-action-only,general_v2,90,90,45,45,0,0,90,44,0,45,1,0.4888888888888889,0.4888888888888889,0.9777777777777777,1.0,0.0,0.4943820224719101,0.5192592592592593,0.6723447849324257,0.5,"(0.8843331823158513, 0.9960664011171667)","(0.9213484012671117, 1.0)"
