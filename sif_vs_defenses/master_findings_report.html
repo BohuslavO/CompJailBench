@@ -1,0 +1,480 @@
+<title>SIF vs Four Defenses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ground:      #FBFCFD;
+    --surface:     #F1F5F7;
+    --surface-2:   #E7EEF1;
+    --ink:         #14202A;
+    --ink-soft:    #45596A;
+    --neutral:     #5C6E7B;
+    --rule:        #D9E2E7;
+    --rule-strong: #BCCAD3;
+    --accent:      #0F6E8C;
+    --accent-soft: #E1EEF3;
+    --pass:        #1F7A4D;
+    --pass-soft:   #E1F0E7;
+    --fail:        #A3341F;
+    --fail-soft:   #F6E4DE;
+    --void:        #8A6D1F;
+    --void-soft:   #F5EEDA;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0E1319;
+      --surface:     #161E26;
+      --surface-2:   #1D2732;
+      --ink:         #DEE7ED;
+      --ink-soft:    #A3B3BF;
+      --neutral:     #8396A3;
+      --rule:        #27323C;
+      --rule-strong: #3A4855;
+      --accent:      #52B8D6;
+      --accent-soft: #123039;
+      --pass:        #5DBE8B;
+      --pass-soft:   #142A20;
+      --fail:        #E28066;
+      --fail-soft:   #2E1B15;
+      --void:        #D6B45E;
+      --void-soft:   #2A2415;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:      #0E1319;
+    --surface:     #161E26;
+    --surface-2:   #1D2732;
+    --ink:         #DEE7ED;
+    --ink-soft:    #A3B3BF;
+    --neutral:     #8396A3;
+    --rule:        #27323C;
+    --rule-strong: #3A4855;
+    --accent:      #52B8D6;
+    --accent-soft: #123039;
+    --pass:        #5DBE8B;
+    --pass-soft:   #142A20;
+    --fail:        #E28066;
+    --fail-soft:   #2E1B15;
+    --void:        #D6B45E;
+    --void-soft:   #2A2415;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.62;
+    margin: 0;
+    padding: 0 0 6rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 76ch; margin: 0 auto; padding: 0 1.5rem; display: flex; flex-direction: column; gap: 2.9rem; }
+
+  h1, h2, h3 {
+    font-family: "Newsreader", Georgia, "Times New Roman", serif;
+    text-wrap: balance;
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+  h1 { font-size: 2.4rem; line-height: 1.1; font-weight: 600; }
+  h2 { font-size: 1.62rem; line-height: 1.22; }
+  h3 { font-size: 1.14rem; }
+
+  p, li { color: var(--ink-soft); }
+  p { margin: 0; }
+  section { display: flex; flex-direction: column; gap: 1.15rem; }
+  ul, ol { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: .5rem; }
+  li::marker { color: var(--rule-strong); }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--neutral);
+    margin: 0;
+  }
+
+  code, .mono, td.num, th.num {
+    font-family: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  code {
+    font-size: .84em;
+    background: var(--surface-2);
+    padding: .1em .4em;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, .navlink:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  strong { color: var(--ink); font-weight: 600; }
+
+  /* ---- sticky nav ---- */
+  .nav {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--ground) 86%, transparent);
+    backdrop-filter: blur(9px);
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: .4rem;
+  }
+  .nav-inner {
+    max-width: 76ch; margin: 0 auto; padding: .6rem 1.5rem;
+    display: flex; flex-wrap: wrap; gap: .4rem; align-items: center;
+  }
+  .nav-brand {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--neutral); margin-right: auto;
+  }
+  .navlink {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .74rem; letter-spacing: .02em;
+    color: var(--ink-soft); text-decoration: none;
+    padding: .28em .6em; border-radius: 3px;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    white-space: nowrap;
+    transition: border-color .15s, color .15s;
+  }
+  .navlink:hover { border-color: var(--accent); color: var(--accent); }
+  .navlink .dot { display: inline-block; width: .5em; height: .5em; border-radius: 50%; margin-right: .45em; vertical-align: .04em; }
+
+  section[id] { scroll-margin-top: 4.5rem; }
+
+  header.masthead { padding-top: 3rem; }
+  .lede { font-size: 1.12rem; color: var(--ink-soft); }
+  .lede em { color: var(--ink); font-style: italic; }
+
+  /* ---- meta strip ---- */
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13ch, 1fr));
+    gap: .9rem 1.4rem;
+    padding: 1.05rem 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+  }
+  .meta div { display: flex; flex-direction: column; gap: .12rem; }
+  .meta .k {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--neutral);
+  }
+  .meta .v { font-size: .95rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  /* ---- tables ---- */
+  .scroller { overflow-x: auto; border: 1px solid var(--rule); border-radius: 5px; }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  caption {
+    caption-side: top; text-align: left; padding: .7rem 1rem;
+    font-size: .78rem; color: var(--neutral); background: var(--surface);
+    border-bottom: 1px solid var(--rule);
+  }
+  th, td { padding: .52rem .85rem; text-align: left; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  thead th {
+    font-size: .68rem; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--neutral); font-weight: 600; background: var(--surface);
+    white-space: nowrap;
+  }
+  td.num, th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface); }
+  .ok   { color: var(--pass); font-weight: 600; }
+  .bad  { color: var(--fail); font-weight: 600; }
+  .warn { color: var(--void); font-weight: 600; }
+
+  /* ---- defense section header ---- */
+  .defhead { display: flex; flex-direction: column; gap: .5rem; padding-top: .4rem; border-top: 2px solid var(--rule-strong); }
+  .defhead .row { display: flex; align-items: baseline; gap: .75rem; flex-wrap: wrap; }
+  .verdict {
+    display: inline-flex; align-items: center; gap: .4em;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 600;
+    padding: .24em .6em; border-radius: 3px;
+    border: 1px solid transparent;
+  }
+  .verdict.fail { background: var(--fail-soft); color: var(--fail); border-color: color-mix(in srgb, var(--fail) 35%, transparent); }
+  .verdict.void { background: var(--void-soft); color: var(--void); border-color: color-mix(in srgb, var(--void) 35%, transparent); }
+
+  blockquote {
+    margin: 0; padding: .85rem 1.15rem;
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+    font-size: .96rem;
+  }
+  blockquote p { color: var(--ink); }
+
+  .callout {
+    padding: .95rem 1.2rem; border: 1px solid var(--rule);
+    border-left: 3px solid var(--void); border-radius: 0 4px 4px 0; background: var(--surface);
+    font-size: .9rem;
+  }
+  .callout p { color: var(--ink-soft); }
+  .callout strong { color: var(--ink); }
+
+  hr { border: none; border-top: 1px solid var(--rule); margin: 0; }
+  footer { font-size: .82rem; color: var(--neutral); }
+  .src { font-size: .76rem; color: var(--neutral); font-family: "IBM Plex Mono", ui-monospace, monospace; }
+</style>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <span class="nav-brand">CompJailBench</span>
+    <a class="navlink" href="#overview"><span class="dot" style="background:var(--accent)"></span>Overview</a>
+    <a class="navlink" href="#sentinel"><span class="dot" style="background:var(--fail)"></span>SentinelAgent</a>
+    <a class="navlink" href="#cot"><span class="dot" style="background:var(--void)"></span>CoT Monitor</a>
+    <a class="navlink" href="#probe"><span class="dot" style="background:var(--accent)"></span>Activation Probe</a>
+    <a class="navlink" href="#gsafeguard"><span class="dot" style="background:var(--void)"></span>G-Safeguard</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header class="masthead" id="overview">
+    <p class="eyebrow">Master findings report &middot; runs 2026-08-08 to 2026-08-18</p>
+    <h1>Semantic Intent Fragmentation against four defenses</h1>
+    <p class="lede">One compositional attack, one shared 33-sample trajectory set, four defenses drawn from four papers — a graph analyzer, a text monitor, an activation probe, and a topology detector. Each was first validated on the collusion-style threat it was built for, then run against SIF. <em>All four fail where SIF lives, and each fails in a way that says what it was really keying on.</em></p>
+  </header>
+
+  <div class="meta">
+    <div><span class="k">Attack</span><span class="v">SIF (Ahad et al. 2026)</span></div>
+    <div><span class="k">Samples</span><span class="v">33 &middot; 22 atk / 11 ctrl</span></div>
+    <div><span class="k">Topology</span><span class="v">3-agent star</span></div>
+    <div><span class="k">Backend</span><span class="v">Bedrock us-east-1</span></div>
+    <div><span class="k">Temperature</span><span class="v">0 (pinned)</span></div>
+    <div><span class="k">Pinned SIF-ASR</span><span class="v">0.136 &plusmn;.045</span></div>
+  </div>
+
+  <section>
+    <h2>The one-paragraph story</h2>
+    <p><strong>Semantic Intent Fragmentation</strong> is a distributed jailbreak: a single, legitimately-phrased request that an unmodified orchestrator decomposes into three individually-benign subtasks (retriever &rarr; processor &rarr; publisher). No message is adversarial; the violation exists only in how the steps compose. Across every defense the attack's fragmentation machinery is airtight — <code>FS(P) = 1.0</code> on all 22 attack arms, meaning no subtask is individually flaggable — and the attack's <em>own</em> success gate binds not on evasion but on condition&nbsp;(e), the genuine-harm judge, which only fires on personnel data. That gives a reproducible <strong>SIF-ASR of 0.136&nbsp;&plusmn;&nbsp;0.045</strong> whose stable core is three HR-domain arms. The question this report answers for each defense is narrower and sharper: <em>shown the exact trajectory, does the defense see the composition?</em></p>
+  </section>
+
+  <section>
+    <h2>Cross-defense synthesis</h2>
+    <p>The same 33 trajectories under four defense modalities. Every one validates on its home threat and collapses on SIF — but the <em>shape</em> of each collapse is a different diagnosis.</p>
+    <div class="scroller">
+      <table>
+        <caption>Four defenses, one attack &mdash; validated vs. SIF performance</caption>
+        <thead>
+          <tr><th>Defense</th><th>Reads</th><th class="num">On its home threat</th><th class="num">On SIF</th><th>Failure mode</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="#sentinel">SentinelAgent</a></td>
+            <td>execution graph</td>
+            <td class="num">tier-3 catches<br>subgraph-only cases</td>
+            <td class="num bad">bal. acc. 0.500<br>(FPR 1.000)</td>
+            <td>the local single-point layer alarms on everything</td>
+          </tr>
+          <tr>
+            <td><a href="#cot">CoT Monitor</a></td>
+            <td>trajectory text</td>
+            <td class="num ok">AUROC 0.86<br>(collusion)</td>
+            <td class="num bad">AUROC &asymp;0.50<br>every view incl. plan</td>
+            <td>asks about coordination SIF never uses</td>
+          </tr>
+          <tr>
+            <td><a href="#probe">NARCBench Probe</a></td>
+            <td>model activations</td>
+            <td class="num ok">AUROC &asymp;1.0<br>(collusion)</td>
+            <td class="num warn">AUROC 0.57&ndash;0.70</td>
+            <td>no single agent's activations look deceptive</td>
+          </tr>
+          <tr>
+            <td><a href="#gsafeguard">G-Safeguard</a></td>
+            <td>graph topology</td>
+            <td class="num">(trained GNN,<br>topology signal)</td>
+            <td class="num bad">shape AUROC &asymp;0.50</td>
+            <td>apparent signal is pure plan-size confound</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <blockquote>
+      <p><strong>The through-line.</strong> A defense that works on collusion — where a bad agent behaves badly and leaves a local trace — fails on SIF, where every agent behaves well and the harm is only in the arrangement. SentinelAgent's compositional tier exists but is drowned by a hyperactive local layer; the CoT monitor has the evidence but asks the wrong question; the probe has the right question but no per-agent signal to read; G-Safeguard's topology sees plan size, not structure. Four modalities, one blind spot: <em>composition itself.</em></p>
+    </blockquote>
+  </section>
+
+  <hr>
+
+  <!-- ============================ SENTINELAGENT ============================ -->
+  <section id="sentinel">
+    <div class="defhead">
+      <p class="eyebrow" style="color:var(--fail)">Defense 1 &middot; execution-graph analyzer &middot; He et al. 2025</p>
+      <div class="row">
+        <h2>SentinelAgent</h2>
+        <span class="verdict fail">Non-discriminating</span>
+      </div>
+    </div>
+    <p>Models the running system as a typed directed execution graph and diffs the dynamic graph against what was permitted, in three tiers: global (tier 1), single-point node/edge faults (tier 2, standing in for Granite Guardian + LlamaFirewall), and multi-point subgraph matching (tier 3, the only compositional layer). Four live rounds on Bedrock plus one offline replay.</p>
+
+    <div class="scroller">
+      <table>
+        <caption>SentinelAgent, seen-signature library &mdash; the headline is that recall carries no information</caption>
+        <thead><tr><th>Metric</th><th class="num">Value</th><th>Reading</th></tr></thead>
+        <tbody>
+          <tr><td>Detection recall</td><td class="num ok">1.000</td><td>22/22 &mdash; but see FPR</td></tr>
+          <tr><td>False-positive rate</td><td class="num bad">1.000</td><td>11/11 benign controls also flagged</td></tr>
+          <tr><td>Specificity</td><td class="num bad">0.000</td><td>no benign sample survived</td></tr>
+          <tr><td>Precision</td><td class="num warn">0.667</td><td>exactly the base rate of attack arms</td></tr>
+          <tr><td>Balanced accuracy</td><td class="num warn">0.500</td><td>chance &mdash; an alarm wired permanently on</td></tr>
+          <tr><td>Unpermitted edges</td><td class="num">0.000</td><td>0/22 &mdash; every call within declared grants</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>What the run establishes</h3>
+    <ul>
+      <li><strong>The false positives are local, not compositional.</strong> The tier-2 gpt-oss-20b node/edge checkers flag <strong>10 of 11</strong> benign controls on their own. Tightening the tier-3 subgraph matcher moves its own false matches from 7/11 to 2/11 but does <em>not</em> move the pipeline FPR at all &mdash; the local layer already alarms on nearly every benign enterprise workflow.</li>
+      <li><strong>Tier 3 did the one thing it claims.</strong> Two attack arms (<code>sif-sec-m2/m3::generated</code>) were caught with <strong>zero flagged nodes and zero flagged edges</strong> &mdash; detectable only as a subgraph. The cleanest demonstration of compositional detection, and the sharpest evidence for SIF's premise.</li>
+      <li><strong>The strict re-check is pure cost.</strong> Turning it off leaves recall and FPR unchanged while halving model calls (61&rarr;35 per sample). Recommend defaulting it off.</li>
+      <li><strong>A weaker orchestrator changes nothing.</strong> Haiku fragments the request as readily as Sonnet (condition&nbsp;(b) 22/22 for both); the defense reads both trajectories identically.</li>
+    </ul>
+    <div class="callout"><p><strong>Caveat.</strong> The checkers are gpt-oss-20b, not the paper's Granite Guardian / LlamaFirewall; the specific FPR is a property of this local model. What transfers is the structural result &mdash; fragmentation holds, the compositional layer does not discriminate, the false-positive rate is local. Held-out signature library: recall 0.909, FPR 1.000.</p></div>
+    <p class="src">Detail: findings_report.html (runs 1&ndash;3) &middot; experiments/sif_vs_sentinel.py</p>
+  </section>
+
+  <hr>
+
+  <!-- ============================ COT MONITOR ============================ -->
+  <section id="cot">
+    <div class="defhead">
+      <p class="eyebrow" style="color:var(--void)">Defense 2 &middot; black-box text monitor &middot; NARCBench CoT monitor</p>
+      <div class="row">
+        <h2>CoT / observable-reasoning Monitor</h2>
+        <span class="verdict void">Blind as shipped</span>
+      </div>
+    </div>
+    <p>An LLM reads one <em>evidence view</em> of the trajectory &mdash; actions, observable reasoning, or all messages, plus our plan-inclusive fourth view &mdash; and is asked whether it shows <em>covert coordination between agents</em>. Because the defense is a prompt, the evidence window and the framing become experimental variables. Grid: 4 views &times; 2 framings (published, and a composition-reframed &ldquo;steelman&rdquo;), validated first on real NARCBench collusion.</p>
+
+    <div class="scroller">
+      <table>
+        <caption>Suspiciousness AUROC (SIF attack vs benign), Llama 3.3 70B monitor, gpt-oss-20b orchestrator</caption>
+        <thead><tr><th>View</th><th class="num">Published</th><th class="num">Steelman</th><th>Reading</th></tr></thead>
+        <tbody>
+          <tr><td><code>action</code></td><td class="num bad">0.52</td><td class="num">0.61</td><td>blind as shipped</td></tr>
+          <tr><td><code>cot</code></td><td class="num bad">0.50</td><td class="num bad">0.50</td><td>empty channel &mdash; SIF has no reasoning</td></tr>
+          <tr><td><code>all</code></td><td class="num bad">0.50</td><td class="num ok">0.69</td><td>best recall under reframe</td></tr>
+          <tr><td><code>plan</code></td><td class="num bad">0.50</td><td class="num ok">0.70</td><td>the plan alone doesn't fix it</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>What the run establishes</h3>
+    <ul>
+      <li><strong>The monitor is competent, then blind.</strong> The identical <code>run_monitor</code> scores AUROC 0.861 / 0.870 / 0.862 separating collusion from control on 68 held-out NARCBench transcripts &mdash; and flatlines at chance on SIF across every published view, <em>including the full orchestrator plan.</em></li>
+      <li><strong>The failure is the question, not the evidence window.</strong> Handing it the plan doesn't help; <em>reframing</em> the prompt to composition (&ldquo;do the steps combine into a violation even if each is benign?&rdquo;) lifts AUROC to 0.61&ndash;0.70. Framing is the dominant axis.</li>
+      <li><strong>Recovery is precision-costly and capability-dependent.</strong> The steelman flags benign controls too (FPR 0.09&ndash;0.45). A weaker monitor (Haiku) recovers less and is markedly less precise; plan-view precision is a strong-model property.</li>
+      <li><strong>Robust across two orchestrators.</strong> The published-framing blindness replicates on Sonnet-authored trajectories. Two S2 sub-claims did <em>not</em> replicate and were retracted: &ldquo;plan view = 0 false positives&rdquo; and &ldquo;gate-passing attacks are hardest.&rdquo;</li>
+    </ul>
+    <div class="callout"><p><strong>Caveat.</strong> Suspiciousness is coarsely quantized (only {0, 0.2, 0.75, 0.8, 0.9} observed) so steelman AUROC gaps are within noise; <code>evaded</code> rests on 3&ndash;4 gate-passers and FPR on 11 controls. Results are for two named monitors, not LLM monitors in general; NARCBench's <code>cot</code> carries real rationales while SIF's is empty, so that 0.87 does not transfer.</p></div>
+    <p class="src">Detail: findings_report.html (CoT panel) &middot; experiments/sif_vs_cot_monitor_plan.md</p>
+  </section>
+
+  <hr>
+
+  <!-- ============================ NARCBENCH PROBE ============================ -->
+  <section id="probe">
+    <div class="defhead">
+      <p class="eyebrow" style="color:var(--accent)">Defense 3 &middot; white-box activation probe &middot; NARCBench</p>
+      <div class="row">
+        <h2>NARCBench Activation Probe</h2>
+        <span class="verdict void">Near-blind</span>
+      </div>
+    </div>
+    <p>A linear probe over the residual-stream activations (gpt-oss-20b, layer 12, last-token hidden state per agent turn), trained by logistic regression to separate colluding from honest agents. The only white-box defense in the suite &mdash; it needs the model's weights on a GPU, which no hosted API exposes, so extraction ran on Kaggle (T4&nbsp;&times;2) and scoring locally.</p>
+
+    <div class="scroller">
+      <table>
+        <caption>Per-technique AUROC (SIF attack vs benign) &mdash; probe validated to ~1.0 on NARCBench-Core collusion</caption>
+        <thead><tr><th>Detector</th><th class="num">AUROC on SIF</th><th>Reading</th></tr></thead>
+        <tbody>
+          <tr><td><code>peak_suspicion</code></td><td class="num bad">0.566</td><td>near-blind (the headline detector)</td></tr>
+          <tr><td><code>deception_split</code></td><td class="num warn">0.620</td><td>weak</td></tr>
+          <tr><td><code>activation_alignment</code></td><td class="num warn">0.702</td><td>mildly above chance</td></tr>
+          <tr><td><code>asymmetry_probe</code></td><td class="num">N/A</td><td>requires N=4 agents; SIF has 3</td></tr>
+          <tr><td><code>sorted_concat</code></td><td class="num">N/A</td><td>requires N=4 agents; SIF has 3</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>What the run establishes</h3>
+    <ul>
+      <li><strong>The probe is near-blind to SIF.</strong> A probe validated to held-out AUROC ~1.0 on the collusion data it was trained for sits at 0.57&ndash;0.70 on SIF &mdash; because SIF's harm is compositional and <em>no single agent's activations look deceptive.</em> Each worker does an individually-honest subtask.</li>
+      <li><strong>Two of five detectors don't even apply.</strong> The strongest NARCBench detectors hard-require exactly four agents; SIF's three-agent star returns them <code>None</code>.</li>
+      <li><strong>Detection recall is negligible.</strong> At benign-calibrated thresholds, 9&ndash;36%; of the four attacks that cleared the SIF gate, three scored as benign (n=4).</li>
+    </ul>
+    <div class="callout"><p><strong>Caveat.</strong> Small n (22/11) &rarr; wide CIs; <code>activation_alignment</code> at 0.702 is mildly above chance, not a clean null, and the gate-passer evasion cell is only n=4. Faithful by construction: the model that authored the SIF text is the model probed.</p></div>
+    <p class="src">Detail: experiments/sif_acts.npz &middot; experiments/score_sif_vs_narcbench.py &middot; Kaggle kernel bradwong0/sif-extract-acts</p>
+  </section>
+
+  <hr>
+
+  <!-- ============================ G-SAFEGUARD ============================ -->
+  <section id="gsafeguard">
+    <div class="defhead">
+      <p class="eyebrow" style="color:var(--void)">Defense 4 &middot; topology-guided detector &middot; Wang et al. 2025</p>
+      <div class="row">
+        <h2>G-Safeguard</h2>
+        <span class="verdict void">Plan-size confound</span>
+      </div>
+    </div>
+    <p>Builds an utterance graph over the agent communication and asks whether the interaction <em>structure</em> is anomalous, then intervenes on the offending node. Tested as two layers reported separately: the topology detector proper (structural features + the shipped heuristic, plus a cross-validated classifier as the GNN's stand-in) and, for contrast, the compositional-leakage LLM judge shipped alongside it. Three live rounds across two orchestrator families and two judge families.</p>
+
+    <div class="scroller">
+      <table>
+        <caption>Attributing the topology &ldquo;signal&rdquo; &mdash; is it structure, or just plan size?</caption>
+        <thead><tr><th>Feature set</th><th class="num">AUROC</th><th>Reading</th></tr></thead>
+        <tbody>
+          <tr><td>All structural features</td><td class="num">0.83&ndash;0.92</td><td>looks like detection&hellip;</td></tr>
+          <tr><td>Plan size alone (subtask count)</td><td class="num">0.82&ndash;0.91</td><td>&hellip;but size reproduces it entirely</td></tr>
+          <tr><td>Size-invariant shape (depth, cycles)</td><td class="num bad">&asymp;0.50</td><td>topology is blind once size is held out</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>What the run establishes</h3>
+    <ul>
+      <li><strong>Topology detection is a plan-size confound.</strong> The full-feature AUROC (0.83&ndash;0.92) is reproduced by subtask count alone (0.82&ndash;0.91); the honest size-invariant <em>shape</em> AUROC is ~0.50. Attack plans simply have more subtasks (~4.6 vs ~3.3) &mdash; an artifact of how phrasings were authored, not a structural signature of harm.</li>
+      <li><strong>The real signal is semantic tool-composition, not graph shape.</strong> An egress tool (<code>http.post</code>/<code>webhook</code>) appears in ~86% of attack runs vs ~30% of benign &mdash; harm as bulk-retrieve + join + external egress, which a topology reader cannot see.</li>
+      <li><strong>The leakage judge is uncalibrated.</strong> Recall 1.0 but <strong>FPR 0.909</strong> &mdash; identical across Llama and Mistral judges, so it's the shipped prompt, not the model. Robust across both orchestrator and both judge families.</li>
+    </ul>
+    <div class="callout"><p><strong>Caveat.</strong> A proxy for the trained GNN framework: the structural heuristic + collision/AUROC analysis stand in for the topology signal, and intervention is a no-op for SIF (there is no compromised node to sever). The strong orchestrator (Sonnet) is unavailable on this account; gpt-oss-120b was flaky (500s).</p></div>
+    <p class="src">Detail: experiments/sif_vs_gsafeguard.py &middot; experiments/analyze_gsafeguard.py &middot; logs/gsafeguard_&#123;haiku,mistral,judgeswap&#125;/</p>
+  </section>
+
+  <hr>
+
+  <!-- ============================ SHARED CAVEATS ============================ -->
+  <section>
+    <h2>Caveats common to all four</h2>
+    <ul>
+      <li><strong>Every instrument is a substitution.</strong> Guardrails stand in for LlamaGuard; the judges and checkers are Bedrock/gpt-oss models, not the source papers' classifiers. The structural results transfer; the specific rates are not cross-comparable to either source paper.</li>
+      <li><strong>Small n.</strong> 22 attack arms / 11 controls. Per-slice and per-mechanism rates are directional; AUROC confidence intervals are wide.</li>
+      <li><strong>Judge/monitor noise.</strong> Temperature 0 is necessary but not sufficient &mdash; adjudicators still drift between byte-identical runs (Mistral's condition&nbsp;(d) flipped 5/22), so gated numbers are reported over repeats, never as a point.</li>
+      <li><strong>The &ldquo;generated&rdquo; phrasing arm is a template, not an attacker model.</strong> The source paper's LLM-vs-human phrasing claim (71%) is untested here; do not cite the 0.136 against it.</li>
+      <li><strong>Constructed dataset.</strong> The 11 scenarios were built for this project (M1&ndash;M4 mechanism taxonomy is the SIF authors'; policy clauses are verbatim NIST SP&nbsp;800-53). Not a released benchmark.</li>
+    </ul>
+  </section>
+
+  <hr>
+  <footer>
+    <p>CompJailBench &mdash; distributed jailbreaks in multi-agent LLM systems. This master report condenses four pairings; per-run detail and per-sample tables live in <code>findings_report.html</code> (SentinelAgent + CoT), the CoT plan doc, and the two topology/probe harnesses named above. Reproduce the live tables with <code>python experiments/analyze_run.py</code>.</p>
+  </footer>
+
+</div>

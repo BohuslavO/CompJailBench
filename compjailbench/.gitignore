@@ -1,0 +1,12 @@
+# Secrets — never commit this
+.env
+
+# Results / traces (generated data, not source)
+results/
+datasets/agentharm_samples.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/

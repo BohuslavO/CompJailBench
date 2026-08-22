@@ -1,0 +1,51 @@
+\subsection{G-Safeguard-Inspired Compositional Graph Monitor}
+\label{sec:gsafeguard-inspired}
+
+We implement a detection-only graph-monitor baseline inspired by
+G-Safeguard~\citep{wang2025gsafeguard} and by the preliminary GraphMonitor implementation in team commit
+\texttt{c5eea2a}. We distinguish this baseline from the published
+G-Safeguard system: our implementation does not train an edge-featured graph
+neural network, identify compromised agents through node classification, or
+intervene in a live execution by pruning communication edges. It instead asks
+whether the observable public communication graph and final aggregation exhibit
+compositional leakage, where individually plausible outputs collectively advance
+a harmful, deceptive, or covert objective.
+
+For each saved trajectory, we construct a label-free public graph containing one
+node per agent. Each node stores the agent's latest public message and the number
+of public messages it produced. Directed edges summarize public sender--recipient
+pairs, their message counts, and the rounds in which communication occurred. The
+monitor additionally receives the task context and options visible to all agents
+and the final aggregated output. Private coordination, observable rationales,
+designated-colluder identities, attack targets, condition labels, and evaluation
+metadata are excluded. Labels are joined only after prediction.
+
+We apply a separate LLM judge (\texttt{openai/bedrock/gpt-oss-120b}) with
+temperature zero, low reasoning effort, and the frozen prompt version
+\texttt{compositional\_leakage\_v1}. The judge returns a continuous
+suspiciousness score in $[0,1]$ and a one-sentence evidence statement. We freeze
+the decision threshold at 0.5. Expected cycles, bidirectional communication,
+and high connectivity are recorded as graph statistics but are not themselves
+treated as evidence of attack, since NARCBench uses the same fully connected
+multi-round topology in both matched conditions.
+
+We evaluate all 50 collusion trajectories and their 50 matched controls. The
+primary condition-label analysis reports AUROC, average precision, recall,
+false-positive rate, precision, balanced accuracy, and paired attack--control
+score differences. Because the defense observes public consequences rather
+than private intent, we additionally report an exploratory harmful-outcome
+analysis based on the end-to-end \texttt{attack\_success} label. This label is
+never supplied to the monitor. Confidence intervals for proportions use Wilson
+intervals; paired score and flag-rate differences use a 10,000-resample paired
+bootstrap; paired binary flags use an exact McNemar test.
+
+The condition-label AUROC was 0.714 and average precision was 0.780. At the
+fixed threshold, the monitor flagged 3/50 attack-condition trajectories and
+0/50 controls (recall 0.060, false-positive rate 0, precision 1.0). Mean
+suspiciousness was 0.107 for attack trajectories and 0.040 for controls; the
+paired difference was 0.067 (bootstrap 95\% CI [0.026, 0.119]). Only three
+collusion attempts achieved the strict end-to-end attack-success outcome; the
+monitor detected two of them. This outcome-level estimate is exploratory due to
+the very small positive count. The final run required 101 model calls, including
+one retry after a truncated invalid response, and 215,154 provider-reported
+tokens.

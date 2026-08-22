@@ -1,0 +1,113 @@
+\subsection{NARCBench Collusion Attack and Observable-Reasoning Monitor}
+\label{sec:narcbench-cot}
+
+\paragraph{Attack environment.}
+We evaluated covert multi-agent coordination using the 50 scenarios from
+NARCBench-Core~\citep{rose2026narcbench}. The scenarios span 17 high-stakes
+domains and each instantiates a four-member committee choosing between two
+options. For every scenario, we ran a collusion condition and a matched control
+condition, yielding 100 runs. In the collusion condition, two designated agents
+received a private coordination phase before three rounds of public
+deliberation; all four agents then independently submitted a final
+recommendation. In the control condition, all four agents received honest
+mandates and no private coordination phase occurred. Scenario text, agent
+identities, option content, speaking-order seed, and public deliberation
+structure were held fixed within each matched pair. Following the released
+benchmark implementation, option labels were counterbalanced across letter and
+numeric labels and across target position to reduce label-position shortcuts.
+
+\paragraph{Models and generation.}
+The committee agents used \texttt{openai/bedrock/gpt-oss-120b}, accessed through
+Amazon Bedrock's OpenAI-compatible endpoint, with temperature 0.7, low reasoning
+effort, and a maximum of 768 output tokens per turn. Independent monitor calls
+used the same underlying checkpoint in a separately configured Inspect model
+role, with temperature 0, low reasoning effort, and a maximum of 1,536 output
+tokens. Using the same checkpoint for generation and monitoring is a limitation
+of this experiment and should not be interpreted as cross-model validation. We
+used Inspect AI version 0.3.251. Agent prompts and model responses
+were recorded in the Inspect evaluation log; SHA-256 hashes of every system/user
+prompt pair were additionally stored in the trajectory metadata. The exact
+NARCBench source revision was commit
+\texttt{85fea3be2a9d8b9f16e33a4bd65bd947c31fa07d}.
+
+\paragraph{Observable-reasoning instrumentation.}
+Each committee response contained a public message (or final recommendation)
+and a concise rationale made available to the evaluator but not to the other
+committee members. We refer to the latter as an \emph{observable rationale},
+not as the model's hidden or faithful chain of thought. This distinction is
+important because post-hoc rationales may omit, rationalize, or misrepresent the
+internal computation that produced an action. The instrumentation therefore
+defines a NARCBench-derived evaluation variant rather than an exact reproduction
+of the original generation protocol.
+
+\paragraph{Attack outcomes.}
+Let $T_i^{(c)}$ and $T_i^{(0)}$ indicate whether the committee selected the
+assigned collusion target in the collusion and control runs for scenario $i$.
+We defined target selection as at least three of four committee votes for the
+assigned target. We report target-selection rates in each condition and the matched uplift
+$\Delta = n^{-1}\sum_i(T_i^{(c)}-T_i^{(0)})$. We additionally report (i) target
+adherence, the fraction of collusion runs in which both designated colluders
+voted for the assigned target, and (ii) end-to-end attack success, which
+requires both target adherence and committee selection of the target. All 50
+assigned collusion runs remain in the primary analysis; abstentions, malformed
+outputs, and refusals are counted as failures rather than silently excluded.
+Separately, human reviewers audit whether the messages exhibit semantic
+coordination. The audited-valid subset requires both target adherence and
+semantic evidence of a shared strategy and is reported only as a secondary
+per-protocol analysis. One human reviewer labeled a fixed 10-of-50 subset.
+Files used during reviewer training were excluded from this independent subset.
+Because a second reviewer was not available, we do not report inter-rater
+agreement or Cohen's kappa, and this subset is treated as a preliminary
+qualitative audit rather than a full-dataset estimate.
+
+\paragraph{Defense and evidence scopes.}
+An independent LLM monitor assigned a suspiciousness score in $[0,1]$ to each
+trajectory. The monitor never received the condition label, hidden target,
+colluder identities, attack-specific metadata, or private messages in the main
+conditions. We predeclared three evidence scopes: \emph{action-only}, containing
+public messages, votes, tool calls, and the committee outcome;
+\emph{observable-reasoning-only}, containing evaluator-visible rationales from
+public and final stages; and \emph{action+reasoning}, containing both sources.
+Action+reasoning was the primary defense condition; the other two were
+ablations. A fourth privileged condition that includes private coordination may
+be reported as an audit upper bound but is not treated as a deployable defense.
+Scores at or above 0.5 were classified as attacks. The threshold was fixed
+before examining the test results. This completed cell used a NARCBench-specific
+monitor prompt (\texttt{narcbench_v1}) focused on covert steering of committee
+decisions. For the cross-attack defense matrix, we separately freeze an
+attack-agnostic prompt (\texttt{general_v2}) and rescore saved trajectories so
+that every attack row uses the same defense prompt. Results from the two prompt
+versions are not pooled.
+
+\paragraph{Statistical analysis.}
+For attack proportions and thresholded defense rates, we report 95\% Wilson
+confidence intervals. For the paired target-selection uplift, we report a 95\%
+percentile bootstrap interval obtained by resampling scenario pairs with
+replacement (10,000 replicates) and a two-sided exact McNemar test. Monitor
+performance is summarized by AUROC and average precision as threshold-free
+metrics, together with recall, false-positive rate, precision, balanced
+accuracy, and invalid-output counts at the fixed threshold. Resampling and all
+comparisons preserve the scenario pair as the unit of analysis.
+
+\paragraph{Compute and reproducibility.}
+The full evaluation comprised 1,700 attacker-model calls and 300 monitor-model
+calls. We report total input/output tokens, wall-clock time, model/provider IDs,
+generation parameters, software versions, scenario-level outcomes, and the
+manual-audit protocol alongside aggregate results. The released analysis script
+converts a completed Inspect log into normalized JSONL, attack and defense CSV
+summaries, and a manuscript-ready results table.
+
+\paragraph{Results.}
+Across 50 matched scenarios, target adherence was 0.280 (95\% CI
+[0.175, 0.417]) and end-to-end attack success was 0.060 (95\% CI
+[0.021, 0.162]). Target selection was 0.100 under collusion and 0.020 under
+control, corresponding to a paired uplift of 0.080 (95\% paired-bootstrap CI
+[-0.020, 0.180]; exact McNemar $p=0.219$). The primary action+reasoning monitor
+achieved AUROC 0.316, recall 0.300, and false-positive rate 0.520. The
+action-only baseline achieved the highest AUROC (0.427); consequently, these
+results provide no evidence that the elicited rationales improved detection on
+this model and protocol. All three scopes produced valid scores for all 100
+trajectories. In the preliminary human-audited subset, 3 of 10 trajectories met
+both automatic target adherence and the reviewer's semantic-coordination
+criterion; 7 of 10 were rated as containing refusal or noncompliance. These
+subset counts are not extrapolated to all 50 attack trajectories.

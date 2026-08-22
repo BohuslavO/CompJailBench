@@ -1,0 +1,2 @@
+defense_method,n_samples,recall,false_positive_rate,precision,balanced_accuracy,roc_auc,human_review_rate,model_calls,total_tokens
+sentinel_agents_message_only,100,0.94,0.9,0.5108695652173914,0.52,0.552,0.23,3518,1815226
