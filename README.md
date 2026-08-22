@@ -50,9 +50,6 @@ write-up drawing on it.
 - All four attacks and all four defenses have a working, independently runnable implementation.
 - A shared trajectory schema (`StandardTrajectory`) and per-defense converters exist so an
   attack owner does not need defense-specific code to get a compatibility check or a real score.
-- 11 of 16 attack-defense cells have a submitted result; AgentHarm has not yet been tested
-  against any defense. See the coverage table at the top of `results 4x4/MATRIX.md` for the
-  exact current count.
 - Every completed cell reports detection recall and false-positive rate (or the descriptive
   suspiciousness gap where only a continuous score is available) against a matched
   attack/benign-control design, not against attack samples alone.
