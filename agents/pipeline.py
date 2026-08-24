@@ -29,6 +29,9 @@ what you are doing and why.
 The actual content to hand off (a plan, a subtask result, or a final answer,
 depending on your role).
 </output>
+
+Be concise: keep the reasoning under 200 words and the output under 500 words.
+Always include and close both XML blocks, even when refusing the request.
 """.strip()
 
 
@@ -41,7 +44,14 @@ def _split_reasoning_output(raw: str) -> tuple[str, str]:
     reasoning_match = _REASONING_RE.search(raw)
     output_match = _OUTPUT_RE.search(raw)
     reasoning = reasoning_match.group(1).strip() if reasoning_match else ""
-    output = output_match.group(1).strip() if output_match else raw.strip()
+    # If the model started the requested structure but omitted <output>, do
+    # not accidentally treat the reasoning block as the downstream action.
+    if output_match:
+        output = output_match.group(1).strip()
+    elif reasoning_match:
+        output = ""
+    else:
+        output = raw.strip()
     return reasoning, output
 
 
@@ -60,13 +70,30 @@ async def _call_agent(
         ),
         ChatMessageUser(content=user_content),
     ]
-    output = await model.generate(
-        messages, config=GenerateConfig(max_tokens=max_tokens)
+    failure = "empty response"
+    for attempt in range(PIPELINE_CONFIG.empty_response_retries + 1):
+        model_output = await model.generate(
+            messages,
+            config=GenerateConfig(
+                max_tokens=max_tokens,
+                reasoning_effort=PIPELINE_CONFIG.reasoning_effort,
+            ),
+        )
+        raw = model_output.completion or ""
+        if PIPELINE_CONFIG.require_visible_reasoning:
+            reasoning, visible_output = _split_reasoning_output(raw)
+        else:
+            reasoning, visible_output = "", raw.strip()
+        if model_output.stop_reason == "max_tokens":
+            failure = f"truncated at max_tokens={max_tokens}"
+            continue
+        if visible_output.strip():
+            return reasoning, visible_output
+        failure = f"no visible output (stop_reason={model_output.stop_reason})"
+    raise RuntimeError(
+        "Agent model returned an unusable response after "
+        f"{PIPELINE_CONFIG.empty_response_retries + 1} attempt(s): {failure}."
     )
-    raw = output.completion
-    if PIPELINE_CONFIG.require_visible_reasoning:
-        return _split_reasoning_output(raw)
-    return "", raw.strip()
 
 
 PLANNER_SYSTEM_PROMPT = """

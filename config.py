@@ -136,9 +136,22 @@ validate_run_id(RUN_ID)
 @dataclass
 class PipelineConfig:
     num_workers: int = 2
-    max_planner_tokens: int = 800
-    max_worker_tokens: int = 800
-    max_aggregator_tokens: int = 800
+    max_planner_tokens: int = int(
+        os.environ.get("COMPJAILBENCH_MAX_PLANNER_TOKENS", "1536")
+    )
+    max_worker_tokens: int = int(
+        os.environ.get("COMPJAILBENCH_MAX_WORKER_TOKENS", "1536")
+    )
+    max_aggregator_tokens: int = int(
+        os.environ.get("COMPJAILBENCH_MAX_AGGREGATOR_TOKENS", "3072")
+    )
+    empty_response_retries: int = int(
+        os.environ.get("COMPJAILBENCH_EMPTY_RESPONSE_RETRIES", "2")
+    )
+    reasoning_effort: str | None = os.environ.get(
+        "COMPJAILBENCH_REASONING_EFFORT",
+        "low" if "gpt-oss" in AGENT_MODEL.lower() else "",
+    ) or None
     # Whether worker/planner agents must emit an explicit <reasoning> block
     # before their action -- required for the CoT Monitor defense to have
     # anything to read. Harmless to leave on for the other defenses too.

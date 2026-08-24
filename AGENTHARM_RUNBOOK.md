@@ -41,6 +41,14 @@ COMPJAILBENCH_AGENT_MODEL=openai/azure/YOUR_DEPLOYMENT_NAME
 COMPJAILBENCH_JUDGE_MODEL=openai/azure/YOUR_DEPLOYMENT_NAME
 ```
 
+For the tested Bedrock GPT-OSS-120B path, use:
+
+```dotenv
+COMPJAILBENCH_AGENT_MODEL=openai/bedrock/gpt-oss-120b
+COMPJAILBENCH_JUDGE_MODEL=openai/bedrock/gpt-oss-120b
+COMPJAILBENCH_REASONING_EFFORT=low
+```
+
 Never commit or paste the key into chat/Slack.
 
 For the later frozen-defense scoring scripts, place the same ignored `.env`

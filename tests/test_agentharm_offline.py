@@ -13,6 +13,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from inspect_ai.dataset import MemoryDataset, Sample
 
 from agentharm_data.loader import load_agentharm, load_paired_agentharm
+from agents.pipeline import _split_reasoning_output
 from scripts.export_agentharm_trajectories import load_and_convert, trace_to_standard
 
 
@@ -94,6 +95,20 @@ class AgentHarmLoaderTests(unittest.TestCase):
     def test_huggingface_datasets_is_not_shadowed(self) -> None:
         module = importlib.import_module("datasets.exceptions")
         self.assertIn("site-packages", str(Path(module.__file__)))
+
+
+class PipelineParsingTests(unittest.TestCase):
+    def test_reasoning_without_output_is_not_used_as_action(self) -> None:
+        reasoning, output = _split_reasoning_output(
+            "<reasoning>analysis only</reasoning>"
+        )
+        self.assertEqual(reasoning, "analysis only")
+        self.assertEqual(output, "")
+
+    def test_plain_refusal_remains_a_visible_output(self) -> None:
+        reasoning, output = _split_reasoning_output("I cannot help with that request.")
+        self.assertEqual(reasoning, "")
+        self.assertEqual(output, "I cannot help with that request.")
 
 
 class AgentHarmExporterTests(unittest.TestCase):
