@@ -93,11 +93,11 @@ def new_trace(sample_id: str, original_prompt: str) -> ExecutionTrace:
 def save_trace(trace: ExecutionTrace, directory: Path) -> Path:
     directory.mkdir(parents=True, exist_ok=True)
     out_path = directory / f"{trace.trace_id}.json"
-    with out_path.open("w") as f:
+    with out_path.open("w", encoding="utf-8") as f:
         json.dump(trace.to_dict(), f, indent=2, default=str)
     return out_path
 
 
 def load_trace(path: Path) -> dict[str, Any]:
-    with path.open() as f:
+    with path.open(encoding="utf-8") as f:
         return json.load(f)

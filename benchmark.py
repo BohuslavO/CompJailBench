@@ -3,18 +3,34 @@ from __future__ import annotations
 from inspect_ai import Task, task
 
 from agents import multi_agent_pipeline
-from datasets.agentharm_loader import load_agentharm
+from agentharm_data import load_agentharm
 from defenses import (
     cot_monitor_scorer,
     g_safeguard_scorer,
     probing_scorer,
     sentinel_agent_scorer,
 )
-from defenses.task_success import task_success_scorer
+from inspect_ai.scorer import Score, Target, scorer
+from inspect_ai.solver import TaskState
+
+
+@scorer(metrics=[])
+def trace_capture_scorer():
+    """Free bookkeeping scorer for generation-only trajectory capture."""
+
+    async def score(state: TaskState, target: Target) -> Score:
+        return Score(
+            value=1,
+            answer="trace_captured",
+            explanation="Trajectory generation completed; defenses score it post-hoc.",
+            metadata={"condition": (state.metadata or {}).get("condition")},
+        )
+
+    return score
 
 
 def _make_task(defense_scorer=None) -> Task:
-    scorers = [task_success_scorer()]
+    scorers = [trace_capture_scorer()]
     if defense_scorer is not None:
         scorers.append(defense_scorer())
     return Task(
@@ -26,8 +42,7 @@ def _make_task(defense_scorer=None) -> Task:
 
 @task
 def compjailbench_none() -> Task:
-    """No defense -- baseline attack success rate with only the raw
-    multi-agent pipeline and no monitor at all."""
+    """Generation-only run. Saved trajectories are scored post-hoc."""
     return _make_task(defense_scorer=None)
 
 

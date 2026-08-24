@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass, field
+import re
+from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 
 try:
@@ -32,7 +34,7 @@ for _dir in (RESULTS_DIR, TRACES_DIR, LOGS_DIR):
 # Inspect AI model strings look like "<provider>/<model-name>", e.g.
 #   "openai/gpt-4o-mini"
 #   "anthropic/claude-sonnet-4-6"
-#   "azureai/gpt-4o"
+#   "openai/azure/gpt-4o"
 # Change these to whatever you actually have API access to. Nothing runs
 # until (a) these are valid model strings for your Inspect AI version and
 # (b) the corresponding API key env var is set.
@@ -60,9 +62,9 @@ JUDGE_MODEL = os.environ.get("COMPJAILBENCH_JUDGE_MODEL", AGENT_MODEL)
 
 ENABLE_PROBING = os.environ.get("COMPJAILBENCH_ENABLE_PROBING", "false").lower() == "true"
 
-DEFENSES = ["none", "g_safeguard", "sentinel_agent", "cot_monitor"] + (
-    ["probing"] if ENABLE_PROBING else []
-)
+# Generate each AgentHarm trajectory exactly once. The comparable 4x4
+# defenses consume the saved StandardTrajectory JSONL afterwards.
+DEFENSES = ["none"]
 
 
 # ---------------------------------------------------------------------------
@@ -71,12 +73,10 @@ DEFENSES = ["none", "g_safeguard", "sentinel_agent", "cot_monitor"] + (
 
 @dataclass
 class AgentHarmConfig:
-    # "harmful" or "benign" split of AgentHarm.
-    split: str = os.environ.get("COMPJAILBENCH_AGENTHARM_SPLIT", "harmful")
-    # Inspect Evals task variant: "agentharm" (standard) or "agentharm_avoidance"
-    # (the "reasoning about a request without acting" variant). See
-    # datasets/agentharm_loader.py.
-    variant: str = os.environ.get("COMPJAILBENCH_AGENTHARM_VARIANT", "agentharm")
+    # Harmful and benign are paired conditions, not Inspect dataset splits.
+    condition: str = os.environ.get("COMPJAILBENCH_AGENTHARM_CONDITION", "harmful")
+    # Official Inspect Evals split name.
+    split: str = os.environ.get("COMPJAILBENCH_AGENTHARM_DATASET_SPLIT", "test_public")
     # Cap the number of samples for fast local iteration; set to None for the
     # full split.
     limit: int | None = (
@@ -84,9 +84,49 @@ class AgentHarmConfig:
         if os.environ.get("COMPJAILBENCH_LIMIT")
         else 10
     )
+    force_redownload: bool = (
+        os.environ.get("COMPJAILBENCH_AGENTHARM_FORCE_REDOWNLOAD", "false").lower()
+        == "true"
+    )
+    # Placeholders are forbidden for experimental runs. This switch exists
+    # only for explicitly requested UI/demo smoke tests.
+    allow_placeholder: bool = (
+        os.environ.get("COMPJAILBENCH_ALLOW_PLACEHOLDER", "false").lower()
+        == "true"
+    )
+
+    def validate(self) -> None:
+        if self.condition not in {"harmful", "benign"}:
+            raise ValueError(
+                "COMPJAILBENCH_AGENTHARM_CONDITION must be 'harmful' or 'benign'."
+            )
+        if self.split not in {"val", "test_public", "test_private"}:
+            raise ValueError(
+                "COMPJAILBENCH_AGENTHARM_DATASET_SPLIT must be one of "
+                "'val', 'test_public', or 'test_private'."
+            )
+        if self.limit is not None and self.limit <= 0:
+            raise ValueError("COMPJAILBENCH_LIMIT must be a positive integer.")
 
 
 AGENTHARM_CONFIG = AgentHarmConfig()
+AGENTHARM_CONFIG.validate()
+
+RUN_ID = os.environ.get(
+    "COMPJAILBENCH_RUN_ID",
+    datetime.now(timezone.utc).strftime("agentharm_%Y%m%dT%H%M%SZ"),
+)
+
+
+def validate_run_id(run_id: str) -> None:
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", run_id):
+        raise ValueError(
+            "COMPJAILBENCH_RUN_ID may contain only letters, numbers, '.', '_', "
+            "and '-' (maximum 128 characters)."
+        )
+
+
+validate_run_id(RUN_ID)
 
 
 # ---------------------------------------------------------------------------
@@ -113,9 +153,31 @@ def api_keys_present() -> dict[str, bool]:
     return {
         "OPENAI_API_KEY": bool(os.environ.get("OPENAI_API_KEY")),
         "ANTHROPIC_API_KEY": bool(os.environ.get("ANTHROPIC_API_KEY")),
+        "AZUREAI_OPENAI_API_KEY": bool(os.environ.get("AZUREAI_OPENAI_API_KEY")),
+        "AZUREAI_OPENAI_BASE_URL": bool(os.environ.get("AZUREAI_OPENAI_BASE_URL")),
+        "AZUREAI_OPENAI_API_VERSION": bool(os.environ.get("AZUREAI_OPENAI_API_VERSION")),
         "AZURE_OPENAI_API_KEY": bool(os.environ.get("AZURE_OPENAI_API_KEY")),
-        "AZURE_OPENAI_ENDPOINT": bool(os.environ.get("AZURE_OPENAI_ENDPOINT")),
+        "AWS_BEARER_TOKEN_BEDROCK": bool(os.environ.get("AWS_BEARER_TOKEN_BEDROCK")),
+        "BEDROCK_OPENAI_API_KEY": bool(os.environ.get("BEDROCK_OPENAI_API_KEY")),
     }
+
+
+def model_credentials_present(model_name: str) -> bool:
+    """Conservative preflight check for the configured Inspect model ID."""
+    keys = api_keys_present()
+    if model_name.startswith("mockllm/"):
+        return True
+    if model_name.startswith("openai/azure/"):
+        return (
+            keys["AZUREAI_OPENAI_API_KEY"] or keys["AZURE_OPENAI_API_KEY"]
+        ) and keys["AZUREAI_OPENAI_BASE_URL"]
+    if model_name.startswith("openai/bedrock/"):
+        return keys["AWS_BEARER_TOKEN_BEDROCK"] or keys["BEDROCK_OPENAI_API_KEY"]
+    if model_name.startswith("openai/"):
+        return keys["OPENAI_API_KEY"]
+    if model_name.startswith("anthropic/"):
+        return keys["ANTHROPIC_API_KEY"]
+    return any(keys.values())
 
 
 if __name__ == "__main__":
@@ -123,5 +185,6 @@ if __name__ == "__main__":
 
     print("AGENT_MODEL:", AGENT_MODEL)
     print("JUDGE_MODEL:", JUDGE_MODEL)
+    print("RUN_ID:", RUN_ID)
     print("DEFENSES:", DEFENSES)
     print("API keys present:", json.dumps(api_keys_present(), indent=2))

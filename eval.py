@@ -38,6 +38,23 @@ def parse_args() -> argparse.Namespace:
         help="Which defense conditions to run (default: everything enabled in config.py).",
     )
     parser.add_argument(
+        "--condition",
+        choices=("harmful", "benign"),
+        default=config.AGENTHARM_CONFIG.condition,
+        help="Paired AgentHarm arm to generate.",
+    )
+    parser.add_argument(
+        "--split",
+        choices=("val", "test_public", "test_private"),
+        default=config.AGENTHARM_CONFIG.split,
+        help="Official AgentHarm dataset split.",
+    )
+    parser.add_argument(
+        "--run-id",
+        default=config.RUN_ID,
+        help="Shared ID used to join harmful and benign trajectory runs.",
+    )
+    parser.add_argument(
         "--limit",
         type=int,
         default=None,
@@ -51,13 +68,15 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def print_config_summary() -> None:
+def print_config_summary(defense_names: list[str]) -> None:
     print("=" * 70)
     print("CompJailBench eval configuration")
     print("=" * 70)
     print(f"AGENT_MODEL: {config.AGENT_MODEL}")
     print(f"JUDGE_MODEL: {config.JUDGE_MODEL}")
-    print(f"Defenses to run: {config.DEFENSES}")
+    print(f"Defenses to run: {defense_names}")
+    print(f"Run ID: {config.RUN_ID}")
+    print(f"AgentHarm condition: {config.AGENTHARM_CONFIG.condition}")
     print(f"AgentHarm split: {config.AGENTHARM_CONFIG.split}")
     print(f"Sample limit: {config.AGENTHARM_CONFIG.limit}")
     print("API keys present:")
@@ -78,7 +97,12 @@ def run_all(defense_names: list[str]) -> dict[str, list]:
         logs = inspect_eval(
             task_fn(),
             model=config.AGENT_MODEL,
-            log_dir=str(config.LOGS_DIR / name),
+            log_dir=str(
+                config.LOGS_DIR
+                / config.RUN_ID
+                / config.AGENTHARM_CONFIG.condition
+                / name
+            ),
         )
         results[name] = logs
     return results
@@ -113,31 +137,48 @@ def build_comparison_table(results: dict[str, list]) -> pd.DataFrame:
 
 def main() -> None:
     args = parse_args()
+    config.AGENTHARM_CONFIG.condition = args.condition
+    config.AGENTHARM_CONFIG.split = args.split
+    config.RUN_ID = args.run_id
+    config.validate_run_id(config.RUN_ID)
     if args.limit is not None:
         config.AGENTHARM_CONFIG.limit = args.limit
+    config.AGENTHARM_CONFIG.validate()
 
-    print_config_summary()
+    if args.defenses != ["none"]:
+        raise SystemExit(
+            "For comparable 4x4 results, eval.py only generates trajectories with "
+            "'--defenses none'. Score the saved StandardTrajectory JSONL with the "
+            "frozen defense adapters documented in AGENTHARM_RUNBOOK.md."
+        )
+
+    print_config_summary(args.defenses)
 
     if args.dry_run:
         print("\n[dry run] Config looks resolved. Not calling any model. "
               "Re-run without --dry-run once your API key is set.")
         return
 
-    if not any(config.api_keys_present().values()):
+    if not config.model_credentials_present(config.AGENT_MODEL):
         print(
-            "\nNo API keys detected in the environment. Set at least one of "
-            "OPENAI_API_KEY / ANTHROPIC_API_KEY / AZURE_OPENAI_API_KEY before "
-            "running for real. Exiting (use --dry-run to check config without "
-            "this check)."
+            f"\nCredentials for AGENT_MODEL={config.AGENT_MODEL!r} are incomplete. "
+            "For Azure OpenAI, set AZUREAI_OPENAI_API_KEY and "
+            "AZUREAI_OPENAI_BASE_URL. Exiting before loading the model."
         )
         sys.exit(1)
 
     results = run_all(args.defenses)
 
     df = build_comparison_table(results)
-    config.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    csv_path = config.RESULTS_DIR / "comparison.csv"
-    md_path = config.RESULTS_DIR / "comparison.md"
+    output_dir = (
+        config.RESULTS_DIR
+        / "runs"
+        / config.RUN_ID
+        / config.AGENTHARM_CONFIG.condition
+    )
+    output_dir.mkdir(parents=True, exist_ok=True)
+    csv_path = output_dir / "comparison.csv"
+    md_path = output_dir / "comparison.md"
     df.to_csv(csv_path, index=False)
     with md_path.open("w") as f:
         f.write(tabulate(df, headers="keys", tablefmt="github", showindex=False))
@@ -148,7 +189,14 @@ def main() -> None:
     print(tabulate(df, headers="keys", tablefmt="github", showindex=False))
     print(f"\nSaved: {csv_path}")
     print(f"Saved: {md_path}")
-    print(f"Full Inspect logs under: {config.LOGS_DIR}")
+    print(
+        "Saved traces under: "
+        f"{config.TRACES_DIR / config.RUN_ID / config.AGENTHARM_CONFIG.condition}"
+    )
+    print(
+        "Full Inspect logs under: "
+        f"{config.LOGS_DIR / config.RUN_ID / config.AGENTHARM_CONFIG.condition}"
+    )
 
 
 if __name__ == "__main__":

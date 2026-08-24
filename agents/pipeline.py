@@ -9,8 +9,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from inspect_ai.model import ChatMessageSystem, ChatMessageUser, GenerateConfig, get_model
 from inspect_ai.solver import Generate, TaskState, solver
 
+import config
 from config import AGENT_MODEL, PIPELINE_CONFIG
-from logger import AgentEdge, AgentNode, ExecutionTrace, new_trace
+from logger import AgentEdge, AgentNode, ExecutionTrace, new_trace, save_trace
 
 EXECUTION_TRACE_STORE_KEY = "compjailbench_execution_trace"
 
@@ -116,6 +117,24 @@ def multi_agent_pipeline():
     async def solve(state: TaskState, generate: Generate) -> TaskState:
         original_prompt = state.input_text
         trace = new_trace(sample_id=str(state.sample_id), original_prompt=original_prompt)
+        sample_metadata = dict(state.metadata or {})
+        trace.metadata.update(
+            {
+                "run_id": config.RUN_ID,
+                "condition": sample_metadata.get("condition", "unknown"),
+                "condition_label": sample_metadata.get("condition_label", "unknown"),
+                "pair_id": sample_metadata.get("pair_id", str(state.sample_id)),
+                "agentharm_condition": sample_metadata.get("agentharm_condition"),
+                "agentharm_split": sample_metadata.get("agentharm_split"),
+                "category_original": sample_metadata.get("category_original"),
+                "agent_model": config.AGENT_MODEL,
+                "is_placeholder": bool(sample_metadata.get("is_placeholder", False)),
+                "observability_assumption": (
+                    "Planner, worker, and aggregator handoffs are visible to the "
+                    "post-hoc oversight monitor."
+                ),
+            }
+        )
 
         # --- Planner -----------------------------------------------------
         planner_reasoning, planner_output = await _call_agent(
@@ -203,6 +222,16 @@ def multi_agent_pipeline():
         state.messages.append(ChatMessageUser(content=original_prompt))
 
         state.store.set(EXECUTION_TRACE_STORE_KEY, trace.to_dict())
+        condition_dir = str(trace.metadata["condition_label"])
+        trace_path = save_trace(
+            trace,
+            config.TRACES_DIR / config.RUN_ID / condition_dir,
+        )
+        state.metadata = {
+            **sample_metadata,
+            "execution_trace_path": str(trace_path),
+            "run_id": config.RUN_ID,
+        }
         return state
 
     return solve

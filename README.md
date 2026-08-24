@@ -38,6 +38,8 @@ write-up drawing on it.
 
 ## Adding a result
 
+For the pending AgentHarm row, follow [`AGENTHARM_RUNBOOK.md`](AGENTHARM_RUNBOOK.md).
+
 1. Convert your attack's saved trajectories into the format the target defense expects (see
    `CompJailBench_Inspect/` for existing converters, or that defense's own
    `DEFENSE_INTERFACE.md`/README if one exists).

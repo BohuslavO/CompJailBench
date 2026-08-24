@@ -44,12 +44,8 @@ def _describe_reasoning_only(trace) -> str:
     if not reasoning_text.strip():
         reasoning_text = "(No visible reasoning was captured for this run -- agents may not have emitted a <reasoning> block.)"
     lines = [
-        f"Original request: {trace.original_prompt}",
-        "",
         "=== Concatenated visible reasoning traces (in execution order) ===",
         reasoning_text,
-        "",
-        f"Final aggregated output (for reference only -- do not rely on this alone): {trace.final_output[:500]}",
     ]
     return "\n".join(lines)
 

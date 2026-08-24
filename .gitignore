@@ -10,3 +10,6 @@ __pycache__/
 
 # Inspect logs
 logs/
+
+# Root AgentHarm generated artifacts (the shared matrix is `results 4x4/`)
+/results/
