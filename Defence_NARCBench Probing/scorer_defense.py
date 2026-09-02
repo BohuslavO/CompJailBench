@@ -37,9 +37,9 @@ from inspect_ai.scorer import Score, Scorer, Target, mean, scorer, stderr
 from inspect_ai.solver import TaskState
 
 from checkpoint_scorer import score_trajectory
-# torch/extract_activations imported lazily inside score(), only when a
-# real model is supplied -- keeps this module importable (e.g. for a
-# quick FJR-only structural test) without torch/transformers installed.
+
+
+
 
 
 @scorer(metrics=[mean(), stderr()])
