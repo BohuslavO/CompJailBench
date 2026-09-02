@@ -23,7 +23,7 @@ def convert(in_path, out_path, contributor, attack_method, defense_method, model
     with open(in_path, newline="") as f:
         for r in csv.DictReader(f):
             if r.get("error"):
-                continue  # failed runs have no metric to report
+                continue
             run_id = f"{r['task']}|{r['strategy']}|{r['condition']}"
             base = {
                 "contributor": contributor,
