@@ -35,7 +35,7 @@ def scoreable_tasks(tasks_root: str) -> list:
             if parse_checkpoints(task.checkpoints_md):
                 out.append(slug)
         except Exception:
-            continue  # malformed task files, skip rather than crash the build
+            continue
     return out
 
 
