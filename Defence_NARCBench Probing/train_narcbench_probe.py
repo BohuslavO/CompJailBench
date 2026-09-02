@@ -10,11 +10,11 @@ from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
-# NARCBench's own recommended probe-layer range per model (from their
-# README/config.py). Used as a default so you don't have to look this
-# up by hand each time you point this script at a different model's
-# activations -- required now that probing needs to work for whichever
-# model each of the 4 attacks ends up using, not just Qwen3-32B.
+
+
+
+
+
 MODEL_LAYERS = {
     "Qwen/Qwen3-32B-AWQ": (26, 30),
     "meta-llama/Llama-3.1-70B-Instruct-AWQ-INT4": (32, 37),
