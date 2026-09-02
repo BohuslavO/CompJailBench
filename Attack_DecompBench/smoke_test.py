@@ -13,10 +13,10 @@ from task_loader import load_task, list_tasks
 from routing import AgentRole, STRATEGIES
 from pipeline import run_task
 
-# Point this at wherever you ran `hf download decompositionbench/DeCompBench`
-# to -- the folder that directly contains task subfolders like
-# abuse-report-suppression/, absent-admin-false-attribution/, etc.
-# Can also be overridden: python smoke_test.py "C:\path\to\tasks"
+
+
+
+
 TASKS_ROOT = sys.argv[1] if len(sys.argv) > 1 else r"C:\Users\user\decompbench_data\tasks"
 TASK_DIR = f"{TASKS_ROOT}/abuse-report-suppression"
 
