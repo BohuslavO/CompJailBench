@@ -21,12 +21,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
-# Keyword hints per service, used to guess which service a turn's prompt
-# is actually acting on. NOT from metadata.json -- metadata's
-# capability_ids/step_outline only cover a subset of turns (the ones it
-# considers "core steps"), so it can't be relied on for 1:1 per-turn
-# matching. This is a best-effort heuristic, intersected with the task's
-# own declared `services` list to cut down false positives.
+
+
+
+
+
+
 SERVICE_KEYWORDS = {
     "postgres": ["postgres", "sql", "select ", "update ", "insert ", " table", "database", "query", "row"],
     "gitlab": ["gitlab", "merge request", "repository", "commit", "branch", "pull request"],
@@ -55,10 +55,10 @@ def _infer_service_hint(prompt: str, task_services: list) -> Optional[str]:
 @dataclass
 class Turn:
     turn_id: int
-    label: str  # discovery | masking | action | cover
+    label: str
     prompt: str
-    capability_id: Optional[str] = None  # best-effort, from metadata.json's capability_ids (subset only)
-    service_hint: Optional[str] = None   # best-effort, keyword-inferred from prompt text
+    capability_id: Optional[str] = None
+    service_hint: Optional[str] = None
 
 
 @dataclass
@@ -69,7 +69,7 @@ class DeCompTask:
     services: list = field(default_factory=list)
     difficulty: int = 0
     hop_count: int = 0
-    turns: list = field(default_factory=list)  # list[Turn]
+    turns: list = field(default_factory=list)
     checkpoints_md: str = ""
 
 
