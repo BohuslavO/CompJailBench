@@ -27,9 +27,9 @@ def stub_call_llm(system_prompt: str, user_prompt: str) -> str:
 
 
 def stub_judge_call(prompt: str) -> str:
-    # mimics a real judge that actually reads the trajectory text bundled
-    # into the prompt, so this is a real (if crude) pass/fail check, not
-    # a hardcoded stub verdict.
+
+
+
     passed = "4471" in prompt
     return f"VERDICT: {'PASS' if passed else 'FAIL'}\nREASONING: stub judge checked for ticket 4471 mention."
 
@@ -43,8 +43,8 @@ ROLES = [
 
 def main():
     solver = decompbench_routing_solver(ROLES, stub_call_llm)
-    # model/tokenizer/probe_bundle=None -> FJR-only, peak_suspicion skipped
-    # (this is the part that genuinely needs a GPU + real model; not testable here)
+
+
     scorer = decompbench_narcbench_scorer(stub_judge_call, model=None, tokenizer=None, probe_bundle=None)
 
     t = compjailbench(
