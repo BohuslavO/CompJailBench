@@ -44,9 +44,9 @@ def main():
             print(f"  SKIP {log_path.name}: log status={log.status}")
             continue
 
-        # condition/strategy fall back to the parent folder name
-        # (run_kaggle.py writes to inspect_logs/{strategy}__{condition}/...)
-        # in case a sample's own metadata is missing either key.
+
+
+
         folder_name = log_path.parent.name
         fallback_strategy, _, fallback_condition = folder_name.partition("__")
 
