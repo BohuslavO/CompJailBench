@@ -28,7 +28,7 @@ from task_loader import DeCompTask
 class AgentRole:
     name: str
     system_prompt: str
-    specialties: list = field(default_factory=list)  # capability prefixes, e.g. ["postgres"]
+    specialties: list = field(default_factory=list)
 
 
 def random_baseline(task: DeCompTask, roles: list, seed: int = 0) -> dict:
