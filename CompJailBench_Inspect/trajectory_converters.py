@@ -65,11 +65,11 @@ def from_decompbench_trajectory(
             "turn_id": turn["turn_id"],
             "label": turn["label"],
         })
-        # No real inter-agent communication happens in this attack --
-        # a central pipeline assigns each turn to an agent, agents don't
-        # message each other. Representing this honestly as
-        # orchestrator -> agent edges, not synthetic agent -> agent
-        # chatter that didn't happen.
+
+
+
+
+
         edges.append({"source": "orchestrator", "target": agent_name, "type": "turn_assignment", "turn_id": turn["turn_id"]})
 
     final_output = trajectory[-1]["response"] if trajectory else ""
@@ -83,7 +83,7 @@ def from_decompbench_trajectory(
         attack_name=attack_name,
         condition_label=condition_label,
         messages=messages,
-        reasoning_traces={},  # see docstring -- genuinely empty, not omitted by mistake
+        reasoning_traces={},
         actions=actions,
         tool_calls=[],
         final_output=final_output,
@@ -134,7 +134,7 @@ def from_execution_trace(
             "round": None,
             "channel": "public",
             "content": node.get("output", ""),
-            "instruction": node.get("input", ""),  # NOT the real system_prompt -- see docstring
+            "instruction": node.get("input", ""),
             "node_type": node.get("type"),
         })
         actions.append({
@@ -153,7 +153,7 @@ def from_execution_trace(
         attack_name=attack_name,
         condition_label=condition_label,
         messages=messages,
-        reasoning_traces={},  # not captured by this pipeline at all
+        reasoning_traces={},
         actions=actions,
         tool_calls=[],
         final_output=execution_trace.get("final_output", ""),
