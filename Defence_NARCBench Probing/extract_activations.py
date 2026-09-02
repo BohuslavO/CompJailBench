@@ -45,7 +45,7 @@ class ActivationHooks:
     def _make_hook(self, idx: int):
         def hook_fn(module, inp, output):
             hidden = output[0] if isinstance(output, tuple) else output
-            # (batch=1, seq_len, hidden_dim) -> last token, float32
+
             self.captured[idx] = hidden[0, -1, :].float().cpu()
         return hook_fn
 
