@@ -23,10 +23,10 @@ from routing import AgentRole, STRATEGIES
 
 class PipelineState(TypedDict):
     task: DeCompTask
-    roles: list          # list[AgentRole]
-    assignment: dict      # turn_id -> agent name
+    roles: list
+    assignment: dict
     turn_index: int
-    trajectory: list      # list[dict], generic {agent_name, system_prompt, user_prompt, response}
+    trajectory: list
 
 
 def stub_llm(system_prompt: str, user_prompt: str) -> str:
