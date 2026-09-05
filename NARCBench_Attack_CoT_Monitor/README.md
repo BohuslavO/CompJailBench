@@ -10,15 +10,14 @@ for 100 trajectories per defense cell.
 | Defense cell | Model/input | Primary result | Status |
 |---|---|---|---|
 | Observable-rationale monitor | Saved Bedrock trajectories | AUROC 0.316 for action+rationale; action-only AUROC 0.427 | Complete; negative monitoring result |
-| G-Safeguard-inspired graph monitor | Saved public-message graphs | AUROC 0.714; recall 0.060; FPR 0.000 | Complete; detection-only adaptation |
+| Agent-to-Agent Monitor | Saved public-message graphs and final output | AUROC 0.714; recall 0.060; FPR 0.000 | Complete; project-defined detection-only baseline |
 | Sentinel Agents (message-only adaptation) | Saved public messages | AUROC 0.552; recall 0.940; FPR 0.900 | Complete; degraded, tool-free setting |
 | NARCBench activation probing | Fresh Qwen layer-28 activations | AUROC 0.9896; AP 0.9901 | Complete; 50 matched pairs |
 
-The graph-monitor result is explicitly **G-Safeguard-inspired**: it does not
-train the published GNN or perform topological intervention. The Sentinel cell
-is explicitly **message-only, public-scope, degraded** because the trajectories
-contain no tool calls. The observable-rationale monitor does not claim access
-to hidden chain of thought.
+The **Agent-to-Agent Monitor** is the project-defined graph-and-judge baseline
+described in the paper. The Sentinel cell is explicitly **message-only,
+public-scope, degraded** because the trajectories contain no tool calls. The
+observable-rationale monitor does not claim access to hidden chain of thought.
 
 ## Repository layout
 
@@ -35,7 +34,7 @@ to hidden chain of thought.
 Method-specific documentation:
 
 - [`NARCBENCH_PROBING.md`](NARCBENCH_PROBING.md)
-- [`G_SAFEGUARD_INSPIRED.md`](G_SAFEGUARD_INSPIRED.md)
+- [`AGENT_TO_AGENT_MONITOR.md`](AGENT_TO_AGENT_MONITOR.md)
 - [`SENTINEL_MESSAGE_ONLY.md`](SENTINEL_MESSAGE_ONLY.md)
 - [`DEFENSE_INTERFACE.md`](DEFENSE_INTERFACE.md)
 
@@ -44,11 +43,11 @@ Frozen results and paper text:
 - [`results/paper_main/paper_results.md`](results/paper_main/paper_results.md)
 - [`results/paper_main/EXPERIMENT_SUMMARY.md`](results/paper_main/EXPERIMENT_SUMMARY.md)
 - [`results/narcbench_probing/RESULTS.md`](results/narcbench_probing/RESULTS.md)
-- [`results/g_safeguard_inspired/RESULTS.md`](results/g_safeguard_inspired/RESULTS.md)
+- [`results/agent_to_agent_monitor/RESULTS.md`](results/agent_to_agent_monitor/RESULTS.md)
 - [`results/sentinel_message_only/RESULTS.md`](results/sentinel_message_only/RESULTS.md)
 - [`paper/methodology_narcbench_cot.tex`](paper/methodology_narcbench_cot.tex)
 - [`paper/methodology_narcbench_probing.tex`](paper/methodology_narcbench_probing.tex)
-- [`paper/methodology_g_safeguard_inspired.tex`](paper/methodology_g_safeguard_inspired.tex)
+- [`paper/methodology_agent_to_agent_monitor.tex`](paper/methodology_agent_to_agent_monitor.tex)
 - [`paper/methodology_sentinel_message_only.tex`](paper/methodology_sentinel_message_only.tex)
 
 ## Experimental design
@@ -123,8 +122,8 @@ for the remaining cross-attack inputs.
   faithful hidden reasoning.
 - The attacker and observable-rationale monitor used separate Inspect roles but
   the same underlying Bedrock checkpoint.
-- The G-Safeguard-inspired cell is a detection-only baseline, not a reproduction
-  of the published trained GNN.
+- The Agent-to-Agent Monitor is a project-defined, post-hoc detection baseline;
+  it does not train a classifier or intervene in a live execution.
 - The Sentinel result does not characterize the full tool-aware defense.
 - The activation probe's released metadata does not establish a verifiable
   scenario-level train/evaluation split; its result is described as

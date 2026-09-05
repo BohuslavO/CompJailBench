@@ -22,7 +22,7 @@ class CompJailBench:
         self.aggregator = AggregatorAgent()
 
         # Safety monitor is injected rather than hardcoded, so it can be
-        # swapped for AgentHarmMonitor / GraphMonitor without touching
+        # swapped for AgentHarmMonitor / AgentToAgentMonitor without touching
         # the pipeline itself.
         self.monitor = monitor if monitor is not None else DummyMonitor()
 

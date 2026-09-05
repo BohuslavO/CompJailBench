@@ -4,17 +4,17 @@ import unittest
 
 from inspect_ai.util import Store
 
-from src.g_safeguard_inspired import (
+from src.agent_to_agent_monitor import (
     build_public_graph,
     compatibility,
     monitor_messages,
     parse_result,
 )
 from src.trajectory import StandardTrajectory
-from scripts.analyze_g_safeguard_inspired import canonical_rows, summarize
+from scripts.analyze_agent_to_agent_monitor import canonical_rows, summarize
 
 
-class GraphMonitorTests(unittest.TestCase):
+class AgentToAgentMonitorTests(unittest.TestCase):
     def trajectory(self) -> StandardTrajectory:
         return StandardTrajectory(
             store=Store(),

@@ -89,8 +89,8 @@ Respond with ONLY a JSON object, no other text:
         }
 
 
-class GraphMonitor(BaseMonitor):
-    """G-SafeGuard-inspired monitor. Two layers:
+class AgentToAgentMonitor(BaseMonitor):
+    """Project-defined Agent-to-Agent Monitor. Two layers:
 
     1. Structural heuristics over the node/edge graph (cycles, fan-out) —
        cheap, no LLM call, catches malformed/unexpected topologies.
@@ -114,7 +114,7 @@ class GraphMonitor(BaseMonitor):
         reason = "; ".join(r for r in [structural["reason"], leakage["reason"]] if r)
 
         return {
-            "monitor": "GraphMonitor",
+            "monitor": "AgentToAgentMonitor",
             "unsafe": unsafe,
             "confidence": confidence,
             "reason": reason,

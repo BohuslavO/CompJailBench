@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -33,6 +34,7 @@ from src.defense_interface import (
 )
 from scripts.summarize_audit import parse_audit_file, summarize
 from scripts.analyze_defense_scores import matrix_rows, summarize_scores
+from scripts.analyze_sentinel_message_only import outcome_labels
 from tasks.narcbench_real_attack import selected_pairs
 
 
@@ -194,6 +196,23 @@ class AuditSummaryTests(unittest.TestCase):
 
 
 class CrossAttackAnalysisTests(unittest.TestCase):
+    def test_missing_attack_success_is_not_treated_as_failure(self) -> None:
+        rows = [
+            {"sample_id": "missing", "metadata": {}},
+            {"sample_id": "failed", "metadata": {"attack_success": False}},
+            {"sample_id": "succeeded", "metadata": {"attack_success": True}},
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "trajectories.jsonl"
+            path.write_text(
+                "".join(json.dumps(row) + "\n" for row in rows),
+                encoding="utf-8",
+            )
+            self.assertEqual(
+                outcome_labels(path),
+                {"failed": False, "succeeded": True},
+            )
+
     def test_score_summary_and_matrix_export(self) -> None:
         rows = []
         for index, (truth, score) in enumerate(

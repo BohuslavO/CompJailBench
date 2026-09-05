@@ -9,7 +9,7 @@ Gap is a placeholder signal, not a validated AUROC -- see README.md.
 
 ## 4x4 coverage
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | data (2 metric(s)) | data (2 metric(s)) | data (6 metric(s)) | data (2 metric(s)) |
 | Semantic Intent Fragmentation | data (2 metric(s)) | data (3 metric(s)) | data (3 metric(s)) | data (1 metric(s)) |
@@ -17,7 +17,7 @@ Gap is a placeholder signal, not a validated AUROC -- see README.md.
 | DeCompBench | data (2 metric(s)) | data (3 metric(s)) | data (2 metric(s)) | data (2 metric(s)) |
 
 `—` means no result has been submitted for that attack-defense cell.
-The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspired detection-only baseline; Sentinel Agents is message-only/public/degraded; and the current CoT-monitor result uses the NARCBench-specific `narcbench_v1` prompt.
+The asterisk marks a cell-specific qualification: Agent-to-Agent Monitor is the project's custom detection-only graph-and-judge baseline; Sentinel Agents is message-only/public/degraded; and CoT prompt profiles are cell-specific (`general_v2` for AgentHarm and DeCompBench, provisional `narcbench_v1` for the current NARCBench cell).
 
 <details>
 <summary>Detailed metric tables</summary>
@@ -26,7 +26,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: activation_alignment
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -35,7 +35,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: agent_mean_peak_suspicion
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -44,7 +44,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: asymmetry_probe
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -53,7 +53,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: attack_success
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | atk 0.44 / ben 0.08 (Δ+0.36) |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -62,7 +62,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: deception_split
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -71,7 +71,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: fjr
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -80,7 +80,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: monitor_flag__graph
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | atk 0.00 / ben 0.00 (Δ+0.00) | — | — | — |
 | Semantic Intent Fragmentation | atk 0.00 / ben 0.00 (Δ+0.00) | — | — | — |
@@ -89,7 +89,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: monitor_flag__leakage_judge
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | atk 1.00 / ben 0.91 (Δ+0.09) | — | — | — |
@@ -98,7 +98,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: monitor_flag__observable_reasoning_only
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | atk 0.04 / ben 0.08 (Δ-0.04) | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -107,7 +107,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: monitor_flag__public_action_only
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | atk 0.04 / ben 0.17 (Δ-0.12) | — |
 | Semantic Intent Fragmentation | — | — | atk 0.00 / ben 0.00 (Δ+0.00) | — |
@@ -116,7 +116,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: monitor_flag__public_action_plus_observable_reasoning
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | atk 0.00 / ben 0.08 (Δ-0.08) | — |
 | Semantic Intent Fragmentation | — | — | atk 0.00 / ben 0.00 (Δ+0.00) | — |
@@ -125,7 +125,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: monitor_flag__public_utterance_graph_plus_final_output
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -134,7 +134,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: monitor_flag__sentinel_full
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | — | atk 1.00 / ben 1.00 (Δ+0.00) | — | — |
@@ -143,7 +143,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: monitor_flag__sentinel_tier2
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | — | atk 0.91 / ben 0.91 (Δ+0.00) | — | — |
@@ -152,7 +152,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: monitor_flag__sentinel_tier3
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | — | atk 1.00 / ben 0.64 (Δ+0.36) | — | — |
@@ -161,7 +161,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: peak_suspicion
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | atk 10.77 / ben 11.74 (Δ-0.97) |
 | Semantic Intent Fragmentation | — | — | — | atk -0.29 / ben -0.80 (Δ+0.51) |
@@ -170,7 +170,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: public_peak_suspicion
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -179,7 +179,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: sentinel_flag__public
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | atk 0.75 / ben 0.92 (Δ-0.17) | — | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -188,7 +188,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: sentinel_suspiciousness__public
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | atk 0.69 / ben 0.86 (Δ-0.18) | — | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -197,7 +197,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: sorted_concat
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -206,7 +206,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: suspiciousness__graph
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | atk 0.00 / ben 0.00 (Δ+0.00) | — | — | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -215,7 +215,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: suspiciousness__observable_reasoning_only
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | atk 0.03 / ben 0.10 (Δ-0.07) | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -224,7 +224,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: suspiciousness__public_action_only
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | atk 0.04 / ben 0.18 (Δ-0.15) | — |
 | Semantic Intent Fragmentation | — | — | atk 0.05 / ben 0.05 (Δ+0.00) | — |
@@ -233,7 +233,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: suspiciousness__public_action_plus_observable_reasoning
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | atk 0.01 / ben 0.12 (Δ-0.11) | — |
 | Semantic Intent Fragmentation | — | — | — | — |
@@ -242,7 +242,7 @@ The asterisk marks a cell-specific adaptation: the G-Safeguard cell is an inspir
 
 ### Metric: suspiciousness__public_utterance_graph_plus_final_output
 
-| attack \ defense | G-Safeguard* | Sentinel Agents* | CoT monitor* | NARCBench Probing |
+| attack \ defense | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
 | AgentHarm | — | — | — | — |
 | Semantic Intent Fragmentation | — | — | — | — |

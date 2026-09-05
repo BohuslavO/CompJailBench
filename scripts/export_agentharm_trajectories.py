@@ -127,7 +127,10 @@ def trace_to_standard(trace: dict[str, Any], source_path: Path | None = None) ->
     }
 
 
-def load_and_convert(trace_root: Path) -> list[dict[str, Any]]:
+def load_and_convert(
+    trace_root: Path,
+    excluded_pair_ids: set[str] | None = None,
+) -> list[dict[str, Any]]:
     paths = sorted(trace_root.rglob("*.json"))
     if not paths:
         raise FileNotFoundError(f"No trace JSON files found under {trace_root}")
@@ -135,6 +138,19 @@ def load_and_convert(trace_root: Path) -> list[dict[str, Any]]:
         trace_to_standard(json.loads(path.read_text(encoding="utf-8")), path)
         for path in paths
     ]
+    excluded_pair_ids = {str(pair_id) for pair_id in (excluded_pair_ids or set())}
+    observed_pair_ids = {item["pair_id"] for item in converted}
+    unknown_exclusions = excluded_pair_ids - observed_pair_ids
+    if unknown_exclusions:
+        raise ValueError(
+            "Excluded pair IDs were not present in the trace set: "
+            f"{sorted(unknown_exclusions)}"
+        )
+    converted = [
+        item for item in converted if item["pair_id"] not in excluded_pair_ids
+    ]
+    if not converted:
+        raise ValueError("No trajectories remain after applying pair exclusions")
     keys = [(item["condition_label"], item["pair_id"]) for item in converted]
     duplicates = [key for key, count in Counter(keys).items() if count > 1]
     if duplicates:
@@ -161,9 +177,22 @@ def main() -> None:
     parser.add_argument("--trace-root", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--manifest", type=Path)
+    parser.add_argument(
+        "--exclude-pair-id",
+        action="append",
+        default=[],
+        help="Explicitly exclude this pair from both arms; repeat as needed.",
+    )
+    parser.add_argument(
+        "--exclusion-reason",
+        help="Reason recorded in the manifest when pair exclusions are used.",
+    )
     args = parser.parse_args()
+    excluded_pair_ids = set(args.exclude_pair_id)
+    if excluded_pair_ids and not args.exclusion_reason:
+        parser.error("--exclusion-reason is required with --exclude-pair-id")
 
-    trajectories = load_and_convert(args.trace_root)
+    trajectories = load_and_convert(args.trace_root, excluded_pair_ids)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("w", encoding="utf-8") as handle:
         for trajectory in trajectories:
@@ -177,6 +206,8 @@ def main() -> None:
         "output": str(args.output),
         "counts": dict(counts),
         "pair_count": counts.get("attack", 0),
+        "excluded_pair_ids": sorted(excluded_pair_ids),
+        "exclusion_reason": args.exclusion_reason if excluded_pair_ids else None,
         "models": sorted({item["model_name"] for item in trajectories}),
         "splits": sorted(
             {

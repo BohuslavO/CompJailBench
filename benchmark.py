@@ -6,7 +6,7 @@ from agents import multi_agent_pipeline
 from agentharm_data import load_agentharm
 from defenses import (
     cot_monitor_scorer,
-    g_safeguard_scorer,
+    agent_to_agent_monitor_scorer,
     probing_scorer,
     sentinel_agent_scorer,
 )
@@ -47,9 +47,9 @@ def compjailbench_none() -> Task:
 
 
 @task
-def compjailbench_g_safeguard() -> Task:
-    """AgentHarm vs. the G-SafeGuard-inspired topology monitor."""
-    return _make_task(defense_scorer=g_safeguard_scorer)
+def compjailbench_agent_to_agent_monitor() -> Task:
+    """AgentHarm evaluated with the project-defined Agent-to-Agent Monitor."""
+    return _make_task(defense_scorer=agent_to_agent_monitor_scorer)
 
 
 @task

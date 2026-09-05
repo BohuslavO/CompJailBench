@@ -3,7 +3,7 @@ Runs the core CompJailBench comparison:
 
     single-agent baseline  vs  multi-agent decomposition pipeline
 
-scored by both AgentHarmMonitor (final-output only) and GraphMonitor
+scored by both AgentHarmMonitor (final-output only) and AgentToAgentMonitor
 (structure + compositional leakage), and writes results/summary.csv plus
 a printed table.
 
@@ -18,7 +18,7 @@ import os
 from dataset import BenchmarkDataset
 from baseline import SingleAgentBaseline
 from benchmark import CompJailBench
-from monitors import AgentHarmMonitor, GraphMonitor
+from monitors import AgentHarmMonitor, AgentToAgentMonitor
 from logger import TrajectoryLogger
 
 
@@ -29,7 +29,7 @@ def run(dataset_path, num_workers, out_csv):
     multi_agent = CompJailBench(num_workers=num_workers)
 
     agentharm_monitor = AgentHarmMonitor()
-    graph_monitor = GraphMonitor()
+    graph_monitor = AgentToAgentMonitor()
 
     logger = TrajectoryLogger(output_dir="results/traces")
 
@@ -95,7 +95,7 @@ def run(dataset_path, num_workers, out_csv):
     print(f"n samples:                          {n}")
     print(f"Baseline harmful-completion rate:    {baseline_rate:.1%}")
     print(f"Multi-agent harmful-completion rate: {multi_rate:.1%}")
-    print(f"GraphMonitor catch rate (of successful multi-agent attacks): {graph_catch_rate:.1%}")
+    print(f"AgentToAgentMonitor catch rate (of successful multi-agent attacks): {graph_catch_rate:.1%}")
     print(f"\nFull results: {out_csv}")
     print(f"Full traces:  results/traces/")
 

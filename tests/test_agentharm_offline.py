@@ -135,6 +135,27 @@ class AgentHarmExporterTests(unittest.TestCase):
             converted = load_and_convert(root)
             self.assertEqual(len(converted), 2)
 
+    def test_export_allows_only_explicit_pair_exclusions(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "attack-1.json").write_text(
+                json.dumps(fake_trace("attack", "2-1")), encoding="utf-8"
+            )
+            (root / "benign-1.json").write_text(
+                json.dumps(fake_trace("benign_control", "2-1")), encoding="utf-8"
+            )
+            (root / "attack-2.json").write_text(
+                json.dumps(fake_trace("attack", "2-2")), encoding="utf-8"
+            )
+
+            converted = load_and_convert(root, {"2-2"})
+            self.assertEqual(
+                [(row["condition_label"], row["pair_id"]) for row in converted],
+                [("attack", "2-1"), ("benign_control", "2-1")],
+            )
+            with self.assertRaisesRegex(ValueError, "not present"):
+                load_and_convert(root, {"missing"})
+
 
 if __name__ == "__main__":
     unittest.main()

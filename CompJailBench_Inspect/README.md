@@ -27,7 +27,7 @@ another contributor's expected input.
   trajectory (our own `pipeline.py` output, or another attack's native format) into
   `StandardTrajectory` JSONL.
 - `to_execution_trace.py` — converts our trajectory format into Atharv's `execution_trace`
-  node/edge dict shape, so our attack's trajectories can be scored by the G-Safeguard-inspired
+  node/edge dict shape, so our attack's trajectories can be scored by the Agent-to-Agent Monitor
   graph monitor without modifying that defense's code.
 - `run_kaggle.py` — the real driver script: loads the target model, runs the DeCompBench attack
   across all (strategy, condition) combinations via Inspect `eval()`, and writes `.eval` logs

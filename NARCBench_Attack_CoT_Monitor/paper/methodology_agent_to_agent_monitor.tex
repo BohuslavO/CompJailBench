@@ -1,15 +1,12 @@
-\subsection{G-Safeguard-Inspired Compositional Graph Monitor}
-\label{sec:gsafeguard-inspired}
+\subsection{Agent-to-Agent Monitor}
+\label{sec:agent-to-agent-monitor}
 
-We implement a detection-only graph-monitor baseline inspired by
-G-Safeguard~\citep{wang2025gsafeguard} and by the preliminary GraphMonitor implementation in team commit
-\texttt{c5eea2a}. We distinguish this baseline from the published
-G-Safeguard system: our implementation does not train an edge-featured graph
-neural network, identify compromised agents through node classification, or
-intervene in a live execution by pruning communication edges. It instead asks
-whether the observable public communication graph and final aggregation exhibit
-compositional leakage, where individually plausible outputs collectively advance
-a harmful, deceptive, or covert objective.
+We implement the project-defined Agent-to-Agent Monitor as a post-hoc,
+detection-only baseline. It combines structural summaries of the observable
+agent-interaction graph with an LLM judge for compositional leakage, asking
+whether individually plausible outputs collectively advance a harmful,
+deceptive, or covert objective. It does not train a classifier or intervene in
+the live multi-agent execution.
 
 For each saved trajectory, we construct a label-free public graph containing one
 node per agent. Each node stores the agent's latest public message and the number

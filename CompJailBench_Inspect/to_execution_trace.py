@@ -1,6 +1,6 @@
 """
 Converts MY DeCompBench trajectory into Atharv's execution_trace shape
-(compjailbench/monitors.py -- AgentHarmMonitor, GraphMonitor), so I can
+(compjailbench/monitors.py -- AgentHarmMonitor, AgentToAgentMonitor), so I can
 test my attack against his defense specifically (team agreement: each
 person tests their own attack against all 4 defenses -- this is the
 opposite direction from trajectory_converters.py's from_execution_trace,
@@ -8,7 +8,7 @@ which converts HIS attack's output, not mine).
 
 Edge structure choice, worth being explicit about: turns are linked as
 a sequential chain (turn_1 -> turn_2 -> turn_3...), NOT a star from a
-synthetic "orchestrator" node. GraphMonitor's structural heuristic flags
+synthetic "orchestrator" node. AgentToAgentMonitor's structural heuristic flags
 fan-out > 4 as suspicious -- a star topology from one central dispatcher
 node would trip that on almost every DeCompBench task (most have more
 than 4 turns), which would be an artifact of THIS converter's

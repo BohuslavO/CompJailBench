@@ -13,7 +13,7 @@ from tabulate import tabulate
 import config
 from benchmark import (
     compjailbench_cot_monitor,
-    compjailbench_g_safeguard,
+    compjailbench_agent_to_agent_monitor,
     compjailbench_none,
     compjailbench_probing,
     compjailbench_sentinel_agent,
@@ -21,7 +21,7 @@ from benchmark import (
 
 TASK_REGISTRY = {
     "none": compjailbench_none,
-    "g_safeguard": compjailbench_g_safeguard,
+    "agent_to_agent_monitor": compjailbench_agent_to_agent_monitor,
     "sentinel_agent": compjailbench_sentinel_agent,
     "cot_monitor": compjailbench_cot_monitor,
     "probing": compjailbench_probing,

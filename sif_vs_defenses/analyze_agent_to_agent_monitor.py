@@ -1,13 +1,13 @@
 """
-Turn a sif_vs_gsafeguard .eval log into the SIF-vs-G-Safeguard report.
+Turn a sif_vs_agent_to_agent_monitor .eval log into the SIF-vs-Agent-to-Agent Monitor report.
 
-    python experiments/analyze_gsafeguard.py                 # newest gsafeguard log
-    python experiments/analyze_gsafeguard.py path/to.eval
+    python sif_vs_defenses/analyze_agent_to_agent_monitor.py                 # newest Agent-to-Agent Monitor log
+    python sif_vs_defenses/analyze_agent_to_agent_monitor.py path/to.eval
 
 Prints, with denominators (a rate over a handful of samples is not a result):
   - arm sizes and plan-generation failures
   - plan-size distribution per arm  (the confound)
-  - G-Safeguard TOPOLOGY layer: structural recall/FPR, collision, and the AUROC
+  - Agent-to-Agent Monitor TOPOLOGY layer: structural recall/FPR, collision, and the AUROC
     attribution full vs size-only vs shape -- how much of any separation is just
     plan size vs real structure
   - leakage judge (LLM-as-judge, reported separately): recall/FPR/precision,
@@ -23,7 +23,7 @@ from statistics import mean, pstdev
 from inspect_ai.log import read_eval_log
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import sif_vs_gsafeguard as G  # noqa: E402  -- FEATURE_NAMES, _auroc, _collision_rate
+import sif_vs_agent_to_agent_monitor as G  # noqa: E402  -- FEATURE_NAMES, _auroc, _collision_rate
 
 
 def _sub(sample, needle):
@@ -54,10 +54,10 @@ def h(title):
 
 def main(path=None):
     if path is None:
-        logs = sorted(glob.glob(str(Path(G.ROOT) / "logs" / "*sif-vs-gsafeguard*.eval")),
+        logs = sorted(glob.glob(str(Path(G.ROOT) / "logs" / "*sif-vs-agent-to-agent-monitor*.eval")),
                       key=os.path.getmtime)
         if not logs:
-            print("no sif-vs-gsafeguard logs in logs/")
+            print("no sif-vs-agent-to-agent-monitor logs in logs/")
             return
         path = logs[-1]
 
@@ -113,7 +113,7 @@ def main(path=None):
         else:
             print(f"  {label:<7} no non-degraded samples")
 
-    h("G-Safeguard TOPOLOGY layer")
+    h("Agent-to-Agent Monitor TOPOLOGY layer")
     a_fire = sum(_fired(_sub(s, "topology")) for s in attack)
     b_fire = sum(_fired(_sub(s, "topology")) for s in benign)
     print(f"structural recall (attack):   {rate(a_fire, len(attack))}")

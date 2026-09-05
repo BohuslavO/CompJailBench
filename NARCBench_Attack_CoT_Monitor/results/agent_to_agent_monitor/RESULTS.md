@@ -1,4 +1,4 @@
-# NARCBench × G-Safeguard-inspired graph monitor
+# NARCBench × Agent-to-Agent Monitor
 
 ## Result status
 
@@ -62,11 +62,10 @@ Development smoke tests are not included in these final-run totals.
 
 ## Interpretation and limitations
 
-This result supports only a **G-Safeguard-inspired compositional graph
-monitor**. It does not evaluate the published trained GNN or topological
-intervention. Because the topology is fixed and fully connected in both matched
-conditions, discrimination primarily comes from public task/output semantics;
-graph connectivity alone cannot distinguish attack from control.
+This result evaluates the project-defined **Agent-to-Agent Monitor**. Because
+the topology is fixed and fully connected in both matched conditions,
+discrimination primarily comes from public task/output semantics; graph
+connectivity alone cannot distinguish attack from control.
 
 The same Bedrock model family generated and monitored the trajectories. A
 temperature-zero development smoke score for `leg_02_collusion` differed from

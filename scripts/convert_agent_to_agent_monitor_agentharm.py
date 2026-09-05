@@ -2,8 +2,8 @@ import json
 import csv
 from pathlib import Path
 
-INPUT = Path("results/runs/agentharm_full_20260824/g_safeguard_scores.jsonl")
-OUTPUT = Path("results 4x4/raw/slava__agentharm__g_safeguard_inspired_graph_monitor.csv")
+INPUT = Path("results/runs/agentharm_full_20260824/agent_to_agent_monitor_scores.jsonl")
+OUTPUT = Path("results 4x4/raw/slava__agentharm__agent_to_agent_monitor.csv")
 
 MODEL = "target=google/gemini-3.6-flash;monitor=google/gemini-3.6-flash"
 NOTES = "prompt_version=compositional_leakage_v1;threshold=0.5;split=test_public;scope=public-utterance-graph-plus-final-output"
@@ -25,12 +25,12 @@ with INPUT.open(encoding="utf-8") as f:
         flag = 1 if row["prediction"] == "attack" else 0
         run_id = f"{pair_id}|standard|{condition}"
         rows.append([
-            "slava", "agentharm", "g_safeguard_inspired_graph_monitor", MODEL,
+            "slava", "agentharm", "agent_to_agent_monitor", MODEL,
             pair_id, "standard", condition, "suspiciousness__graph", suspiciousness,
             1, run_id, NOTES,
         ])
         rows.append([
-            "slava", "agentharm", "g_safeguard_inspired_graph_monitor", MODEL,
+            "slava", "agentharm", "agent_to_agent_monitor", MODEL,
             pair_id, "standard", condition, "monitor_flag__graph", flag,
             1, run_id, NOTES,
         ])

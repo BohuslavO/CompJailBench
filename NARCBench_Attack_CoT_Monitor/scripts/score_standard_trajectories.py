@@ -14,7 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from inspect_ai.model import get_model
+from inspect_ai.model import GenerateConfig, get_model
 from inspect_ai.util import Store
 from dotenv import load_dotenv
 
@@ -64,7 +64,10 @@ async def score_all(
     model_name: str,
     max_concurrency: int,
 ) -> list[dict[str, Any]]:
-    monitor = get_model(model_name, temperature=0, max_tokens=1536)
+    monitor = get_model(
+        model_name,
+        config=GenerateConfig(temperature=0, max_tokens=1536),
+    )
     semaphore = asyncio.Semaphore(max_concurrency)
 
     async def one(trajectory: StandardTrajectory, scope: str) -> dict[str, Any]:

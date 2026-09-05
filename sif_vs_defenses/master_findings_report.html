@@ -238,7 +238,7 @@
     <a class="navlink" href="#sentinel"><span class="dot" style="background:var(--fail)"></span>SentinelAgent</a>
     <a class="navlink" href="#cot"><span class="dot" style="background:var(--void)"></span>CoT Monitor</a>
     <a class="navlink" href="#probe"><span class="dot" style="background:var(--accent)"></span>Activation Probe</a>
-    <a class="navlink" href="#gsafeguard"><span class="dot" style="background:var(--void)"></span>G-Safeguard</a>
+    <a class="navlink" href="#agent_to_agent_monitor"><span class="dot" style="background:var(--void)"></span>Agent-to-Agent Monitor</a>
   </div>
 </nav>
 
@@ -296,9 +296,9 @@
             <td>no single agent's activations look deceptive</td>
           </tr>
           <tr>
-            <td><a href="#gsafeguard">G-Safeguard</a></td>
+            <td><a href="#agent_to_agent_monitor">Agent-to-Agent Monitor</a></td>
             <td>graph topology</td>
-            <td class="num">(trained GNN,<br>topology signal)</td>
+            <td class="num">structural checks<br>+ LLM judge</td>
             <td class="num bad">shape AUROC &asymp;0.50</td>
             <td>apparent signal is pure plan-size confound</td>
           </tr>
@@ -306,7 +306,7 @@
       </table>
     </div>
     <blockquote>
-      <p><strong>The through-line.</strong> A defense that works on collusion — where a bad agent behaves badly and leaves a local trace — fails on SIF, where every agent behaves well and the harm is only in the arrangement. SentinelAgent's compositional tier exists but is drowned by a hyperactive local layer; the CoT monitor has the evidence but asks the wrong question; the probe has the right question but no per-agent signal to read; G-Safeguard's topology sees plan size, not structure. Four modalities, one blind spot: <em>composition itself.</em></p>
+      <p><strong>The through-line.</strong> A defense that works on collusion — where a bad agent behaves badly and leaves a local trace — fails on SIF, where every agent behaves well and the harm is only in the arrangement. SentinelAgent's compositional tier exists but is drowned by a hyperactive local layer; the CoT monitor has the evidence but asks the wrong question; the probe has the right question but no per-agent signal to read; Agent-to-Agent Monitor's topology sees plan size, not structure. Four modalities, one blind spot: <em>composition itself.</em></p>
     </blockquote>
   </section>
 
@@ -425,16 +425,16 @@
 
   <hr>
 
-  <!-- ============================ G-SAFEGUARD ============================ -->
-  <section id="gsafeguard">
+  <!-- ============================ Agent-to-Agent Monitor ============================ -->
+  <section id="agent_to_agent_monitor">
     <div class="defhead">
-      <p class="eyebrow" style="color:var(--void)">Defense 4 &middot; topology-guided detector &middot; Wang et al. 2025</p>
+      <p class="eyebrow" style="color:var(--void)">Defense 4 &middot; project-defined graph-and-judge detector</p>
       <div class="row">
-        <h2>G-Safeguard</h2>
+        <h2>Agent-to-Agent Monitor</h2>
         <span class="verdict void">Plan-size confound</span>
       </div>
     </div>
-    <p>Builds an utterance graph over the agent communication and asks whether the interaction <em>structure</em> is anomalous, then intervenes on the offending node. Tested as two layers reported separately: the topology detector proper (structural features + the shipped heuristic, plus a cross-validated classifier as the GNN's stand-in) and, for contrast, the compositional-leakage LLM judge shipped alongside it. Three live rounds across two orchestrator families and two judge families.</p>
+    <p>Builds an utterance graph over agent communication and combines structural checks with an LLM judge for compositional leakage. The two components are reported separately so topology-only behavior is not confused with semantic judgment. Three live rounds cover two orchestrator families and two judge families.</p>
 
     <div class="scroller">
       <table>
@@ -454,8 +454,8 @@
       <li><strong>The real signal is semantic tool-composition, not graph shape.</strong> An egress tool (<code>http.post</code>/<code>webhook</code>) appears in ~86% of attack runs vs ~30% of benign &mdash; harm as bulk-retrieve + join + external egress, which a topology reader cannot see.</li>
       <li><strong>The leakage judge is uncalibrated.</strong> Recall 1.0 but <strong>FPR 0.909</strong> &mdash; identical across Llama and Mistral judges, so it's the shipped prompt, not the model. Robust across both orchestrator and both judge families.</li>
     </ul>
-    <div class="callout"><p><strong>Caveat.</strong> A proxy for the trained GNN framework: the structural heuristic + collision/AUROC analysis stand in for the topology signal, and intervention is a no-op for SIF (there is no compromised node to sever). The strong orchestrator (Sonnet) is unavailable on this account; gpt-oss-120b was flaky (500s).</p></div>
-    <p class="src">Detail: experiments/sif_vs_gsafeguard.py &middot; experiments/analyze_gsafeguard.py &middot; logs/gsafeguard_&#123;haiku,mistral,judgeswap&#125;/</p>
+    <div class="callout"><p><strong>Caveat.</strong> The structural heuristic and collision/AUROC diagnostics are post-hoc and detection-only; no live intervention is evaluated. The strong orchestrator (Sonnet) is unavailable on this account; gpt-oss-120b was flaky (500s).</p></div>
+    <p class="src">Detail: sif_vs_defenses/sif_vs_agent_to_agent_monitor.py &middot; sif_vs_defenses/analyze_agent_to_agent_monitor.py &middot; logs/agent_to_agent_monitor_&#123;haiku,mistral,judgeswap&#125;/</p>
   </section>
 
   <hr>

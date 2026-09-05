@@ -3,7 +3,7 @@
 Benchmark for testing whether harmful intent can "leak" through a
 planner → workers → aggregator multi-agent pipeline, even when no single
 agent's output looks harmful in isolation. Scored two ways: AgentHarm-style
-final-output grading, and a G-SafeGuard-inspired graph/structure monitor.
+final-output grading, and the Agent-to-Agent Monitor.
 
 ## Status
 
@@ -98,7 +98,7 @@ Output: `results/summary.csv` (per-sample scores) and `results/traces/`
 (full execution traces per sample, including every agent's input/output
 and timing). Printed summary gives three headline numbers: baseline
 harmful-completion rate, multi-agent harmful-completion rate, and
-GraphMonitor's catch rate on the multi-agent successes.
+AgentToAgentMonitor's catch rate on the multi-agent successes.
 
 ## Architecture
 
@@ -112,7 +112,7 @@ GraphMonitor's catch rate on the multi-agent successes.
   decomposition. The comparison point for whether decomposition changes
   anything.
 - **`monitors.py`** — `AgentHarmMonitor` (LLM-judge grading of final
-  output only — completed/refused), `GraphMonitor` (structural heuristics
+  output only — completed/refused), `AgentToAgentMonitor` (structural heuristics
   + LLM-judge "compositional leakage" check comparing individual worker
   outputs against the aggregated final output).
 - **`client.py`** — `get_client()` factory returns `MockLLMClient`,
@@ -123,41 +123,23 @@ GraphMonitor's catch rate on the multi-agent successes.
 - **`datasets/agentharm_loader.py`** — pulls real samples from the public
   AgentHarm HuggingFace dataset and converts to our sample schema.
 
-## G-SafeGuard status — IMPORTANT, read before citing anything as "G-SafeGuard"
+## Agent-to-Agent Monitor
 
-We checked the official G-SafeGuard repo (`github.com/wslong20/G-safeguard`,
-ACL 2025). Two things worth knowing before this goes near a mentor or a paper:
+`monitors.AgentToAgentMonitor` implements the project-defined Agent-to-Agent Monitor
+described in the paper. It is a post-hoc, detection-only baseline with two
+components: structural checks over the observable agent-interaction graph and
+an LLM judge that compares individual outputs with the final aggregation for
+compositional leakage. It does not train a classifier or modify a live run.
 
-1. **No pretrained checkpoint exists.** Every attack type (memory attack,
-   prompt injection, tool attack) requires generating a synthetic multi-agent
-   conversation dataset, building a GNN training set from it, and training
-   the GNN from scratch (their scripts default to 50 epochs). There is
-   currently no "just run inference" path.
-2. **Threat-model mismatch.** G-SafeGuard's GNN is trained to catch agents
-   whose outputs look anomalous because of prompt injection / memory
-   poisoning / tool attacks. CompJailBench's threat model is different:
-   every agent behaves exactly as instructed — nothing looks anomalous —
-   and the harm only exists in the aggregated composition. Their GNN has
-   never seen this pattern, and training it on our own decomposition-attack
-   conversations would effectively be building a new detector in their
-   architecture's shape, not "running G-SafeGuard."
-
-Given that, `monitors.GraphMonitor` in this repo is explicitly labeled
-"G-SafeGuard-inspired" (structural heuristics + an LLM-judge compositional
-leakage check) — it is NOT the published G-SafeGuard system, and should never
-be reported to a mentor/reviewer as such. If a real G-SafeGuard baseline is
-required, that's a separate, multi-day project: writing a conversation
-generator for the decomposition attack, adapting their `gen_training_dataset.py`
-pipeline, training, then evaluating. Flag this scope explicitly rather than
-letting it get conflated with the AgentHarm integration above, which IS the
-real thing.
+This name refers only to the CompJailBench baseline. Result files use the
+canonical identifier `agent_to_agent_monitor`, and the evidence scope and model
+configuration remain recorded in each result file's `notes` field.
 
 ## Known open items
 
-- `GraphMonitor`'s structural heuristics (fan-out threshold, cycle
-  detection) and the compositional-leakage LLM-judge prompt are first-pass
-  implementations, not validated against the actual G-SafeGuard paper's
-  methodology yet.
+- `AgentToAgentMonitor`'s structural heuristics (fan-out threshold and cycle
+  detection) and compositional-leakage prompt are fixed project baselines; they
+  were not systematically retuned for every attack family.
 - `AgentHarmMonitor` uses an LLM judge as a stand-in for AgentHarm's real
   per-task programmatic graders (which need tool-call logs AgentHarm's own
   harness produces) — good for a fast comparative read, not a drop-in

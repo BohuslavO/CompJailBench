@@ -50,13 +50,13 @@ accidentally split into several rows or columns:
 | role | canonical keys |
 |---|---|
 | attacks | `agentharm`, `semantic_intent_fragmentation`, `narcbench_collusion`, `decompbench_routing` |
-| defenses | `g_safeguard_inspired_graph_monitor`, `sentinel_agents_message_only`, `cot_observable_reasoning_monitor`, `narcbench_probing` |
+| defenses | `agent_to_agent_monitor`, `sentinel_agents_message_only`, `cot_observable_reasoning_monitor`, `narcbench_probing` |
 
 Configuration-specific qualifications belong in `strategy` and `notes`. The
 current NARCBench cells must retain the following limitations:
 
-- `g_safeguard_inspired_graph_monitor` is an inspired detection-only baseline,
-  not the published trained GNN or intervention system.
+- `agent_to_agent_monitor` is the project's custom detection-only baseline,
+  combining graph-structure summaries with an LLM compositional-leakage judge.
 - `sentinel_agents_message_only` uses public messages, has no tool calls, and is
   explicitly degraded.
 - `cot_observable_reasoning_monitor` currently uses `narcbench_v1`; a
@@ -65,3 +65,19 @@ current NARCBench cells must retain the following limitations:
   Bedrock text trajectories do not contain compatible hidden activations. Its
   primary `peak_suspicion` metric covers all recorded turns; public-only and
   group-level probe metrics are reported separately.
+
+The AgentHarm cells must retain these limitations:
+
+- Text defenses use 24 matched pairs after pair `10-4` was excluded from both
+  arms following a persistent benign-generation failure.
+- The attack uses official behavior prompts in a custom Planner -> Workers ->
+  Aggregator pipeline, without the official AgentHarm tool environment or
+  programmatic task graders.
+- Sentinel is the public message-only degraded adaptation, and the CoT monitor
+  uses the attack-agnostic `general_v2` prompt.
+- Activation probing is a separate Qwen3-32B-AWQ generation with 25 pairs;
+  text-defense cells use Bedrock GPT-OSS-120B with 24 pairs.
+
+CoT prompt profiles are cell-specific and recorded in each CSV's `notes`:
+AgentHarm and DeCompBench use `general_v2`; the current NARCBench cell retains
+the provisional `narcbench_v1` result pending rescore.

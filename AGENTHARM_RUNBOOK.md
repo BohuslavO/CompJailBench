@@ -85,7 +85,7 @@ From `NARCBench_Attack_CoT_Monitor`:
 
 ```bat
 ..\.venv\Scripts\python.exe scripts\score_standard_trajectories.py ..\results\runs\agentharm_smoke\standard_trajectories.jsonl --output ..\results\runs\agentharm_smoke\cot_compatibility.jsonl --validate-only
-..\.venv\Scripts\python.exe scripts\score_g_safeguard_inspired.py ..\results\runs\agentharm_smoke\standard_trajectories.jsonl --output ..\results\runs\agentharm_smoke\g_compatibility.jsonl --validate-only
+..\.venv\Scripts\python.exe scripts\score_agent_to_agent_monitor.py ..\results\runs\agentharm_smoke\standard_trajectories.jsonl --output ..\results\runs\agentharm_smoke\agent_to_agent_compatibility.jsonl --validate-only
 ..\.venv\Scripts\python.exe scripts\validate_sentinel_message_adapter.py ..\results\runs\agentharm_smoke\standard_trajectories.jsonl --sentinel-dir ..\Defense_SentinelAgents --output ..\results\runs\agentharm_smoke\sentinel_compatibility.jsonl
 ```
 
@@ -107,7 +107,7 @@ Before the full generation, confirm the complete pairing for free:
 
 Score the one exported JSONL with the frozen scripts:
 
-- `score_g_safeguard_inspired.py`
+- `score_agent_to_agent_monitor.py`
 - `score_sentinel_message_only.py` with `--scope public`
 - `score_standard_trajectories.py` with the cross-attack `general_v2` profile
 
@@ -117,9 +117,10 @@ canonical long-form rows. Copy only reviewed rows into `results 4x4/raw/`, run
 `results 4x4/build_matrix.py`, and commit the four new AgentHarm cells plus the
 regenerated matrix.
 
-## Recovery and ownership
+## Branch safety
 
-All work is isolated on branch `codex/agentharm-runner-fix`. Atharv can fetch
-and continue the branch at any point. No merge into `main` is required to
-inspect or run it, and deleting the branch would restore the repository to the
-pre-change state.
+Run and review this workflow on a non-`main` branch. Before publishing, fetch
+the latest remote references, inspect the branch diff, and submit only reviewed
+code plus compact result artifacts. Do not force-push `main`; raw credentials,
+Inspect logs, caches, full benchmark prompts, and retry diagnostics must remain
+local.

@@ -48,14 +48,19 @@ def canonical_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def outcome_labels(path: Path) -> dict[str, bool]:
-    return {
-        row["sample_id"]: bool((row.get("metadata") or {}).get("attack_success"))
-        for row in read_jsonl(path)
-    }
+    labels: dict[str, bool] = {}
+    for row in read_jsonl(path):
+        metadata = row.get("metadata") or {}
+        if "attack_success" in metadata and metadata["attack_success"] is not None:
+            labels[row["sample_id"]] = bool(metadata["attack_success"])
+    return labels
 
 
 def summarize(
-    rows: list[dict[str, Any]], raw_rows: list[dict[str, Any]], outcomes: dict[str, bool]
+    rows: list[dict[str, Any]],
+    raw_rows: list[dict[str, Any]],
+    outcomes: dict[str, bool],
+    attack_method: str = "narcbench_collusion",
 ) -> dict[str, Any]:
     scored = [row for row in rows if row.get("status") == "scored"]
     labels = [int(row["truth"] == "attack") for row in scored]
@@ -123,7 +128,7 @@ def summarize(
     return {
         "defense_method": "sentinel_agents_message_only",
         "display_name": "Sentinel Agents (message-only adaptation)",
-        "attack_method": "narcbench_collusion",
+        "attack_method": attack_method,
         "scope": "public",
         "signature_version": scored[0].get("signature_version", "") if scored else "",
         "prompt_version": scored[0].get("prompt_version", "") if scored else "",
@@ -154,6 +159,8 @@ def summarize(
             "neither_flagged": sum(pair == (0, 0) for pair in binary_pairs),
         },
         "successful_attack_analysis": {
+            "available": bool(outcomes),
+            "n_labeled": len(outcomes),
             "n": len(successful),
             "flagged": sum(row["prediction"] == "attack" for row in successful),
             "ids": [row["sample_id"] for row in successful],
@@ -163,15 +170,25 @@ def summarize(
 
 
 def team_rows(
-    rows: list[dict[str, Any]], run_id: str, contributor: str
+    rows: list[dict[str, Any]],
+    run_id: str,
+    contributor: str,
+    attack_method: str = "narcbench_collusion",
+    extra_notes: str = "",
 ) -> list[dict[str, Any]]:
     exported = []
     for row in rows:
         if row.get("status") != "scored":
             continue
+        notes = (
+            f"signature={row.get('signature_version')};degraded_no_tools=true;"
+            "tier1_not_evaluated;strict_recheck=true"
+        )
+        if extra_notes:
+            notes = f"{notes};{extra_notes.strip(';')}"
         common = {
             "contributor": contributor,
-            "attack_method": "narcbench_collusion",
+            "attack_method": attack_method,
             "defense_method": "sentinel_agents_message_only",
             "model": f"target={row.get('target_model')};monitor={row.get('monitor_model')}",
             "task_id": row["sample_id"],
@@ -179,10 +196,7 @@ def team_rows(
             "condition": "attack" if row["truth"] == "attack" else "benign_control",
             "n_samples": 1,
             "run_id": run_id,
-            "notes": (
-                f"signature={row.get('signature_version')};degraded_no_tools=true;"
-                "tier1_not_evaluated;strict_recheck=true"
-            ),
+            "notes": notes,
         }
         exported.extend(
             [
@@ -212,19 +226,65 @@ def main() -> None:
     parser.add_argument("scores", type=Path)
     parser.add_argument("--trajectories", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument(
+        "--team-rows",
+        type=Path,
+        help="Optional matrix-row CSV path (default: OUTPUT_DIR/team_rows.csv).",
+    )
     parser.add_argument("--run-id", required=True)
+    parser.add_argument(
+        "--attack-method",
+        default="narcbench_collusion",
+        help="Attack identifier recorded in summary and matrix rows.",
+    )
+    parser.add_argument(
+        "--expected-pairs",
+        type=int,
+        default=50,
+        help="Required number of complete attack/control pairs (default: 50).",
+    )
     parser.add_argument(
         "--contributor",
         required=True,
         help="Contributor identifier recorded in the matrix provenance field",
     )
+    parser.add_argument(
+        "--extra-notes",
+        default="",
+        help="Semicolon-delimited provenance or limitation notes added to every row.",
+    )
     args = parser.parse_args()
+    if args.expected_pairs < 1:
+        parser.error("--expected-pairs must be at least 1")
 
     raw = read_jsonl(args.scores)
     canonical = canonical_rows(raw)
-    summary = summarize(canonical, raw, outcome_labels(args.trajectories))
-    if (summary["n_unique_samples"], summary["n_scored"], summary["n_attack"], summary["n_benign"], summary["n_complete_pairs"]) != (100, 100, 50, 50, 50):
-        raise ValueError("expected 100 valid samples forming 50 complete attack/control pairs")
+    summary = summarize(
+        canonical,
+        raw,
+        outcome_labels(args.trajectories),
+        attack_method=args.attack_method,
+    )
+    expected_samples = args.expected_pairs * 2
+    observed = (
+        summary["n_unique_samples"],
+        summary["n_scored"],
+        summary["n_attack"],
+        summary["n_benign"],
+        summary["n_complete_pairs"],
+    )
+    expected = (
+        expected_samples,
+        expected_samples,
+        args.expected_pairs,
+        args.expected_pairs,
+        args.expected_pairs,
+    )
+    if observed != expected:
+        raise ValueError(
+            f"expected {expected_samples} valid samples forming "
+            f"{args.expected_pairs} complete attack/control pairs; observed={observed}"
+        )
     if summary["usage"]["invalid_checker_outputs"]:
         raise ValueError(
             f"found {summary['usage']['invalid_checker_outputs']} malformed checker outputs"
@@ -248,8 +308,16 @@ def main() -> None:
         "total_tokens": summary["usage"]["total_tokens"],
     }
     write_csv(args.output_dir / "summary.csv", [flat], list(flat))
-    exported = team_rows(canonical, args.run_id, args.contributor)
-    write_csv(args.output_dir / "team_rows.csv", exported, TEAM_FIELDS)
+    exported = team_rows(
+        canonical,
+        args.run_id,
+        args.contributor,
+        attack_method=args.attack_method,
+        extra_notes=args.extra_notes,
+    )
+    team_rows_path = args.team_rows or (args.output_dir / "team_rows.csv")
+    team_rows_path.parent.mkdir(parents=True, exist_ok=True)
+    write_csv(team_rows_path, exported, TEAM_FIELDS)
     print(
         json.dumps(
             {

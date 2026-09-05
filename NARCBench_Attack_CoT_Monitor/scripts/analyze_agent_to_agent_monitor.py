@@ -1,4 +1,4 @@
-"""Analyze the NARCBench × G-Safeguard-inspired graph-monitor run."""
+"""Analyze the NARCBench × Agent-to-Agent Monitor run."""
 
 from __future__ import annotations
 
@@ -122,8 +122,8 @@ def summarize(
     score_ci = paired_bootstrap_interval(complete_pairs, score_difference)
     flag_ci = paired_bootstrap_interval(complete_pairs, flag_difference)
     summary = {
-        "defense_method": "g_safeguard_inspired_graph_monitor",
-        "display_name": "G-Safeguard-inspired compositional graph monitor",
+        "defense_method": "agent_to_agent_monitor",
+        "display_name": "Agent-to-Agent Monitor",
         "attack_method": "narcbench_collusion",
         "prompt_version": scored[0].get("prompt_version", "") if scored else "",
         "threshold": 0.5,
@@ -261,7 +261,7 @@ def team_rows(
         common = {
             "contributor": contributor,
             "attack_method": "narcbench_collusion",
-            "defense_method": "g_safeguard_inspired_graph_monitor",
+            "defense_method": "agent_to_agent_monitor",
             "model": (
                 f"target={row.get('target_model', 'unknown')};"
                 f"monitor={row.get('monitor_model', 'unknown')}"

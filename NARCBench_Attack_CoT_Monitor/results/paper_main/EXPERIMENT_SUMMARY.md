@@ -3,8 +3,8 @@
 ## Status
 
 The NARCBench attack has complete evaluations for the observable-rationale
-monitor, G-Safeguard-inspired graph monitor, Sentinel Agents message-only
-adaptation, and NARCBench activation-probing defense.
+monitor, Agent-to-Agent Monitor, Sentinel Agents message-only adaptation, and
+NARCBench activation-probing defense.
 
 - 50 matched NARCBench-Core scenarios
 - 100 trajectories: 50 collusion and 50 honest control
@@ -91,10 +91,10 @@ credentials.
 
 ## Additional completed attack × defense cell
 
-The same 100 saved trajectories were scored by a **G-Safeguard-inspired
-compositional graph monitor** without rerunning the attacker. This is a
-detection-only adaptation of the `GraphMonitor` in commit `c5eea2a`; it
-is not the published trained GNN and performs no topological intervention.
+The same 100 saved trajectories were scored by the project-defined
+**Agent-to-Agent Monitor** without rerunning the attacker. It combines
+structural graph summaries with an LLM compositional-leakage judge and performs
+post-hoc detection only.
 
 - Condition-label AUROC: 0.714.
 - Fixed-threshold recall: 3/50 attack attempts (0.060).
@@ -105,10 +105,10 @@ is not the published trained GNN and performs no topological intervention.
   including one truncated response that was retried.
 
 The matrix-ready rows are in
-`results/g_safeguard_inspired/team_rows.csv`; paper-ready details are in
-`results/g_safeguard_inspired/RESULTS.md` and
-`paper/methodology_g_safeguard_inspired.tex`. The cell must be named
-**G-Safeguard-inspired graph monitor**, not G-Safeguard.
+`results/agent_to_agent_monitor/team_rows.csv`; paper-ready details are in
+`results/agent_to_agent_monitor/RESULTS.md` and
+`paper/methodology_agent_to_agent_monitor.tex`. The canonical paper and
+repository name is **Agent-to-Agent Monitor**.
 
 ## Additional completed Sentinel Agents cell
 

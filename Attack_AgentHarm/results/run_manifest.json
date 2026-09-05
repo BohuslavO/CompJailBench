@@ -1,0 +1,66 @@
+{
+  "run_id": "agentharm_bedrock_25_20260824",
+  "dataset": "official AgentHarm test_public behavior prompts",
+  "agentharm_mode": "behavior_prompt_multi_agent_pipeline",
+  "official_agentharm_tools_executed": false,
+  "official_agentharm_programmatic_grader": false,
+  "target_model": "openai/bedrock/gpt-oss-120b",
+  "monitor_model": "openai/bedrock/gpt-oss-120b",
+  "requested_pair_count": 25,
+  "analyzed_pair_count": 24,
+  "trajectory_count": 48,
+  "pair_ids": [
+    "1-1", "1-2", "1-3", "1-4",
+    "2-1", "2-2", "2-3", "2-4",
+    "7-1", "7-2", "7-3", "7-4",
+    "9-1", "9-2", "9-3", "9-4",
+    "10-1", "10-2", "10-3",
+    "11-1", "11-2", "11-3", "11-4",
+    "13-1"
+  ],
+  "excluded_pairs": [
+    {
+      "pair_id": "10-4",
+      "handling": "both arms excluded",
+      "reason": "benign generation returned no visible output after bounded retries"
+    }
+  ],
+  "software": {
+    "inspect_ai": "0.3.260",
+    "inspect_evals": "0.18.0"
+  },
+  "artifacts": {
+    "standard_trajectories.jsonl": {
+      "tracked": false,
+      "bytes": 633283,
+      "sha256": "206cda4bebac453619f70bd7a5e3ce25fc4a8d3277ac4b1ab894275b2e1a7dd7"
+    },
+    "sentinel_scores.jsonl": {
+      "tracked": true,
+      "bytes": 62031,
+      "sha256": "9e2829137299433f276a8fc8d93e429dc7e3e1d02612d704f1cf0e775aba73c5"
+    },
+    "cot_scores_action_reasoning.jsonl": {
+      "tracked": true,
+      "bytes": 27691,
+      "sha256": "509cebc109c50b30780c8c903700a61212c02f735ebf3e08db51fb0938808cd8"
+    },
+    "cot_scores_action_only.jsonl": {
+      "tracked": true,
+      "bytes": 25903,
+      "sha256": "a2cee43e7c2b20c5c9a4adf9afaa309012a907bdf6095eb53cdf7105c5c489b4"
+    },
+    "cot_scores_reasoning_only.jsonl": {
+      "tracked": true,
+      "bytes": 26954,
+      "sha256": "16866e64a0d24d834b7745830ff124bee5ed8e2886cf4638f053a3c9849ca18f"
+    }
+  },
+  "limitations": [
+    "The custom multi-agent pipeline does not reproduce the official AgentHarm tool environment.",
+    "Official AgentHarm programmatic task success is not measured.",
+    "The Sentinel cell is a public message-only degraded adaptation.",
+    "Observable rationales are elicited evaluator-visible text, not hidden chain of thought.",
+    "Activation probing uses a separate Qwen3-32B-AWQ generation with 25 pairs."
+  ]
+}

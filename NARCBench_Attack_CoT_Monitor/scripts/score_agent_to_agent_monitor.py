@@ -1,4 +1,4 @@
-"""Validate or score saved trajectories with the G-Safeguard-inspired monitor."""
+"""Validate or score saved trajectories with the Agent-to-Agent Monitor."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 from inspect_ai.model import GenerateConfig, get_model
 from inspect_ai.util import Store
 
-from src.g_safeguard_inspired import (
+from src.agent_to_agent_monitor import (
     DEFENSE_METHOD,
     PROMPT_VERSION,
     build_public_graph,

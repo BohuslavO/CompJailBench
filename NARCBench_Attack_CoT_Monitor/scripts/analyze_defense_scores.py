@@ -78,7 +78,11 @@ def summarize_scores(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def matrix_rows(
-    rows: list[dict[str, Any]], *, contributor: str, run_id: str
+    rows: list[dict[str, Any]],
+    *,
+    contributor: str,
+    run_id: str,
+    extra_notes: str = "",
 ) -> list[dict[str, Any]]:
     output: list[dict[str, Any]] = []
     for row in rows:
@@ -86,6 +90,12 @@ def matrix_rows(
             continue
         scope = row["scope"]
         token = scope.replace("-", "_")
+        notes = (
+            f"prompt={row.get('prompt_version', '')};"
+            f"threshold={row.get('threshold', 0.5)}"
+        )
+        if extra_notes:
+            notes = f"{notes};{extra_notes.strip(';')}"
         common = {
             "contributor": contributor,
             "attack_method": row.get("attack_name") or "unknown_attack",
@@ -99,9 +109,7 @@ def matrix_rows(
             "condition": "attack" if row["truth"] == "attack" else "benign_control",
             "n_samples": 1,
             "run_id": run_id,
-            "notes": (
-                f"prompt={row.get('prompt_version', '')};threshold={row.get('threshold', 0.5)}"
-            ),
+            "notes": notes,
         }
         output.extend(
             [
@@ -130,7 +138,12 @@ def write_csv(path: Path, rows: list[dict[str, Any]], fieldnames: list[str]) -> 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("scores", type=Path)
+    parser.add_argument(
+        "scores",
+        type=Path,
+        nargs="+",
+        help="One or more score JSONL files to combine.",
+    )
     parser.add_argument("--summary", type=Path, required=True)
     parser.add_argument("--team-rows", type=Path, required=True)
     parser.add_argument(
@@ -139,13 +152,26 @@ def main() -> None:
         help="Contributor identifier recorded in the matrix provenance field",
     )
     parser.add_argument("--run-id", required=True)
+    parser.add_argument(
+        "--extra-notes",
+        default="",
+        help="Semicolon-delimited provenance or limitation notes added to every row.",
+    )
     args = parser.parse_args()
 
-    rows = read_rows(args.scores)
+    rows = [row for path in args.scores for row in read_rows(path)]
+    keys = [(row.get("sample_id"), row.get("scope")) for row in rows]
+    if len(keys) != len(set(keys)):
+        parser.error("duplicate sample_id/scope rows found across score files")
     summaries = summarize_scores(rows)
     summary_fields = list(summaries[0]) if summaries else ["scope"]
     write_csv(args.summary, summaries, summary_fields)
-    exported = matrix_rows(rows, contributor=args.contributor, run_id=args.run_id)
+    exported = matrix_rows(
+        rows,
+        contributor=args.contributor,
+        run_id=args.run_id,
+        extra_notes=args.extra_notes,
+    )
     write_csv(args.team_rows, exported, TEAM_FIELDS)
     print(
         json.dumps(

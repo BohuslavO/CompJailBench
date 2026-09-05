@@ -1,9 +1,9 @@
-# G-Safeguard-inspired compositional graph monitor
+# Agent-to-Agent Monitor
 
-This defense is a post-hoc, detection-only adaptation of the `GraphMonitor`
-implementation in repository commit `c5eea2a`. It is **not** the published G-Safeguard
-system: it does not train a graph neural network, classify compromised agents,
-or prune communication edges during execution.
+The Agent-to-Agent Monitor is the project's post-hoc, detection-only baseline
+for observable multi-agent communication. It combines structural summaries of
+the agent-interaction graph with an LLM judge for compositional leakage. It does
+not train a classifier or intervene in a live execution.
 
 ## Evidence contract
 
@@ -24,7 +24,7 @@ cycle rule flagging every ordinary multi-round NARCBench discussion.
 
 ## Frozen evaluation
 
-- Defense ID: `g_safeguard_inspired_graph_monitor`
+- Defense ID: `agent_to_agent_monitor`
 - Prompt: `compositional_leakage_v1`
 - Scope: `public-utterance-graph-plus-final-output`
 - Monitor: `openai/bedrock/gpt-oss-120b`
@@ -37,9 +37,9 @@ The scorer checkpoints every completed row. Resume an interrupted evaluation
 without repeating valid paid calls:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\score_g_safeguard_inspired.py `
+.\.venv\Scripts\python.exe scripts\score_agent_to_agent_monitor.py `
   results\paper_main\standard_trajectories.jsonl `
-  --output results\g_safeguard_inspired\full_scores.jsonl `
+  --output results\agent_to_agent_monitor\full_scores.jsonl `
   --model openai/bedrock/gpt-oss-120b `
   --max-concurrency 5 `
   --resume
@@ -48,16 +48,16 @@ without repeating valid paid calls:
 Regenerate canonical scores, statistics, and team rows without model calls:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\analyze_g_safeguard_inspired.py `
-  results\g_safeguard_inspired\full_scores.jsonl `
+.\.venv\Scripts\python.exe scripts\analyze_agent_to_agent_monitor.py `
+  results\agent_to_agent_monitor\full_scores.jsonl `
   --trajectories results\paper_main\standard_trajectories.jsonl `
-  --canonical results\g_safeguard_inspired\scores_canonical.jsonl `
-  --summary-json results\g_safeguard_inspired\summary.json `
-  --summary-csv results\g_safeguard_inspired\summary.csv `
-  --team-rows results\g_safeguard_inspired\team_rows.csv `
+  --canonical results\agent_to_agent_monitor\scores_canonical.jsonl `
+  --summary-json results\agent_to_agent_monitor\summary.json `
+  --summary-csv results\agent_to_agent_monitor\summary.csv `
+  --team-rows results\agent_to_agent_monitor\team_rows.csv `
   --contributor <contributor-id> `
-  --run-id narcbench__g_safeguard_inspired__20260815
+  --run-id narcbench__agent_to_agent_monitor__20260815
 ```
 
-See `results/g_safeguard_inspired/RESULTS.md` for the frozen result and
-`paper/methodology_g_safeguard_inspired.tex` for paper-ready prose.
+See `results/agent_to_agent_monitor/RESULTS.md` for the frozen result and
+`paper/methodology_agent_to_agent_monitor.tex` for paper-ready prose.
