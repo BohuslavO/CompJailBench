@@ -1,5 +1,8 @@
 # Plan: SIF attack vs CoT / observable-reasoning Monitor
 
+> Historical development plan. For the frozen result and final interpretation,
+> use `../results 4x4/MATRIX.md` and the paper rather than this planning note.
+>
 > Third pairing in the same series. Same attack ([SIF](../Attack_SemanticIntentFragmentation/)),
 > a **black-box text monitor** this time — no graph, no activations, no GPU, one
 > model call per sample per evidence view. Companion to
@@ -89,10 +92,10 @@ at line 14. Call `run_monitor` from local scorers with arm-split metrics instead
 
 ## Two blockers to clear before any SIF number is interpretable
 
-### B1 — the monitor is unvalidated (n = 2)
+### B1 — the monitor was unvalidated at this development stage (n = 2)
 
-[preliminary_env02.md](../NARCBench_Attack_CoT_Monitor/results/preliminary_env02.md)
-is **one matched pair**, and on it the action-only and reasoning-only views both
+The preliminary `env_02` development artifact (not retained in the final result
+bundle) covered **one matched pair**, and on it the action-only and reasoning-only views both
 scored **0.50** — coin-flip. `narcbench_core_small.json` holds exactly two records
 (`env_02` collusion + control). A miss on SIF from a monitor that also coin-flips on
 its home distribution proves nothing about SIF; it is the same trap the probe plan

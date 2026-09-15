@@ -11,11 +11,13 @@ evaluation labels. The observable-rationale monitor does not require it, while
 the separate graph monitor uses it to interpret whether the final aggregation
 departs from the stated task evidence.
 
-The cross-attack scorer uses the frozen prompt profile `general_v2`. Existing
-NARCBench results were produced by the narrower `narcbench_v1` prompt and remain
-a valid model-specific result, but they must be rescored with `general_v2`
-before entering the final comparable defense column. Rescoring reuses saved
-trajectories and does not repeat attacker generation.
+The cross-attack scorer defaults to the frozen prompt profile `general_v2`.
+The reported NARCBench result was produced by the narrower, fixed
+`narcbench_v1` prompt and remains a valid profile-specific result in the paper's
+matrix. Prompt versions and evidence scopes must be recorded in exported rows;
+results from different profiles must not be pooled or described as a perfectly
+controlled common-prompt comparison. A future harmonized rescore can reuse the
+saved trajectories without repeating attacker generation.
 
 ## Required fields by scope
 

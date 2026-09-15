@@ -66,10 +66,10 @@ because only one reviewer labeled a fixed 20% subset.
   probing because they do not contain hidden states. This was resolved for the
   probing matrix cell by running a separate, complete Qwen3-32B-AWQ evaluation;
   those results are not pooled with the Bedrock trajectories.
-- The completed NARCBench score used the narrower `narcbench_v1` monitor prompt.
-  A final comparable 4x4 defense column must rescore saved trajectories with
-  the attack-agnostic `general_v2` prompt; this requires monitor calls but no
-  attacker regeneration.
+- The completed and paper-reported NARCBench score used the narrower, fixed
+  `narcbench_v1` monitor prompt. Cross-attack runs use `general_v2` where
+  applicable; the matrix records the cell-specific prompt and evidence scope,
+  and the two prompt versions are not pooled.
 
 ## Reproducibility artifacts
 

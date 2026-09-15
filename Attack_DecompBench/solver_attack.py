@@ -55,7 +55,7 @@ def _roles_for_condition(base_roles: list, condition: str) -> list:
 @solver
 def decompbench_routing_solver(base_roles: list, call_llm: Callable, model_name: str = "qwen3-32b-awq") -> Solver:
     """base_roles: the 3 AgentRole objects (attack condition, no suffix).
-    call_llm: your already-loaded model's generation function, same
+    call_llm: an already-loaded model generation function, with the same
     signature run_task/pipeline.py has always expected --
     call_llm(system_prompt, user_prompt) -> str.
 
@@ -63,14 +63,13 @@ def decompbench_routing_solver(base_roles: list, call_llm: Callable, model_name:
     which build_dataset() in compjailbench_inspect/dataset.py populates
     from DeCompBench's decomposition.json + metadata.json.
 
-    Writes the trajectory TWICE: once to state.metadata["trajectory"]
-    (my own contract, read by scorer_defense.py), and once to
-    state.store_as(StandardTrajectory) (the team-wide contract from the
-    cot_narcbench branch, read by their cot_monitor.py). Any
-    StandardTrajectory-reading Scorer -- theirs or a future one --
-    works against this attack's output without needing my own contract
-    at all. Verified against their real, unmodified evidence_views.py
-    code, not assumed compatible."""
+    Writes the trajectory twice: once to state.metadata["trajectory"]
+    (the local contract read by scorer_defense.py), and once to
+    state.store_as(StandardTrajectory) (the shared contract read by the
+    observable-rationale monitor). Any StandardTrajectory-reading Scorer
+    can therefore evaluate this attack without a defense-specific trajectory
+    implementation. Compatibility was verified against the unmodified
+    evidence_views.py implementation."""
 
     async def solve(state: TaskState, generate: Generate) -> TaskState:
         task_dir = state.metadata["task_dir"]

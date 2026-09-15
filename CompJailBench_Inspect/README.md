@@ -1,7 +1,7 @@
 # CompJailBench_Inspect
 
 Shared Inspect integration and cross-attack/cross-defense trajectory converters. This is the
-glue layer that lets any contributor's attack be scored by any contributor's defense without a
+glue layer that lets each attack be scored by each defense without a
 custom harness for every pair — it does not implement an attack or a defense itself.
 
 ## Why this folder exists
@@ -9,8 +9,8 @@ custom harness for every pair — it does not implement an attack or a defense i
 Without a shared harness, evaluating every attack against every defense would require a custom
 evaluation path per pair. AISI Inspect organizes an evaluation around tasks, samples, solvers,
 scorers, and metrics; this folder is where our attacks and defenses are wired into that shared
-structure, plus the trajectory-format converters that let one contributor's raw output become
-another contributor's expected input.
+structure, plus the trajectory-format converters that translate native attack outputs into the
+formats expected by the defense adapters.
 
 ## Files
 
@@ -26,8 +26,8 @@ another contributor's expected input.
 - `trajectory_converters.py`, `postprocess_to_standard_trajectory.py` — convert a raw attack
   trajectory (our own `pipeline.py` output, or another attack's native format) into
   `StandardTrajectory` JSONL.
-- `to_execution_trace.py` — converts our trajectory format into Atharv's `execution_trace`
-  node/edge dict shape, so our attack's trajectories can be scored by the Agent-to-Agent Monitor
+- `to_execution_trace.py` — converts DeCompBench trajectories into the standalone
+  `execution_trace` node/edge dictionary used by the Agent-to-Agent Monitor
   graph monitor without modifying that defense's code.
 - `run_kaggle.py` — the real driver script: loads the target model, runs the DeCompBench attack
   across all (strategy, condition) combinations via Inspect `eval()`, and writes `.eval` logs

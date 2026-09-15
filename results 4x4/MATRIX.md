@@ -17,7 +17,7 @@ Gap is a placeholder signal, not a validated AUROC -- see README.md.
 | DeCompBench | data (2 metric(s)) | data (3 metric(s)) | data (2 metric(s)) | data (2 metric(s)) |
 
 `—` means no result has been submitted for that attack-defense cell.
-The asterisk marks a cell-specific qualification: Agent-to-Agent Monitor is the project's custom detection-only graph-and-judge baseline; Sentinel Agents is message-only/public/degraded; and CoT prompt profiles are cell-specific (`general_v2` for AgentHarm and DeCompBench, provisional `narcbench_v1` for the current NARCBench cell).
+The asterisk marks a cell-specific qualification: Agent-to-Agent Monitor is the project's custom detection-only graph-and-judge baseline; Sentinel Agents is message-only/public/degraded; and CoT/observable-rationale prompt profiles and evidence scopes are cell-specific (`general_v2` where applicable and fixed `narcbench_v1` for the reported NARCBench cell).
 
 <details>
 <summary>Detailed metric tables</summary>

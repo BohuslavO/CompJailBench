@@ -59,8 +59,10 @@ current NARCBench cells must retain the following limitations:
   combining graph-structure summaries with an LLM compositional-leakage judge.
 - `sentinel_agents_message_only` uses public messages, has no tool calls, and is
   explicitly degraded.
-- `cot_observable_reasoning_monitor` currently uses `narcbench_v1`; a
-  `general_v2` cross-attack rescore remains pending for a common defense prompt.
+- `cot_observable_reasoning_monitor` uses the fixed, project-specific `narcbench_v1`
+  profile for the NARCBench cell. Other cells use `general_v2` where applicable;
+  prompt profile and available evidence scope are therefore cell-specific and must
+  remain explicit when comparing results.
 - `narcbench_probing` uses a separate self-hosted Qwen3-32B-AWQ run because the
   Bedrock text trajectories do not contain compatible hidden activations. Its
   primary `peak_suspicion` metric covers all recorded turns; public-only and
@@ -78,6 +80,9 @@ The AgentHarm cells must retain these limitations:
 - Activation probing is a separate Qwen3-32B-AWQ generation with 25 pairs;
   text-defense cells use Bedrock GPT-OSS-120B with 24 pairs.
 
-CoT prompt profiles are cell-specific and recorded in each CSV's `notes`:
-AgentHarm and DeCompBench use `general_v2`; the current NARCBench cell retains
-the provisional `narcbench_v1` result pending rescore.
+CoT/observable-rationale prompt profiles are cell-specific and recorded in each
+CSV's `notes`: AgentHarm and DeCompBench use `general_v2`, while the reported
+NARCBench cell uses the fixed `narcbench_v1` profile. Semantic Intent
+Fragmentation and DeCompBench do not contain a separate recorded rationale field,
+so their reported cells use the available public action/message evidence. These
+differences are limitations of the collected trajectories, not missing matrix cells.

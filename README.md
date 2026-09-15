@@ -2,8 +2,8 @@
 
 CompJailBench is a benchmark for distributed jailbreaks in multi-agent LLM systems: a harmful
 request is adversarially decomposed across agents so that each subtask looks safe in isolation
-while the composed output is unsafe. Each team member owns one attack and one defense; every
-attack is evaluated against all four defenses under a common long-format results schema. See
+while the composed output is unsafe. The benchmark evaluates four attack families against four
+defense families under a common long-format results schema. See
 `results 4x4/MATRIX.md` for the current state of that 4x4 matrix and `results 4x4/README.md`
 for the schema itself.
 
@@ -24,8 +24,11 @@ recorded in the corresponding CSV's `notes` column and must be preserved in any 
 - `Defence_NARCBench Probing/` — activation-probing defense, reused from NARCBench.
 - `Attack_SemanticIntentFragmentation/` — Semantic Intent Fragmentation attack.
 - `Defense_SentinelAgents/` — graph-based SentinelAgent defense.
-- `compjailbench/` — shared AgentHarm baseline code and the
-  Agent-to-Agent Monitor implementation.
+- `agents/`, `agentharm_data/`, `defenses/`, and the root evaluation scripts — the current
+  Inspect-based AgentHarm trajectory-generation and defense-scoring workflow.
+- `compjailbench/` — the preserved standalone AgentHarm prototype and the
+  Agent-to-Agent Monitor implementation used by the corresponding historical run. Its README
+  explains the narrower scope; it is not the canonical entry point for the full benchmark.
 - `NARCBench_Attack_CoT_Monitor/` — isolated project for the NARCBench collusion attack and the
   CoT/observable-rationale monitor. Has its own README and a `DEFENSE_INTERFACE.md`
   contract that other attacks use to test against this defense.
@@ -35,7 +38,7 @@ recorded in the corresponding CSV's `notes` column and must be preserved in any 
 - `results 4x4/` — the shared results matrix. `raw/` holds one CSV per
   (contributor, attack, defense) submission; `build_matrix.py` reads all of `raw/` and
   regenerates `MATRIX.md`.
-- `sif_vs_defenses/`, `data/activations/` — supporting data and intermediate artifacts for the
+- `sif_vs_defenses/`, `data/activations/` — supporting data and retained artifacts for the
   Semantic Intent Fragmentation attack.
 
 ## Adding a result
@@ -53,7 +56,7 @@ limitations are documented in [`Attack_AgentHarm/README.md`](Attack_AgentHarm/RE
    full run.
 3. Run the defense and export one CSV row per metric in the schema documented in
    `results 4x4/README.md`.
-4. Save it as `results 4x4/raw/<yourname>__<attack_method>__<defense_method>.csv`, using the
+4. Save it as `results 4x4/raw/<source>__<attack_method>__<defense_method>.csv`, using the
    canonical attack/defense keys listed in that README.
 5. Run `python build_matrix.py` from inside `results 4x4/` and commit both the new CSV and the
    regenerated `MATRIX.md` together.
@@ -62,6 +65,9 @@ limitations are documented in [`Attack_AgentHarm/README.md`](Attack_AgentHarm/RE
 
 - Raw Inspect `.eval` logs and Python `__pycache__` are intentionally not tracked (see
   `.gitignore`); regenerate them locally by re-running the relevant attack/defense scripts.
+- Matrix-ready CSV files under `results 4x4/raw/` intentionally duplicate normalized rows kept
+  beside their source experiments. Likewise, a small number of shared schema/adaptor files are
+  copied into self-contained subprojects. These are reproducibility copies, not cleanup targets.
 - Some sub-projects (e.g. `NARCBench_Attack_CoT_Monitor/`) keep their own `.env`/`.venv` and
   local setup instructions rather than sharing one root environment, since attacker and monitor
   model access differ per defense.

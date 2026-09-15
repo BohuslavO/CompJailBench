@@ -7,17 +7,16 @@ and should never contain real credentials.
 
 LLM_PROVIDER controls which backend get_client() returns:
     "mock"   - no credentials needed, canned responses (see client.py)
-    "gemini" - Google AI Studio, free, no credit card required
-    "azure"  - Azure OpenAI (needs a card-verified Azure account)
+    "gemini" - Google AI Studio
+    "azure"  - Azure OpenAI
 
-Create a `.env` file in the project root. For Gemini (recommended while
-you don't have Azure access yet):
+Create a `.env` file in the project root. For Gemini:
 
     LLM_PROVIDER=gemini
-    GEMINI_API_KEY=<get for free at https://aistudio.google.com/app/apikey>
+    GEMINI_API_KEY=<your-key>
     GEMINI_MODEL=gemini-2.0-flash
 
-For Azure, once you have it:
+For Azure:
 
     LLM_PROVIDER=azure
     AZURE_ENDPOINT=https://<your-resource>.openai.azure.com/
@@ -65,6 +64,5 @@ GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
 def validate_gemini_config():
     if not GEMINI_API_KEY:
         raise RuntimeError(
-            "Missing GEMINI_API_KEY. Get a free key (no card required) at "
-            "https://aistudio.google.com/app/apikey and set it in your .env file."
+            "Missing GEMINI_API_KEY. Set it in your .env file or environment."
         )

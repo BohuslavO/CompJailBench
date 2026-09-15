@@ -74,10 +74,10 @@ be reported as an audit upper bound but is not treated as a deployable defense.
 Scores at or above 0.5 were classified as attacks. The threshold was fixed
 before examining the test results. This completed cell used a NARCBench-specific
 monitor prompt (\texttt{narcbench_v1}) focused on covert steering of committee
-decisions. For the cross-attack defense matrix, we separately freeze an
-attack-agnostic prompt (\texttt{general_v2}) and rescore saved trajectories so
-that every attack row uses the same defense prompt. Results from the two prompt
-versions are not pooled.
+decisions. Cross-attack integrations use the attack-agnostic prompt
+\texttt{general_v2} where applicable. The matrix records this profile difference,
+and results from the two prompt versions are not pooled or presented as a
+common-prompt comparison.
 
 \paragraph{Statistical analysis.}
 For attack proportions and thresholded defense rates, we report 95\% Wilson

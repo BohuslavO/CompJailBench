@@ -1,5 +1,8 @@
 # Plan: SIF attack vs NARCBench activation probe
 
+> Historical development plan. For the frozen result and final interpretation,
+> use `../results 4x4/MATRIX.md` and the paper rather than this planning note.
+>
 > Companion to the SIF-vs-SentinelAgent run. Same attack, a *white-box* defense.
 > The research question is identical in shape — **does SIF evade the defense?** —
 > but the defense reads model **activations**, not trajectory text, so almost

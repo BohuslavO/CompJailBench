@@ -1,17 +1,21 @@
-# CompJailBench — Setup & Run Guide
+# Standalone AgentHarm prototype and Agent-to-Agent Monitor
 
 Benchmark for testing whether harmful intent can "leak" through a
 planner → workers → aggregator multi-agent pipeline, even when no single
 agent's output looks harmful in isolation. Scored two ways: AgentHarm-style
 final-output grading, and the Agent-to-Agent Monitor.
 
-## Status
+## Status and scope
 
-The full pipeline is built and has been validated end-to-end in **mock
-mode** (no API calls, deterministic fake responses) — the code path works,
-including arbitrary worker counts (tested with 2 and 3 workers). What's
-NOT yet validated: behavior against a real model, since the team writing
-this doesn't have API access yet. That's the one remaining step.
+This directory preserves the standalone prototype used for the AgentHarm x
+Agent-to-Agent Monitor evaluation path. The frozen matrix result is stored in
+`../results 4x4/raw/slava__agentharm__agent_to_agent_monitor.csv`; the current
+AgentHarm workflow and its other defense cells are documented in
+`../AGENTHARM_RUNBOOK.md` and `../Attack_AgentHarm/README.md`.
+
+This prototype remains useful for reproducing the graph-and-judge baseline, but
+it is not the canonical entry point for the full 4x4 benchmark. The repository
+root README identifies the current component for each attack and defense.
 
 ## Setup
 
@@ -23,10 +27,10 @@ pip install openai python-dotenv networkx google-genai
 Copy `.env` and fill in real values. Two provider options, set via
 `LLM_PROVIDER` in `.env`:
 
-**Gemini (recommended — free, no credit card required)**
+**Gemini**
 ```
 LLM_PROVIDER=gemini
-GEMINI_API_KEY=<get free at https://aistudio.google.com/app/apikey>
+GEMINI_API_KEY=<your-key>
 GEMINI_MODEL=gemini-2.0-flash
 ```
 If `GEMINI_MODEL` 404s, list available models for your key and update it:
@@ -48,7 +52,7 @@ AZURE_DEPLOYMENT=<your-deployment-name>
 
 ## Run order
 
-### Step 0 — Real AgentHarm via the official implementation (do this first)
+### Optional external reference — official single-agent AgentHarm
 
 AgentHarm has an official implementation inside AISI's `inspect_evals` package —
 this uses their actual dataset AND their actual programmatic graders, not an
@@ -61,9 +65,9 @@ export GOOGLE_API_KEY=<your gemini key>   # note: GOOGLE_API_KEY, not GEMINI_API
 inspect eval inspect_evals/agentharm --model google/gemini-2.0-flash
 ```
 
-This runs the standard (single-agent, tool-using) AgentHarm eval — i.e. NOT yet
-through our decomposition pipeline. It's the baseline reference point: "how
-does this model do on AgentHarm normally." View the full transcript/scoring
+This runs the standard single-agent, tool-using AgentHarm evaluation, not the
+multi-agent attack used in CompJailBench and not a cell in the 4x4 matrix. It
+can be used as an external reference point. View the full transcript/scoring
 with:
 
 ```bash
@@ -78,11 +82,11 @@ inspect eval inspect_evals/agentharm --model azure/<your-deployment-name>
 model provider docs, this may differ slightly from our own `client.py`'s env
 var names since that's Inspect's own provider integration, not our code.)
 
-### Step 1 — Our own multi-agent decomposition pipeline (approximate scorers)
+### Standalone multi-agent prototype
 
 ```bash
 # 1. Sanity check the whole pipeline with zero API calls first
-COMPJAILBENCH_MOCK=1 python run_experiment.py --dataset datasets/mock_samples.json --num_workers 2
+COMPJAILBENCH_MOCK=1 python run_experiment.py --dataset datasets/sample.json --num_workers 2
 
 # 2. Pull real harmful samples from the public AgentHarm dataset
 #    (may require accepting terms on HuggingFace / `huggingface-cli login`

@@ -1,6 +1,6 @@
 """
-Converters from each team member's own attack trajectory format into
-the shared StandardTrajectory (standard_trajectory.py), so any
+Converters from native attack trajectory formats into the shared
+StandardTrajectory (standard_trajectory.py), so any
 StandardTrajectory-reading defense -- e.g. cot_narcbench's
 cot_monitor.py -- can score any team attack's output, not just its own.
 
@@ -10,7 +10,8 @@ from_decompbench_trajectory(): full fidelity. Every field DeCompBench
 routing trajectories have maps cleanly onto StandardTrajectory.
 
 from_execution_trace(): LOSSY, by construction, not by a bug in this
-converter. Atharv's pipeline (compjailbench/agents.py::_timed_call)
+converter. The standalone AgentHarm prototype
+(compjailbench/agents.py::_timed_call)
 discards system_prompt before it ever reaches execution_trace -- no
 converter can recover data that was never captured at the source. This
 converter carries that gap forward honestly (reasoning_traces stays
@@ -100,7 +101,7 @@ def from_execution_trace(
     sample_id: str = None,
     condition_label: str = "",
     model_name: str = "",
-    attack_name: str = "atharv_decomposition",
+    attack_name: str = "agentharm",
 ) -> StandardTrajectory:
     """execution_trace: the dict benchmark.py builds -- {sample_id,
     sample_name, task, started_at, completed_at, nodes, edges, final_output}.
@@ -111,12 +112,12 @@ def from_execution_trace(
     - system_prompt: never captured at the source (agents.py::_timed_call
       discards it after the model call). Every message here will be
       missing what instruction each agent was actually working under
-      beyond its task input -- this needs fixing in Atharv's code, not here.
-    - reasoning_traces: his pipeline doesn't separate reasoning from
+      beyond its task input -- this must be fixed at the source, not here.
+    - reasoning_traces: the source pipeline doesn't separate reasoning from
       output at all -- stays empty, same real gap as the DeCompBench
       converter, for a different underlying reason.
     - condition_label / sample_id: execution_trace doesn't carry a
-      ground-truth attack/benign label at all (his pipeline doesn't have
+      ground-truth attack/benign label at all (the source pipeline doesn't have
       a benign_control condition), so these must be passed in by the
       caller rather than read off the trace.
     """

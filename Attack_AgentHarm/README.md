@@ -28,14 +28,16 @@ trajectories, not official AgentHarm task success.
 | Defense and evidence scope | Recall | False-positive rate | Balanced accuracy | ROC AUC |
 |---|---:|---:|---:|---:|
 | Sentinel Agents, public message-only adaptation | 0.7500 | 0.9167 | 0.4167 | 0.2726 |
-| CoT monitor, action + observable reasoning (primary) | 0.0000 | 0.0833 | 0.4583 | 0.2231 |
-| CoT monitor, observable reasoning only | 0.0417 | 0.0833 | 0.4792 | 0.2778 |
-| CoT monitor, public action only | 0.0417 | 0.1667 | 0.4375 | 0.2144 |
+| CoT/observable-rationale monitor, action + rationale (predeclared primary scope) | 0.0000 | 0.0833 | 0.4583 | 0.2231 |
+| CoT/observable-rationale monitor, rationale only (paper table) | 0.0417 | 0.0833 | 0.4792 | 0.2778 |
+| CoT/observable-rationale monitor, public action only | 0.0417 | 0.1667 | 0.4375 | 0.2144 |
 
 Sentinel uses the frozen public-message adapter and is explicitly degraded: the
 saved trajectories do not reproduce the original private, tool-aware Sentinel
-environment. The CoT monitor uses the attack-agnostic `general_v2` prompt and
-evaluator-visible rationales, not hidden chain of thought.
+environment. The CoT/observable-rationale monitor uses the attack-agnostic
+`general_v2` prompt and evaluator-visible rationales, not hidden chain of thought.
+The paper's 4x4 table reports the rationale-only AUROC (0.2778, rounded to 0.28);
+the other two scopes are retained as ablations.
 
 ## Activation-probing cell
 

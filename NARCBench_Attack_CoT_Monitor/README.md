@@ -110,11 +110,14 @@ Validate compatibility without model calls before starting a full evaluation:
   --validate-only
 ```
 
-The comparable observable-rationale defense column uses the frozen
-attack-agnostic `general_v2` prompt. A missing observable rationale is reported
-as `unavailable`; it is not silently replaced by action-only evidence. See
+The cross-attack scorer defaults to the frozen, attack-agnostic `general_v2`
+prompt. The reported NARCBench cell retains its fixed project-specific
+`narcbench_v1` profile, and every matrix export records the prompt and evidence
+scope used. A missing observable rationale is reported as `unavailable`; when a
+paper result is intentionally based on public action/message evidence, that scope
+is named explicitly rather than presented as rationale monitoring. See
 [`results/paper_main/COT_DEFENSE_COLUMN_STATUS.md`](results/paper_main/COT_DEFENSE_COLUMN_STATUS.md)
-for the remaining cross-attack inputs.
+for the completed cross-attack status and qualifications.
 
 ## Interpretation limits
 

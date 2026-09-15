@@ -1,10 +1,9 @@
 """
-Converts MY DeCompBench trajectory into Atharv's execution_trace shape
-(compjailbench/monitors.py -- AgentHarmMonitor, AgentToAgentMonitor), so I can
-test my attack against his defense specifically (team agreement: each
-person tests their own attack against all 4 defenses -- this is the
-opposite direction from trajectory_converters.py's from_execution_trace,
-which converts HIS attack's output, not mine).
+Converts a DeCompBench trajectory into the standalone execution_trace shape
+(compjailbench/monitors.py -- AgentHarmMonitor, AgentToAgentMonitor), so it can
+score the attack with that defense adapter. This is the opposite direction
+from trajectory_converters.py's from_execution_trace(), which converts the
+standalone AgentHarm pipeline's output into StandardTrajectory.
 
 Edge structure choice, worth being explicit about: turns are linked as
 a sequential chain (turn_1 -> turn_2 -> turn_3...), NOT a star from a
