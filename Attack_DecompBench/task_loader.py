@@ -1,30 +1,8 @@
-"""
-DeCompBench task loader.
-
-Loads a single task's decomposition (sequential turns) and metadata
-(services/capabilities per turn) from the real dataset layout:
-
-tasks/<slug>/
-    metadata.json
-    decomposition.json
-    checkpoints.md
-    desiderata.json
-    task.md
-    utils/{dependencies.yml, evaluator.py, ...}
-
-Schema confirmed directly against the real downloaded dataset
-(tasks/abuse-report-suppression, tasks/absent-admin-false-attribution).
-"""
 import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
-
-
-
-
-
 
 
 SERVICE_KEYWORDS = {
@@ -41,9 +19,6 @@ SERVICE_KEYWORDS = {
 
 
 def _infer_service_hint(prompt: str, task_services: list) -> Optional[str]:
-    """Best-effort: which of this task's declared services does this
-    turn's prompt text look like it's acting on. Returns None if no
-    keyword hits -- caller should fall back to a default role."""
     text = prompt.lower()
     for service in task_services:
         keywords = SERVICE_KEYWORDS.get(service, [])
@@ -107,7 +82,6 @@ def load_task(task_dir: str) -> DeCompTask:
 
 
 def list_tasks(tasks_root: str) -> list:
-    """Slugs of every task under tasks_root that has both files needed to load."""
     root = Path(tasks_root)
     out = []
     for d in sorted(root.iterdir()):

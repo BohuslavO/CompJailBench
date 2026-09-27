@@ -1,23 +1,3 @@
-"""
-Converters from native attack trajectory formats into the shared
-StandardTrajectory (standard_trajectory.py), so any
-StandardTrajectory-reading defense -- e.g. cot_narcbench's
-cot_monitor.py -- can score any team attack's output, not just its own.
-
-Two converters here, with very different fidelity:
-
-from_decompbench_trajectory(): full fidelity. Every field DeCompBench
-routing trajectories have maps cleanly onto StandardTrajectory.
-
-from_execution_trace(): LOSSY, by construction, not by a bug in this
-converter. The standalone AgentHarm prototype
-(compjailbench/agents.py::_timed_call)
-discards system_prompt before it ever reaches execution_trace -- no
-converter can recover data that was never captured at the source. This
-converter carries that gap forward honestly (reasoning_traces stays
-empty, messages won't include what instruction each node was actually
-given) rather than silently inventing something plausible-looking.
-"""
 from typing import Any
 
 from standard_trajectory import StandardTrajectory
@@ -31,17 +11,6 @@ def from_decompbench_trajectory(
     attack_name: str = "decompbench_routing",
     extra_metadata: dict = None,
 ) -> StandardTrajectory:
-    """trajectory: the list[dict] pipeline.py's run_task() returns --
-    each turn has agent_name/turn_id/label/system_prompt/user_prompt/response.
-    condition_label: "attack" or "benign_control", whatever this run used.
-
-    Known gap, not a bug: reasoning_traces stays empty. DeCompBench
-    routing doesn't capture a separate chain-of-thought from the final
-    response -- call_llm returns one string, not response+reasoning
-    split apart. cot_narcbench's cot_only_monitor condition will see
-    nothing for trajectories converted this way. If Qwen3's thinking
-    output ever gets captured separately, wire it in here.
-    """
     messages = []
     actions = []
     agent_ids = []
@@ -66,9 +35,6 @@ def from_decompbench_trajectory(
             "turn_id": turn["turn_id"],
             "label": turn["label"],
         })
-
-
-
 
 
         edges.append({"source": "orchestrator", "target": agent_name, "type": "turn_assignment", "turn_id": turn["turn_id"]})
@@ -103,24 +69,6 @@ def from_execution_trace(
     model_name: str = "",
     attack_name: str = "agentharm",
 ) -> StandardTrajectory:
-    """execution_trace: the dict benchmark.py builds -- {sample_id,
-    sample_name, task, started_at, completed_at, nodes, edges, final_output}.
-    Each node: {id, type, name, input, output, started_at, completed_at,
-    duration_seconds}. Each edge: {source, target, type}.
-
-    LOSSY, structurally, not something this converter can fix:
-    - system_prompt: never captured at the source (agents.py::_timed_call
-      discards it after the model call). Every message here will be
-      missing what instruction each agent was actually working under
-      beyond its task input -- this must be fixed at the source, not here.
-    - reasoning_traces: the source pipeline doesn't separate reasoning from
-      output at all -- stays empty, same real gap as the DeCompBench
-      converter, for a different underlying reason.
-    - condition_label / sample_id: execution_trace doesn't carry a
-      ground-truth attack/benign label at all (the source pipeline doesn't have
-      a benign_control condition), so these must be passed in by the
-      caller rather than read off the trace.
-    """
     messages = []
     actions = []
     agent_ids = []
