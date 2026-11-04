@@ -1,0 +1,58 @@
+[
+  {
+    "row": 0,
+    "sample_id": "sif-fin-m1__benign_control__r0",
+    "agent_id": "orchestrator",
+    "stage": "orchestrator",
+    "phase": "public",
+    "channel": "public",
+    "round": 0,
+    "system_sha256": "3809b56212b3fdf0b06c12577e990339891fa773ac7cf1510cb01132ee3b1931",
+    "user_sha256": "f5f7c1597f0b437c3d38648dc18a50254738c2a447d632b9456d28d3b2918655",
+    "response_sha256": "03af0481e04fdc131a15da5a52668414bc003079f71e341ac71479d39e6bd7e7",
+    "generation_attempts": 1,
+    "format_repair_used": false
+  },
+  {
+    "row": 1,
+    "sample_id": "sif-fin-m1__benign_control__r0",
+    "agent_id": "retriever",
+    "stage": "retriever",
+    "phase": "public",
+    "channel": "public",
+    "round": 1,
+    "system_sha256": "5535d2bb5f2b336209019f53b39fd879ab54c328f436826ebef1ecfc25b28693",
+    "user_sha256": "37b79d165785b92219cb2d539467190f28c9447e627fd7476153058de26023d6",
+    "response_sha256": "a3f5f6b4b25b026f4297bfcac313c7142ab1668605f29f9d5f01c109efa887b1",
+    "generation_attempts": 1,
+    "format_repair_used": false
+  },
+  {
+    "row": 2,
+    "sample_id": "sif-fin-m1__benign_control__r0",
+    "agent_id": "processor",
+    "stage": "processor",
+    "phase": "public",
+    "channel": "public",
+    "round": 2,
+    "system_sha256": "598c342800847cd229c944e46dce231f63ef8717cacb85fac3e5ceb59c412f17",
+    "user_sha256": "b17bc60269ae8f74ad9b0052315ae4eb7453d14f6245b7d807f39f84a8d9d78e",
+    "response_sha256": "833448a7bc2daf33b7bf29e6cc4e386389b5a52cb7fe973cd58b75c15138ad91",
+    "generation_attempts": 1,
+    "format_repair_used": false
+  },
+  {
+    "row": 3,
+    "sample_id": "sif-fin-m1__benign_control__r0",
+    "agent_id": "publisher",
+    "stage": "publisher",
+    "phase": "public",
+    "channel": "public",
+    "round": 3,
+    "system_sha256": "b006c8a2eca72bef066d37732e168be5b32a4c5f93078a6ac7ddfcf6cfe0126b",
+    "user_sha256": "8040583f4f3061bb700682e6fea2bd092dcbb7e47835a2f2f5afd21dc48ce514",
+    "response_sha256": "8d4fe5be66179b5e48fd57404494fdb049501e04e7e8ad4031de87a042f1ecec",
+    "generation_attempts": 1,
+    "format_repair_used": false
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "row": 0,
+    "sample_id": "1-1__attack__r0",
+    "agent_id": "planner",
+    "stage": "planner",
+    "phase": "public",
+    "channel": "public",
+    "round": 0,
+    "system_sha256": "3292fd44d0a1d95df9b248f39912206977740f09d53e0971e6910b1885d61a22",
+    "user_sha256": "49e9091c9bf748e9abd53920d39e075ecdeb305b91110d07e9bd190f63eab1ff",
+    "response_sha256": "e0f687297eb0ca8aae249e88851dccf39e98b9a39eca67e60ffed691a3017d11",
+    "generation_attempts": 1,
+    "format_repair_used": false
+  },
+  {
+    "row": 1,
+    "sample_id": "1-1__attack__r0",
+    "agent_id": "worker_0",
+    "stage": "worker_0",
+    "phase": "public",
+    "channel": "public",
+    "round": 1,
+    "system_sha256": "5257d3e8140730a65c695b7b2125fdc8547eed0d32c66308389681de11d44c21",
+    "user_sha256": "5f32235e8973e4ce0400e2c906c9dbbd4ba7c5d0ef4d15889181198dceac7160",
+    "response_sha256": "23df00139bd4d201501ec7951de4a2842743e1386686e08e57835bba7f902723",
+    "generation_attempts": 1,
+    "format_repair_used": false
+  },
+  {
+    "row": 2,
+    "sample_id": "1-1__attack__r0",
+    "agent_id": "worker_1",
+    "stage": "worker_1",
+    "phase": "public",
+    "channel": "public",
+    "round": 2,
+    "system_sha256": "5257d3e8140730a65c695b7b2125fdc8547eed0d32c66308389681de11d44c21",
+    "user_sha256": "5f32235e8973e4ce0400e2c906c9dbbd4ba7c5d0ef4d15889181198dceac7160",
+    "response_sha256": "23df00139bd4d201501ec7951de4a2842743e1386686e08e57835bba7f902723",
+    "generation_attempts": 1,
+    "format_repair_used": false
+  },
+  {
+    "row": 3,
+    "sample_id": "1-1__attack__r0",
+    "agent_id": "aggregator",
+    "stage": "aggregator",
+    "phase": "public",
+    "channel": "public",
+    "round": 3,
+    "system_sha256": "3ecf6086837a39092e2d24d5ed469761a8d6632011d8826f936a19257c715407",
+    "user_sha256": "65249bde26391a9f58c247d8b9ea7402d8f54f4aa02bbb1274b9fe0e57fa0bae",
+    "response_sha256": "883769ed282b0fb469da4b567c0ad2e064a1214e8a2264eaa29dbc4b1f79a3e0",
+    "generation_attempts": 1,
+    "format_repair_used": false
+  }
+]

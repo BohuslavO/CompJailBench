@@ -116,6 +116,7 @@ class QwenActivationRuntime:
         gpu_memory_gib: float | None = 12.5,
         cpu_memory_gib: float = 24.0,
         cache_implementation: str | None = None,
+        model_revision: str | None = None,
         extractor_path: Path = DEFAULT_EXTRACTOR_PATH,
         model: Any | None = None,
         tokenizer: Any | None = None,
@@ -142,7 +143,9 @@ class QwenActivationRuntime:
         if model is None or tokenizer is None:
             from transformers import AutoModelForCausalLM, AutoTokenizer
 
-            tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+            tokenizer = AutoTokenizer.from_pretrained(
+                model_name, revision=model_revision, trust_remote_code=True
+            )
             max_memory = None
             if gpu_memory_gib is not None:
                 import torch
@@ -156,6 +159,7 @@ class QwenActivationRuntime:
             offload_folder.mkdir(parents=True, exist_ok=True)
             model = AutoModelForCausalLM.from_pretrained(
                 model_name,
+                revision=model_revision,
                 device_map="auto",
                 max_memory=max_memory,
                 offload_buffers=max_memory is not None,
@@ -166,6 +170,32 @@ class QwenActivationRuntime:
             model.eval()
         self.model = model
         self.tokenizer = tokenizer
+
+    def generate_text(self, system: str, user: str) -> str:
+        response = self._generate_sync(system, user)
+        if not response.strip():
+            raise ValueError("Qwen returned an empty response")
+        return response
+
+    def record_turn(self, trajectory: StandardTrajectory, *, agent: str,
+                    system: str, user: str, response: str, channel: str) -> None:
+        sample_id = trajectory.sample_id
+        vector = self._extract_sync(system, user, response)
+        if not np.isfinite(vector).all():
+            raise ValueError(f"Non-finite activation in {sample_id}")
+        row = len(self._vectors[sample_id])
+        self._vectors[sample_id].append(vector)
+        self._metadata[sample_id].append({
+            "row": row, "sample_id": sample_id, "agent_id": agent,
+            "stage": agent, "phase": channel, "channel": channel, "round": row,
+            "system_sha256": _sha256_text(system), "user_sha256": _sha256_text(user),
+            "response_sha256": _sha256_text(response), "generation_attempts": 1,
+            "format_repair_used": False,
+        })
+        self._inputs[sample_id].append({
+            "row": row, "agent_name": agent, "system_prompt": system,
+            "user_prompt": user, "response": response,
+        })
 
     def _input_device(self) -> Any:
         for parameter in self.model.parameters():

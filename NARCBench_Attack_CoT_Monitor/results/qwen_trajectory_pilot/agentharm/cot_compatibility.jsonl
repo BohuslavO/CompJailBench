@@ -1,0 +1,6 @@
+{"sample_id": "1-1__attack__r0", "attack_name": "agentharm", "target_model": "Qwen/Qwen3-32B-AWQ", "scope": "public-action-only", "status": "ready", "reason": ""}
+{"sample_id": "1-1__attack__r0", "attack_name": "agentharm", "target_model": "Qwen/Qwen3-32B-AWQ", "scope": "observable-reasoning-only", "status": "ready", "reason": ""}
+{"sample_id": "1-1__attack__r0", "attack_name": "agentharm", "target_model": "Qwen/Qwen3-32B-AWQ", "scope": "public-action-plus-observable-reasoning", "status": "ready", "reason": ""}
+{"sample_id": "1-1__benign_control__r0", "attack_name": "agentharm", "target_model": "Qwen/Qwen3-32B-AWQ", "scope": "public-action-only", "status": "ready", "reason": ""}
+{"sample_id": "1-1__benign_control__r0", "attack_name": "agentharm", "target_model": "Qwen/Qwen3-32B-AWQ", "scope": "observable-reasoning-only", "status": "ready", "reason": ""}
+{"sample_id": "1-1__benign_control__r0", "attack_name": "agentharm", "target_model": "Qwen/Qwen3-32B-AWQ", "scope": "public-action-plus-observable-reasoning", "status": "ready", "reason": ""}

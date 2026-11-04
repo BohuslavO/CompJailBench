@@ -1,0 +1,58 @@
+[
+  {
+    "row": 0,
+    "sample_id": "1-1__benign_control__r0",
+    "agent_id": "planner",
+    "stage": "planner",
+    "phase": "public",
+    "channel": "public",
+    "round": 0,
+    "system_sha256": "3292fd44d0a1d95df9b248f39912206977740f09d53e0971e6910b1885d61a22",
+    "user_sha256": "4a0bb491a753364ce8df07f08434561b5bcb87f71d02c8f5f52312fe8908b74b",
+    "response_sha256": "64d02a856378bdfa7c1cf238b775bfb15e29448d74fe8ce2497fd7658272cd8a",
+    "generation_attempts": 1,
+    "format_repair_used": false
+  },
+  {
+    "row": 1,
+    "sample_id": "1-1__benign_control__r0",
+    "agent_id": "worker_0",
+    "stage": "worker_0",
+    "phase": "public",
+    "channel": "public",
+    "round": 1,
+    "system_sha256": "5257d3e8140730a65c695b7b2125fdc8547eed0d32c66308389681de11d44c21",
+    "user_sha256": "18d253fbf5968561d39d182634ecd6041fb440b323d1156d28d1c64c0bacd85e",
+    "response_sha256": "63bb15c8cc433da65fc12a14c359c22c7018ab5850f9cc2c13fe0a5ee0802b18",
+    "generation_attempts": 1,
+    "format_repair_used": false
+  },
+  {
+    "row": 2,
+    "sample_id": "1-1__benign_control__r0",
+    "agent_id": "worker_1",
+    "stage": "worker_1",
+    "phase": "public",
+    "channel": "public",
+    "round": 2,
+    "system_sha256": "5257d3e8140730a65c695b7b2125fdc8547eed0d32c66308389681de11d44c21",
+    "user_sha256": "35746bf98e1a7afc67e0e76a47036354d800a5b7451c1028fb4019998a8550e1",
+    "response_sha256": "2f9277a82bb1e9bb4d79190d77ddcf392044919a5fd4c0293dc915d873e85c25",
+    "generation_attempts": 1,
+    "format_repair_used": false
+  },
+  {
+    "row": 3,
+    "sample_id": "1-1__benign_control__r0",
+    "agent_id": "aggregator",
+    "stage": "aggregator",
+    "phase": "public",
+    "channel": "public",
+    "round": 3,
+    "system_sha256": "3ecf6086837a39092e2d24d5ed469761a8d6632011d8826f936a19257c715407",
+    "user_sha256": "c01c9f8d31bd5a32db177b6e377a38f3093ddeb4024b1fa17ddc096f6bc447f5",
+    "response_sha256": "296993fb145a789e98965f55024b4977df9a22c5e8280ca9beeeb0e8b3c0c6c9",
+    "generation_attempts": 1,
+    "format_repair_used": false
+  }
+]

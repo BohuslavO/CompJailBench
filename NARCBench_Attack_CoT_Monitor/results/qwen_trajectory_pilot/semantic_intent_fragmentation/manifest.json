@@ -1,0 +1,17 @@
+{
+  "attack": "semantic_intent_fragmentation",
+  "model": "Qwen/Qwen3-32B-AWQ",
+  "revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "replicate": 0,
+  "sampling_seed": 20260817,
+  "pair_ids": [
+    "sif-fin-m1"
+  ],
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20,
+  "max_new_tokens": 512,
+  "activation_layer": 28,
+  "activation_method": "teacher-forced replay of saved response",
+  "status": "complete"
+}
