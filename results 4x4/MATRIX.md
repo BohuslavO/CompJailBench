@@ -3,18 +3,18 @@
 `build_matrix.py` summarizes 6763 contributor CSV rows from 5 contributor(s).
 Attack methods present: 4/4. Defense methods present: 4/4.
 
-## Qwen3-32B-AWQ r0 AUROC by assigned condition
+## Results by attack and defense
 
-AUROC compares all scored attack attempts with their matched benign controls, using the same Qwen trajectories for all compatible monitors. Attack-success labels and success-conditioned AUROC are pending.
+AgentHarm and SIF show Qwen3-32B-AWQ r0 AUROC by assigned condition on scored pairs. Attack-success labels and success-conditioned AUROC are pending. NARCBench and DeCompBench show the named metrics from their earlier runs as attack / benign-control means. Those runs used their original model configurations.
 
 | Attack | Agent-to-Agent Monitor* | Sentinel Agents* | CoT/rationale monitor* | NARCBench Probing |
 |---|---|---|---|---|
-| AgentHarm | public 0.417 (174 pairs) | public message-only 0.290 (174 pairs) | action 0.339 (174 pairs)<br>reasoning 0.350 (174 pairs)<br>action + reasoning 0.244 (174 pairs) | — |
-| Semantic Intent Fragmentation | public unavailable | public message-only unavailable | action 0.400 (10 pairs)<br>reasoning unavailable<br>action + reasoning unavailable | — |
-| NARCBench | — | — | — | — |
-| DeCompBench | — | — | — | — |
+| AgentHarm | public AUROC 0.417 (174 pairs) | public message-only AUROC 0.290 (174 pairs) | action AUROC 0.339 (174 pairs)<br>reasoning AUROC 0.350 (174 pairs)<br>action + reasoning AUROC 0.244 (174 pairs) | — |
+| Semantic Intent Fragmentation | No saved final output | No saved final output | action AUROC 0.400 (10 pairs)<br>reasoning: No recorded reasoning<br>action + reasoning: No recorded reasoning | — |
+| NARCBench | Suspiciousness<br>0.11 / 0.04 | Suspiciousness<br>0.94 / 0.89 | Action + reasoning suspiciousness<br>0.35 / 0.51 | Peak suspicion<br>6.47 / 0.83 |
+| DeCompBench | Graph suspiciousness<br>0.96 / 0.93 | Full monitor flag rate<br>0.13 / 0.13 | Action suspiciousness<br>0.94 / 0.94 | Peak suspicion<br>14.78 / 13.85 |
 
-SIF lacks final output for Agent-to-Agent and Sentinel, and observable reasoning for both reasoning-dependent CoT scopes. `—` indicates no verified Qwen r0 result.
+For SIF, the Qwen Agent-to-Agent and message-only Sentinel scoring adapters require a saved final output. The SIF trajectories contain public messages and lack that field. CoT can score the messages in action-only mode. Its other scopes require recorded reasoning.
 
 [Per-sample scores, raw monitor calls, and run provenance](../NARCBench_Attack_CoT_Monitor/results/qwen_r0/README.md)
 

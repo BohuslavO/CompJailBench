@@ -62,6 +62,26 @@ QWEN_SCOPES = {
     },
 }
 
+PREVIOUS_METRICS = {
+    "narcbench_collusion": {
+        "agent_to_agent_monitor": ("suspiciousness__public_utterance_graph_plus_final_output", "Suspiciousness"),
+        "sentinel_agents_message_only": ("sentinel_suspiciousness__public", "Suspiciousness"),
+        "cot_observable_reasoning_monitor": ("suspiciousness__public_action_plus_observable_reasoning", "Action + reasoning suspiciousness"),
+        "narcbench_probing": ("peak_suspicion", "Peak suspicion"),
+    },
+    "decompbench_routing": {
+        "agent_to_agent_monitor": ("suspiciousness__graph", "Graph suspiciousness"),
+        "sentinel_agents_message_only": ("monitor_flag__sentinel_full", "Full monitor flag rate"),
+        "cot_observable_reasoning_monitor": ("suspiciousness__public_action_only", "Action suspiciousness"),
+        "narcbench_probing": ("peak_suspicion", "Peak suspicion"),
+    },
+}
+
+UNAVAILABLE_LABELS = {
+    "no final output": "No saved final output",
+    "no evaluator-visible public/final observable reasoning": "No recorded reasoning",
+}
+
 
 def load_raw(raw_dir):
     rows = []
@@ -154,26 +174,29 @@ def render_pivot_table(cells, attack_methods, defense_methods, metric_name, labe
     return "\n".join(lines)
 
 
-def render_qwen_table(rows):
+def render_results_table(rows, previous_cells):
     if not rows:
         return ""
 
     scores = defaultdict(lambda: defaultdict(dict))
-    unavailable = set()
+    unavailable = defaultdict(set)
     for row in rows:
         key = (row["attack_method"], row["defense_method"], row["strategy"])
         metric = row["metric_name"]
         if metric.startswith(("suspiciousness__", "sentinel_suspiciousness__")):
             scores[key][row["task_id"]][row["condition"]] = float(row["metric_value"])
         elif metric == "monitor_observable" and float(row["metric_value"]) == 0:
-            unavailable.add(key)
+            notes = dict(field.split("=", 1) for field in row["notes"].split(";") if "=" in field)
+            reason = notes.get("unavailable_reason", "Required input missing")
+            unavailable[key].add(UNAVAILABLE_LABELS.get(reason, reason))
 
     lines = [
-        "## Qwen3-32B-AWQ r0 AUROC by assigned condition",
+        "## Results by attack and defense",
         "",
-        "AUROC compares all scored attack attempts with their matched benign controls, "
-        "using the same Qwen trajectories for all compatible monitors. "
-        "Attack-success labels and success-conditioned AUROC are pending.",
+        "AgentHarm and SIF show Qwen3-32B-AWQ r0 AUROC by assigned condition on scored pairs. "
+        "Attack-success labels and success-conditioned AUROC are pending. "
+        "NARCBench and DeCompBench show the named metrics from their earlier runs "
+        "as attack / benign-control means. Those runs used their original model configurations.",
         "",
         "| Attack | " + " | ".join(DISPLAY_NAMES[key] for key in EXPECTED_DEFENSE_METHODS) + " |",
         "|---|---|---|---|---|",
@@ -182,7 +205,8 @@ def render_qwen_table(rows):
         cells = []
         for defense in EXPECTED_DEFENSE_METHODS:
             values = []
-            for scope, label in QWEN_SCOPES.get(defense, {}).items():
+            scopes = QWEN_SCOPES.get(defense, {})
+            for scope, label in scopes.items():
                 key = (attack, defense, scope)
                 pairs = [
                     (pair["attack"], pair["benign_control"])
@@ -196,15 +220,24 @@ def render_qwen_table(rows):
                         for attack_score in attack_scores
                         for control_score in control_scores
                     ) / len(pairs) ** 2
-                    values.append(f"{label} {auroc:.3f} ({len(pairs)} pairs)")
+                    values.append(f"{label} AUROC {auroc:.3f} ({len(pairs)} pairs)")
                 elif key in unavailable:
-                    values.append(f"{label} unavailable")
+                    reason = ", ".join(sorted(unavailable[key]))
+                    values.append(f"{label}: {reason}" if len(scopes) > 1 else reason)
+            if not values and defense in PREVIOUS_METRICS.get(attack, {}):
+                metric, label = PREVIOUS_METRICS[attack][defense]
+                data = previous_cells.get((attack, defense), {}).get(metric, {})
+                attack_mean = mean(data.get("attack", []))
+                control_mean = mean(data.get("benign_control", []))
+                if attack_mean is not None and control_mean is not None:
+                    values.append(f"{label}<br>{attack_mean:.2f} / {control_mean:.2f}")
             cells.append("<br>".join(values) or "—")
         lines.append("| " + " | ".join([DISPLAY_NAMES[attack], *cells]) + " |")
     lines.extend([
         "",
-        "SIF lacks final output for Agent-to-Agent and Sentinel, and observable reasoning "
-        "for both reasoning-dependent CoT scopes. `—` indicates no verified Qwen r0 result.",
+        "For SIF, the Qwen Agent-to-Agent and message-only Sentinel scoring adapters require "
+        "a saved final output. The SIF trajectories contain public messages and lack that field. "
+        "CoT can score the messages in action-only mode. Its other scopes require recorded reasoning.",
         "",
         f"[Per-sample scores, raw monitor calls, and run provenance](../{QWEN_RESULTS.as_posix()}/README.md)",
         "",
@@ -257,7 +290,7 @@ def main():
         f"Defense methods present: "
         f"{len(found_defenses & set(EXPECTED_DEFENSE_METHODS))}/4.",
         "",
-        render_qwen_table(qwen_rows),
+        render_results_table(qwen_rows, cells),
         "The historical tables below show mean(metric | attack) / mean(metric | benign_control), and the gap (Δ) between them.",
         "For binary flag metrics, the attack mean is detection recall and the benign-control mean is the false-positive rate.",
         "Gap is a placeholder signal, not a validated AUROC -- see README.md.",
