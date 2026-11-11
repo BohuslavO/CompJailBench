@@ -20,18 +20,26 @@
     "qwen-r0-agentharm-batch-10-scores-20261110-013819.zip": "7a5078fd04a83c1923733c889c3c1470978be0b916453dd942fb6726b32f9984",
     "qwen-r0-agentharm-batch-11-scores-20261110-013819.zip": "238a55a65e678b9f8456159c60f962215445de295e45f2079e6ff03255b29cdf",
     "qwen-r0-agentharm-batch-12-scores-20261110-013819.zip": "d8117563f8027a384c503aba1a0f5c6a655390d343eebed11a9af324fc5f2d6e",
-    "qwen-r0-agentharm-batch-13-scores-20261110-013819.zip": "b29c461f5dc170a0d63f7b47fbf5a9606c4ad93a07c6a05de877882fd40d2917"
+    "qwen-r0-agentharm-batch-13-scores-20261110-013819.zip": "b29c461f5dc170a0d63f7b47fbf5a9606c4ad93a07c6a05de877882fd40d2917",
+    "qwen-r0-agentharm-batch-14-scores-20261111-065142.zip": "b8d0995148ce768e0c65d9e8bcd0fed7c6f68663b119b4974972b97ee5df3cc5",
+    "qwen-r0-agentharm-batch-15-scores-20261111-065142.zip": "cb56b4c6ff40e82705aaece63190f44d2d58d5f35e435b3a6950c1b4a46bb588",
+    "qwen-r0-agentharm-batch-16-scores-20261111-065142.zip": "f8ee6efd05c829dada2408a4285adecffb2f9e504a5e96f4fbe48166cdf91669",
+    "qwen-r0-agentharm-batch-17-scores-20261111-065142.zip": "01c95e81a4e929f520d45c6dcd21026218ddb867c259bd681051b2d7e58dd84c",
+    "qwen-r0-agentharm-batch-18-scores-20261111-065142.zip": "eb8ade009e54158957aec97c0cf54fc060a325f9271886af6eaf0f43b53042d8",
+    "qwen-r0-agentharm-batch-19-scores-20261111-065142.zip": "ece97398a8debafa43254e9d9d222cc2b0a036bd95b7bb287cbf0c5e93734569",
+    "qwen-r0-agentharm-batch-20-scores-20261111-065142.zip": "8d4d16d73f9f86de81993a35cf46db81ebd89e29c3a6dbba16e6a1470941dd2b",
+    "qwen-r0-agentharm-batch-21-scores-20261111-065142.zip": "46bc02861465a83ccd6e7c1235d9eb4280d53de706273da0d1f606c914b62571",
+    "qwen-r0-agentharm-batch-22-scores-20261111-065142.zip": "8d5f68596e93e7b56508ee36512894dbbd0fdbd55920fe9ffaf4fefd5665032a"
   },
-  "complete_pairs_scored": 105,
+  "complete_pairs_scored": 174,
   "complete_pairs_total": 174,
-  "scored_rows": 1050,
+  "scored_rows": 1740,
   "batch_01_inference_seconds": 1188.938279532009,
   "batch_01_inference_seconds_by_defense": {
     "cot": 552.2816351960032,
     "agent_to_agent": 182.26573785200026,
     "sentinel": 454.3909064840054
   },
-  "extrapolated_remaining_inference_seconds": 9514.606802752027,
   "batch_02_inference_seconds": 1114.5281410950129,
   "batch_03_inference_seconds": 1144.3622791530042,
   "batch_04_inference_seconds": 1252.6801561970024,
@@ -52,27 +60,42 @@
     {
       "defense": "agent_to_agent",
       "scope": "public",
-      "auroc": 0.3782766439909297
+      "auroc": 0.41655106354868543
     },
     {
       "defense": "cot",
       "scope": "observable-reasoning-only",
-      "auroc": 0.35600907029478457
+      "auroc": 0.35007927070947287
     },
     {
       "defense": "cot",
       "scope": "public-action-only",
-      "auroc": 0.33895691609977324
+      "auroc": 0.3388822829964328
     },
     {
       "defense": "cot",
       "scope": "public-action-plus-observable-reasoning",
-      "auroc": 0.23582766439909297
+      "auroc": 0.2441702999075175
     },
     {
       "defense": "sentinel",
       "scope": "public",
-      "auroc": 0.29750566893424035
+      "auroc": 0.28975095785440613
     }
-  ]
+  ],
+  "batch_14_inference_seconds": 194.94971248999983,
+  "batch_15_inference_seconds": 187.15586141600033,
+  "batch_16_inference_seconds": 184.24967042900033,
+  "batch_17_inference_seconds": 181.30051846199876,
+  "batch_18_inference_seconds": 189.72303682800077,
+  "batch_19_inference_seconds": 204.5824068869988,
+  "batch_20_inference_seconds": 193.04911913000205,
+  "batch_21_inference_seconds": 203.0339340109981,
+  "batch_22_inference_seconds": 115.50055105100068,
+  "modal_batches_14_22": {
+    "app_id": "ap-HN226haeDvwVxz9jz2VGnj",
+    "gpu": "NVIDIA L40S",
+    "scoring_wall_seconds": 1661,
+    "model_calls": 2775
+  }
 }
