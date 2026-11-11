@@ -1,9 +1,5 @@
 {
   "files": {
-    "README.md": {
-      "sha256": "d12ed1866fa65cf4090abef654f83a188720c527e579358e05ae9bf96bde97aa",
-      "bytes": 3421
-    },
     "qwen-overnight-audit.json": {
       "sha256": "3b83fa2b5f8562cbe1bc316de217faeca57b7a136d9273a10fc64aba17257f68",
       "bytes": 1166
@@ -64,49 +60,13 @@
       "sha256": "b29c461f5dc170a0d63f7b47fbf5a9606c4ad93a07c6a05de877882fd40d2917",
       "bytes": 40397
     },
-    "qwen-r0-agentharm-batch-14-scores-20261111-065142.zip": {
-      "sha256": "b8d0995148ce768e0c65d9e8bcd0fed7c6f68663b119b4974972b97ee5df3cc5",
-      "bytes": 48359
-    },
-    "qwen-r0-agentharm-batch-15-scores-20261111-065142.zip": {
-      "sha256": "cb56b4c6ff40e82705aaece63190f44d2d58d5f35e435b3a6950c1b4a46bb588",
-      "bytes": 49901
-    },
-    "qwen-r0-agentharm-batch-16-scores-20261111-065142.zip": {
-      "sha256": "f8ee6efd05c829dada2408a4285adecffb2f9e504a5e96f4fbe48166cdf91669",
-      "bytes": 44521
-    },
-    "qwen-r0-agentharm-batch-17-scores-20261111-065142.zip": {
-      "sha256": "01c95e81a4e929f520d45c6dcd21026218ddb867c259bd681051b2d7e58dd84c",
-      "bytes": 44860
-    },
-    "qwen-r0-agentharm-batch-18-scores-20261111-065142.zip": {
-      "sha256": "eb8ade009e54158957aec97c0cf54fc060a325f9271886af6eaf0f43b53042d8",
-      "bytes": 57028
-    },
-    "qwen-r0-agentharm-batch-19-scores-20261111-065142.zip": {
-      "sha256": "ece97398a8debafa43254e9d9d222cc2b0a036bd95b7bb287cbf0c5e93734569",
-      "bytes": 55341
-    },
-    "qwen-r0-agentharm-batch-20-scores-20261111-065142.zip": {
-      "sha256": "8d4d16d73f9f86de81993a35cf46db81ebd89e29c3a6dbba16e6a1470941dd2b",
-      "bytes": 47292
-    },
-    "qwen-r0-agentharm-batch-21-scores-20261111-065142.zip": {
-      "sha256": "46bc02861465a83ccd6e7c1235d9eb4280d53de706273da0d1f606c914b62571",
-      "bytes": 47510
-    },
-    "qwen-r0-agentharm-batch-22-scores-20261111-065142.zip": {
-      "sha256": "8d5f68596e93e7b56508ee36512894dbbd0fdbd55920fe9ffaf4fefd5665032a",
-      "bytes": 28548
-    },
     "qwen-r0-agentharm-scores.jsonl": {
-      "sha256": "2e422cba7b51c4cdee51bb3a703cccbf69efc27ff4b20c8bcdfe88f4ed19f301",
-      "bytes": 1731332
+      "sha256": "7d58fe5858639753c73d79e8092b4273c6d7799dd7b977916aed483495ca5285",
+      "bytes": 1044742
     },
     "qwen-r0-agentharm-summary.json": {
-      "sha256": "079ea336ed0c25417da96aec2fd9e1198d40045eb639c06995714f3e529e627a",
-      "bytes": 5623
+      "sha256": "d90424a0f301e55a4039efb094316c1ce4ef1224a13ad43b642fb398db7cf64c",
+      "bytes": 3880
     },
     "qwen-r0-sif-remaining-scores-20261109-223730.zip": {
       "sha256": "4cf4668767cd9fdde5b55a6a0e047e2c4fddd27e248c60b2eecbba2b90bd7ef2",
@@ -127,6 +87,10 @@
     "qwen_source_split.json": {
       "sha256": "8683b3777d7e9e14b02becf1c50427f00faeff1af7a55e2c09fa2e5f598556a7",
       "bytes": 1105
+    },
+    "README.md": {
+      "sha256": "c87e8d3c9a7cc113a2b361cc2ecbf309ab1b6d2ce4fa51c836fab3178d38eb22",
+      "bytes": 3331
     },
     "scoring_inputs/batch-01/agentharm/standard_trajectories.jsonl": {
       "sha256": "12b7a4d98fdebef8c3c1c35ddc3fcb97902b8d0a4cff17c5fdfa8d3c3f7cb68b",

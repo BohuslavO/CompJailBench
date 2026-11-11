@@ -8,9 +8,9 @@ defense families under a common long-format results schema. See
 for the schema itself.
 
 The controlled Qwen rerun artifacts, including saved trajectories, activations,
-174 paired AgentHarm text-monitor results and 10 paired SIF results, are in
+105 paired AgentHarm text-monitor results and 10 paired SIF results, are in
 [`NARCBench_Attack_CoT_Monitor/results/qwen_r0/`](NARCBench_Attack_CoT_Monitor/results/qwen_r0/).
-The notebook for resuming AgentHarm scoring is
+The remaining AgentHarm scoring notebook is
 [`Qwen_resume_Lightning.ipynb`](NARCBench_Attack_CoT_Monitor/notebooks/Qwen_resume_Lightning.ipynb).
 
 ## Scope

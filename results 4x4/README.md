@@ -1,7 +1,8 @@
 # CompJailBench 4x4 result schema
 
 This directory contains the shared long-form result contract and the generated
-attack-by-defense matrix. The builder reads the submissions in `raw/`.
+attack-by-defense matrix. One canonical matrix is built from the CSV files in
+`raw/`; method-specific statistics remain in their source result directories.
 
 ## The schema
 
@@ -38,14 +39,6 @@ AUROC and confidence intervals.
 3. Run `python build_matrix.py` from this directory. The command reads all
    valid CSV files in `raw/` and writes the canonical `MATRIX.md`.
 
-The controlled Qwen r0 submissions use `qwen-r0-` run IDs that identify their
-source score archives. Their `task_id` identifies the matched pair and their
-`notes` identify the trajectory. The builder uses suspiciousness scores to
-compute AUROC on complete scored pairs. A `monitor_observable` value of zero
-records an unavailable input with the reason in `notes`.
-See the [Qwen r0 artifacts](../NARCBench_Attack_CoT_Monitor/results/qwen_r0/README.md)
-for the trajectories, score archives, and raw monitor calls.
-
 `convert_batch_run.py` is a worked converter for one batch-output format.
 
 ## Canonical method keys
@@ -75,7 +68,7 @@ current NARCBench cells must retain the following limitations:
   primary `peak_suspicion` metric covers all recorded turns; public-only and
   group-level probe metrics are reported separately.
 
-The AgentHarm contributor CSVs record these limitations:
+The AgentHarm cells must retain these limitations:
 
 - Text defenses use 24 matched pairs after pair `10-4` was excluded from both
   arms following a persistent benign-generation failure.
