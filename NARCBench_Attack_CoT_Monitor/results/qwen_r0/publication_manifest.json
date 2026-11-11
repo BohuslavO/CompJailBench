@@ -1,0 +1,208 @@
+{
+  "files": {
+    "qwen-overnight-audit.json": {
+      "sha256": "3b83fa2b5f8562cbe1bc316de217faeca57b7a136d9273a10fc64aba17257f68",
+      "bytes": 1166
+    },
+    "qwen-overnight-recovered.zip": {
+      "sha256": "872e20846e810afb72182bd81c83a90cc1481b0bffd562c827d3e13d129a492c",
+      "bytes": 18933013
+    },
+    "qwen-r0-agentharm-batch-01-scores-20261109-224932.zip": {
+      "sha256": "03e88827d45a9eca339e46535355dac7cfe253070e8e343752d043557db983e7",
+      "bytes": 53860
+    },
+    "qwen-r0-agentharm-batch-02-scores-20261109-231442.zip": {
+      "sha256": "1ae60275fade008ebb01766826ddb94e6225973d551d09820535647422825d0a",
+      "bytes": 45857
+    },
+    "qwen-r0-agentharm-batch-03-scores-20261109-234601.zip": {
+      "sha256": "85f5ebf3f9b1228934aaac0cbbd5261642251f7747421e7526c278fbce1327b8",
+      "bytes": 47033
+    },
+    "qwen-r0-agentharm-batch-04-scores-20261110-002916.zip": {
+      "sha256": "baef8bac21c8814c04af77f08c42cb8b06572cb6c9704818833b13d0ef441a45",
+      "bytes": 53829
+    },
+    "qwen-r0-agentharm-batch-05-scores-20261110-002916.zip": {
+      "sha256": "584346784c59c55b0e7280d1ae2c42ae18d118928b0459c86cf350fbba6df4ec",
+      "bytes": 48694
+    },
+    "qwen-r0-agentharm-batch-06-scores-20261110-013819.zip": {
+      "sha256": "0f1cbbb1b77d6de3887679d21b3528d68b3fe48055b215a6ad7698c1a12d0602",
+      "bytes": 45450
+    },
+    "qwen-r0-agentharm-batch-07-scores-20261110-013819.zip": {
+      "sha256": "cae26a75d73f25cd0d673385422ea9744f30877f917a5d64a322c632c5a92900",
+      "bytes": 45954
+    },
+    "qwen-r0-agentharm-batch-08-scores-20261110-013819.zip": {
+      "sha256": "3fad02fe539db68518a01cf210f4ffbe279119c160e3d33389fbc81b9026d1d5",
+      "bytes": 41981
+    },
+    "qwen-r0-agentharm-batch-09-scores-20261110-013819.zip": {
+      "sha256": "6ef5774804529bedc05de264df67cc41d270afe48b9683bf4f4045f3f7a57535",
+      "bytes": 45116
+    },
+    "qwen-r0-agentharm-batch-10-scores-20261110-013819.zip": {
+      "sha256": "7a5078fd04a83c1923733c889c3c1470978be0b916453dd942fb6726b32f9984",
+      "bytes": 44436
+    },
+    "qwen-r0-agentharm-batch-11-scores-20261110-013819.zip": {
+      "sha256": "238a55a65e678b9f8456159c60f962215445de295e45f2079e6ff03255b29cdf",
+      "bytes": 40560
+    },
+    "qwen-r0-agentharm-batch-12-scores-20261110-013819.zip": {
+      "sha256": "d8117563f8027a384c503aba1a0f5c6a655390d343eebed11a9af324fc5f2d6e",
+      "bytes": 49086
+    },
+    "qwen-r0-agentharm-batch-13-scores-20261110-013819.zip": {
+      "sha256": "b29c461f5dc170a0d63f7b47fbf5a9606c4ad93a07c6a05de877882fd40d2917",
+      "bytes": 40397
+    },
+    "qwen-r0-agentharm-scores.jsonl": {
+      "sha256": "7d58fe5858639753c73d79e8092b4273c6d7799dd7b977916aed483495ca5285",
+      "bytes": 1044742
+    },
+    "qwen-r0-agentharm-summary.json": {
+      "sha256": "d90424a0f301e55a4039efb094316c1ce4ef1224a13ad43b642fb398db7cf64c",
+      "bytes": 3880
+    },
+    "qwen-r0-sif-remaining-scores-20261109-223730.zip": {
+      "sha256": "4cf4668767cd9fdde5b55a6a0e047e2c4fddd27e248c60b2eecbba2b90bd7ef2",
+      "bytes": 33575
+    },
+    "qwen-r0-sif-scores.jsonl": {
+      "sha256": "529035209c0ba9fe4d521e13b10989c3822edee1e0ad482aae96a34c824f5e20",
+      "bytes": 74715
+    },
+    "qwen-r0-sif-summary.json": {
+      "sha256": "93aacc26b7daa81092bd0670d1dcf369424849362cd4e8a786b2525ae8110e59",
+      "bytes": 1149
+    },
+    "qwen-r0-smoke-scores-20261109-222512.zip": {
+      "sha256": "fe14d044f91c1d6f1fb1b45320f66495da4de6a3b38fc0440b4d23f6b75cb173",
+      "bytes": 13552
+    },
+    "qwen_source_split.json": {
+      "sha256": "8683b3777d7e9e14b02becf1c50427f00faeff1af7a55e2c09fa2e5f598556a7",
+      "bytes": 1105
+    },
+    "README.md": {
+      "sha256": "c87e8d3c9a7cc113a2b361cc2ecbf309ab1b6d2ce4fa51c836fab3178d38eb22",
+      "bytes": 3331
+    },
+    "scoring_inputs/batch-01/agentharm/standard_trajectories.jsonl": {
+      "sha256": "12b7a4d98fdebef8c3c1c35ddc3fcb97902b8d0a4cff17c5fdfa8d3c3f7cb68b",
+      "bytes": 146626
+    },
+    "scoring_inputs/batch-01/semantic_intent_fragmentation/standard_trajectories.jsonl": {
+      "sha256": "8f180ce7e2a0202588f8658fa5c134a437325135cb4f1445ff78c98e8ca35253",
+      "bytes": 230040
+    },
+    "scoring_inputs/batch-02/agentharm/standard_trajectories.jsonl": {
+      "sha256": "56a08c91c79b7433ef95b2c5c8298ee770e02238a05cd2dbb5880e648a341acd",
+      "bytes": 154909
+    },
+    "scoring_inputs/batch-02/semantic_intent_fragmentation/standard_trajectories.jsonl": {
+      "sha256": "0e965123f5aa2b0910e29e804bed3e5f5398990799f6079feea4ae69252a783f",
+      "bytes": 23559
+    },
+    "scoring_inputs/batch-03/agentharm/standard_trajectories.jsonl": {
+      "sha256": "e42d03b40e218ad5f69ea7e1e0d48c206fa78d682c5c7d14ae1797b726c0bb76",
+      "bytes": 269513
+    },
+    "scoring_inputs/batch-04/agentharm/standard_trajectories.jsonl": {
+      "sha256": "6d9726541fea34a01da963d4e755b8bffc9f938ecd9aab314b1c35cacf143636",
+      "bytes": 216674
+    },
+    "scoring_inputs/batch-05/agentharm/standard_trajectories.jsonl": {
+      "sha256": "d6938e34b3e648334753af2d88f7305673215942f0afddd77206edc22b85c8d7",
+      "bytes": 275857
+    },
+    "scoring_inputs/batch-06/agentharm/standard_trajectories.jsonl": {
+      "sha256": "0ab43a1637fb7fa4efc8f6b1c21b737ebed4f8073e4cee0e8bbf8d60aea17134",
+      "bytes": 256963
+    },
+    "scoring_inputs/batch-07/agentharm/standard_trajectories.jsonl": {
+      "sha256": "b5f718c8781dda027a932c2632c1a728c412601761e3ac9d07757d8113293d41",
+      "bytes": 273665
+    },
+    "scoring_inputs/batch-08/agentharm/standard_trajectories.jsonl": {
+      "sha256": "afaf0833bd385067d99b96d0dd29ea1322d1d3b3d5502366b876cfd5f0e6ab2b",
+      "bytes": 244783
+    },
+    "scoring_inputs/batch-09/agentharm/standard_trajectories.jsonl": {
+      "sha256": "acc818df8af3765b9e11e3b9c7287067e606500a7a5c42660c1782b1b4f18fd3",
+      "bytes": 255883
+    },
+    "scoring_inputs/batch-10/agentharm/standard_trajectories.jsonl": {
+      "sha256": "c9942d55265459f21a8b57b5d1265d43bc3acb0ef78b4fa808cce65a0f06611c",
+      "bytes": 258070
+    },
+    "scoring_inputs/batch-11/agentharm/standard_trajectories.jsonl": {
+      "sha256": "65405fdc3baa8657a494a07f86e8304213021dbaee621ba84685eb455d2bd351",
+      "bytes": 242451
+    },
+    "scoring_inputs/batch-12/agentharm/standard_trajectories.jsonl": {
+      "sha256": "b28e51a9d0587ef20d0fe7ab027ff57b92247acfd926323a9258f97c10370b0e",
+      "bytes": 265677
+    },
+    "scoring_inputs/batch-13/agentharm/standard_trajectories.jsonl": {
+      "sha256": "f11c69048ffe216ee181290f9db2526fcce489218a5d907ef884a717909923cd",
+      "bytes": 249444
+    },
+    "scoring_inputs/batch-14/agentharm/standard_trajectories.jsonl": {
+      "sha256": "8a709f0dd54200852b7b437e4e08a37295762c7603374a277230db406d8db302",
+      "bytes": 256872
+    },
+    "scoring_inputs/batch-15/agentharm/standard_trajectories.jsonl": {
+      "sha256": "6a3e8a4e301bfc1c1adde44b21b5977de5c5b6d7315f14e0fd15c2366f10a2ac",
+      "bytes": 277746
+    },
+    "scoring_inputs/batch-16/agentharm/standard_trajectories.jsonl": {
+      "sha256": "ecc9abb7a1bb50c371b80c769ba9eb81992724de036c9c957b4ab3aeb22daebf",
+      "bytes": 241926
+    },
+    "scoring_inputs/batch-17/agentharm/standard_trajectories.jsonl": {
+      "sha256": "76558fc6ed7ee4256f769a3c54a563e7ef0fd336fcab06879ec530fe9dc3dbc5",
+      "bytes": 258218
+    },
+    "scoring_inputs/batch-18/agentharm/standard_trajectories.jsonl": {
+      "sha256": "19f487767e47d3eaffbe77ab7f59a6f01ca52ae9793365973443c2fd7643fa61",
+      "bytes": 328075
+    },
+    "scoring_inputs/batch-19/agentharm/standard_trajectories.jsonl": {
+      "sha256": "6d531c2b9cb2483390cdc092a5e4b0b81dc2c0098fe6596f3f65a632f3102f5f",
+      "bytes": 280404
+    },
+    "scoring_inputs/batch-20/agentharm/standard_trajectories.jsonl": {
+      "sha256": "9609a3bd555051c21371fab252f38dd9dc9405fa4989573ef8269552e1cac7e3",
+      "bytes": 252257
+    },
+    "scoring_inputs/batch-21/agentharm/standard_trajectories.jsonl": {
+      "sha256": "c782aea8a22204586d07586d1fd60298c1130efb4fb7095b49a368009960762c",
+      "bytes": 205161
+    },
+    "scoring_inputs/batch-22/agentharm/standard_trajectories.jsonl": {
+      "sha256": "331ccbdbdc16c1b52a16ae8f834493d88ad78784c373ac62bdc5ec86a2cd24b2",
+      "bytes": 70811
+    },
+    "scoring_inputs/inventory.json": {
+      "sha256": "b72208b22c3b05964de07b75f83bcd698d2f7a2c43f3c6f4123ef450eb879fbe",
+      "bytes": 8586
+    },
+    "scoring_inputs/sif-remaining/semantic_intent_fragmentation/standard_trajectories.jsonl": {
+      "sha256": "5266110350625cbd5ed65bcb89579a6678ffadfb2b9a533fcd0dc0c29bfa1c98",
+      "bytes": 253599
+    },
+    "scoring_inputs/smoke/agentharm/standard_trajectories.jsonl": {
+      "sha256": "cdfd0700ece34bf5b47bf1010c6cb444bd1a499449d75eed8479293c3ffc28ee",
+      "bytes": 13018
+    },
+    "scoring_inputs/smoke/semantic_intent_fragmentation/standard_trajectories.jsonl": {
+      "sha256": "83fe3da8e6450c9802c837ba2bcab80b98b681541913828cff5f815261ba4444",
+      "bytes": 30005
+    }
+  }
+}

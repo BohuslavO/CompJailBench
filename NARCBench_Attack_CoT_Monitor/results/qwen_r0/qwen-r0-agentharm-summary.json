@@ -1,0 +1,78 @@
+{
+  "model": {
+    "monitor_model": "Qwen/Qwen3-32B-AWQ",
+    "monitor_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+    "do_sample": false,
+    "max_new_tokens": 1536,
+    "enable_thinking": false
+  },
+  "sources": {
+    "qwen-r0-smoke-scores-20261109-222512.zip": "fe14d044f91c1d6f1fb1b45320f66495da4de6a3b38fc0440b4d23f6b75cb173",
+    "qwen-r0-agentharm-batch-01-scores-20261109-224932.zip": "03e88827d45a9eca339e46535355dac7cfe253070e8e343752d043557db983e7",
+    "qwen-r0-agentharm-batch-02-scores-20261109-231442.zip": "1ae60275fade008ebb01766826ddb94e6225973d551d09820535647422825d0a",
+    "qwen-r0-agentharm-batch-03-scores-20261109-234601.zip": "85f5ebf3f9b1228934aaac0cbbd5261642251f7747421e7526c278fbce1327b8",
+    "qwen-r0-agentharm-batch-04-scores-20261110-002916.zip": "baef8bac21c8814c04af77f08c42cb8b06572cb6c9704818833b13d0ef441a45",
+    "qwen-r0-agentharm-batch-05-scores-20261110-002916.zip": "584346784c59c55b0e7280d1ae2c42ae18d118928b0459c86cf350fbba6df4ec",
+    "qwen-r0-agentharm-batch-06-scores-20261110-013819.zip": "0f1cbbb1b77d6de3887679d21b3528d68b3fe48055b215a6ad7698c1a12d0602",
+    "qwen-r0-agentharm-batch-07-scores-20261110-013819.zip": "cae26a75d73f25cd0d673385422ea9744f30877f917a5d64a322c632c5a92900",
+    "qwen-r0-agentharm-batch-08-scores-20261110-013819.zip": "3fad02fe539db68518a01cf210f4ffbe279119c160e3d33389fbc81b9026d1d5",
+    "qwen-r0-agentharm-batch-09-scores-20261110-013819.zip": "6ef5774804529bedc05de264df67cc41d270afe48b9683bf4f4045f3f7a57535",
+    "qwen-r0-agentharm-batch-10-scores-20261110-013819.zip": "7a5078fd04a83c1923733c889c3c1470978be0b916453dd942fb6726b32f9984",
+    "qwen-r0-agentharm-batch-11-scores-20261110-013819.zip": "238a55a65e678b9f8456159c60f962215445de295e45f2079e6ff03255b29cdf",
+    "qwen-r0-agentharm-batch-12-scores-20261110-013819.zip": "d8117563f8027a384c503aba1a0f5c6a655390d343eebed11a9af324fc5f2d6e",
+    "qwen-r0-agentharm-batch-13-scores-20261110-013819.zip": "b29c461f5dc170a0d63f7b47fbf5a9606c4ad93a07c6a05de877882fd40d2917"
+  },
+  "complete_pairs_scored": 105,
+  "complete_pairs_total": 174,
+  "scored_rows": 1050,
+  "batch_01_inference_seconds": 1188.938279532009,
+  "batch_01_inference_seconds_by_defense": {
+    "cot": 552.2816351960032,
+    "agent_to_agent": 182.26573785200026,
+    "sentinel": 454.3909064840054
+  },
+  "extrapolated_remaining_inference_seconds": 9514.606802752027,
+  "batch_02_inference_seconds": 1114.5281410950129,
+  "batch_03_inference_seconds": 1144.3622791530042,
+  "batch_04_inference_seconds": 1252.6801561970024,
+  "batch_05_inference_seconds": 1208.6035138119842,
+  "batch_06_inference_seconds": 1129.3601058359836,
+  "batch_07_inference_seconds": 1110.976509676997,
+  "batch_08_inference_seconds": 1085.5807858300013,
+  "batch_09_inference_seconds": 1105.8967716110292,
+  "batch_10_inference_seconds": 1098.2711793169947,
+  "batch_11_inference_seconds": 1065.5897454800142,
+  "batch_12_inference_seconds": 1164.5969484029956,
+  "batch_13_inference_seconds": 1064.8704955290232,
+  "latest_bundle": {
+    "file": "qwen-r0-agentharm-batches-06-13-scores-20261110-013819.zip",
+    "sha256": "d6326b1c82081b9cd4e4f3d811ac819c6fc71956cc6fcc0dc734e6d77cc24a61"
+  },
+  "descriptive_auroc_by_assigned_condition": [
+    {
+      "defense": "agent_to_agent",
+      "scope": "public",
+      "auroc": 0.3782766439909297
+    },
+    {
+      "defense": "cot",
+      "scope": "observable-reasoning-only",
+      "auroc": 0.35600907029478457
+    },
+    {
+      "defense": "cot",
+      "scope": "public-action-only",
+      "auroc": 0.33895691609977324
+    },
+    {
+      "defense": "cot",
+      "scope": "public-action-plus-observable-reasoning",
+      "auroc": 0.23582766439909297
+    },
+    {
+      "defense": "sentinel",
+      "scope": "public",
+      "auroc": 0.29750566893424035
+    }
+  ]
+}

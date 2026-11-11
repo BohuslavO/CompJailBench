@@ -1,0 +1,3 @@
+NARCBench_Attack_CoT_Monitor/results/qwen_r0/** -text
+NARCBench_Attack_CoT_Monitor/scripts/score_qwen_pilot_monitors.py -text
+NARCBench_Attack_CoT_Monitor/scripts/score_sentinel_message_only.py -text

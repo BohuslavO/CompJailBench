@@ -1,0 +1,49 @@
+{
+  "sha256": "872e20846e810afb72182bd81c83a90cc1481b0bffd562c827d3e13d129a492c",
+  "runs": {
+    "agentharm/r0": {
+      "manifest_status": "complete_with_errors",
+      "assigned": 352,
+      "saved": 350,
+      "conditions": {
+        "attack": 176,
+        "benign_control": 174
+      },
+      "complete_pairs": 174,
+      "errors": [
+        "14-1__benign_control__r0",
+        "53-1__benign_control__r0"
+      ],
+      "missing": 0,
+      "missing_ids": []
+    },
+    "agentharm/r1": {
+      "manifest_status": "running",
+      "assigned": 352,
+      "saved": 7,
+      "conditions": {
+        "attack": 4,
+        "benign_control": 3
+      },
+      "complete_pairs": 3,
+      "errors": [],
+      "missing": 345
+    },
+    "semantic_intent_fragmentation/r0": {
+      "manifest_status": "running",
+      "assigned": 22,
+      "saved": 21,
+      "conditions": {
+        "attack": 11,
+        "benign_control": 10
+      },
+      "complete_pairs": 10,
+      "errors": [],
+      "missing": 1,
+      "missing_ids": [
+        "sif-hr-m4__benign_control__r0"
+      ]
+    }
+  },
+  "preserved_old_trajectory_count": 330
+}

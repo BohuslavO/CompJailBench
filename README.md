@@ -7,6 +7,12 @@ defense families under a common long-format results schema. See
 `results 4x4/MATRIX.md` for the current state of that 4x4 matrix and `results 4x4/README.md`
 for the schema itself.
 
+The controlled Qwen rerun artifacts, including saved trajectories, activations,
+105 paired AgentHarm text-monitor results and 10 paired SIF results, are in
+[`NARCBench_Attack_CoT_Monitor/results/qwen_r0/`](NARCBench_Attack_CoT_Monitor/results/qwen_r0/).
+The remaining AgentHarm scoring notebook is
+[`Qwen_resume_Lightning.ipynb`](NARCBench_Attack_CoT_Monitor/notebooks/Qwen_resume_Lightning.ipynb).
+
 ## Scope
 
 This repository is the shared implementation and results store for the project. It is not a
