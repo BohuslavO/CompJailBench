@@ -1,10 +1,7 @@
 # CompJailBench 4x4 result schema
 
 This directory contains the shared long-form result contract and the generated
-attack-by-defense matrix. The contributor tables are built from the CSV files in
-`raw/`. The Qwen r0 table is computed from the published per-sample scores
-in [Qwen r0 results](../NARCBench_Attack_CoT_Monitor/results/qwen_r0/README.md).
-Its AUROC compares assigned attack and control conditions on complete scored pairs.
+attack-by-defense matrix. The builder reads the submissions in `raw/`.
 
 ## The schema
 
@@ -40,6 +37,14 @@ AUROC and confidence intervals.
 2. Save it as `raw/<contributor>__<attack_method>__<defense_method>.csv`.
 3. Run `python build_matrix.py` from this directory. The command reads all
    valid CSV files in `raw/` and writes the canonical `MATRIX.md`.
+
+The controlled Qwen r0 submissions use `qwen-r0-` run IDs that identify their
+source score archives. Their `task_id` identifies the matched pair and their
+`notes` identify the trajectory. The builder uses suspiciousness scores to
+compute AUROC on complete scored pairs. A `monitor_observable` value of zero
+records an unavailable input with the reason in `notes`.
+See the [Qwen r0 artifacts](../NARCBench_Attack_CoT_Monitor/results/qwen_r0/README.md)
+for the trajectories, score archives, and raw monitor calls.
 
 `convert_batch_run.py` is a worked converter for one batch-output format.
 

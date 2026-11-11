@@ -1,6 +1,6 @@
 # CompJailBench 4x4 Results Matrix
 
-`build_matrix.py` summarizes 3163 contributor CSV rows from 4 contributor(s).
+`build_matrix.py` summarizes 6763 contributor CSV rows from 5 contributor(s).
 Attack methods present: 4/4. Defense methods present: 4/4.
 
 ## Qwen3-32B-AWQ r0 AUROC by assigned condition
@@ -18,7 +18,7 @@ SIF lacks final output for Agent-to-Agent and Sentinel, and observable reasoning
 
 [Per-sample scores, raw monitor calls, and run provenance](../NARCBench_Attack_CoT_Monitor/results/qwen_r0/README.md)
 
-The contributor CSV tables below show mean(metric | attack) / mean(metric | benign_control), and the gap (Δ) between them.
+The historical tables below show mean(metric | attack) / mean(metric | benign_control), and the gap (Δ) between them.
 For binary flag metrics, the attack mean is detection recall and the benign-control mean is the false-positive rate.
 Gap is a placeholder signal, not a validated AUROC -- see README.md.
 

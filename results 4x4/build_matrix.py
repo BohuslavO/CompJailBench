@@ -8,7 +8,6 @@ Usage:
 """
 import argparse
 import csv
-import json
 from collections import defaultdict
 from pathlib import Path
 
@@ -54,13 +53,13 @@ DISPLAY_NAMES = {
 }
 
 QWEN_SCOPES = {
-    "agent_to_agent_monitor": ("agent_to_agent", {"public": "public"}),
-    "sentinel_agents_message_only": ("sentinel", {"public": "public message-only"}),
-    "cot_observable_reasoning_monitor": ("cot", {
+    "agent_to_agent_monitor": {"public": "public"},
+    "sentinel_agents_message_only": {"public": "public message-only"},
+    "cot_observable_reasoning_monitor": {
         "public-action-only": "action",
         "observable-reasoning-only": "reasoning",
         "public-action-plus-observable-reasoning": "action + reasoning",
-    }),
+    },
 }
 
 
@@ -155,23 +154,19 @@ def render_pivot_table(cells, attack_methods, defense_methods, metric_name, labe
     return "\n".join(lines)
 
 
-def render_qwen_table():
-    results_dir = BASE_DIR.parent / QWEN_RESULTS
-    score_files = sorted(results_dir.glob("qwen-r0-*-scores.jsonl"))
-    if not score_files:
+def render_qwen_table(rows):
+    if not rows:
         return ""
 
     scores = defaultdict(lambda: defaultdict(dict))
     unavailable = set()
-    for path in score_files:
-        with path.open(encoding="utf-8") as source:
-            for line in source:
-                row = json.loads(line)
-                key = (row["attack_name"], row["defense"], row["scope"])
-                if row["status"] == "scored":
-                    scores[key][row["pair_id"]][row["condition_label"]] = row["suspiciousness"]
-                elif row["status"] == "unavailable":
-                    unavailable.add(key)
+    for row in rows:
+        key = (row["attack_method"], row["defense_method"], row["strategy"])
+        metric = row["metric_name"]
+        if metric.startswith(("suspiciousness__", "sentinel_suspiciousness__")):
+            scores[key][row["task_id"]][row["condition"]] = float(row["metric_value"])
+        elif metric == "monitor_observable" and float(row["metric_value"]) == 0:
+            unavailable.add(key)
 
     lines = [
         "## Qwen3-32B-AWQ r0 AUROC by assigned condition",
@@ -186,10 +181,9 @@ def render_qwen_table():
     for attack in EXPECTED_ATTACK_METHODS:
         cells = []
         for defense in EXPECTED_DEFENSE_METHODS:
-            method, scopes = QWEN_SCOPES.get(defense, (None, {}))
             values = []
-            for scope, label in scopes.items():
-                key = (attack, method, scope)
+            for scope, label in QWEN_SCOPES.get(defense, {}).items():
+                key = (attack, defense, scope)
                 pairs = [
                     (pair["attack"], pair["benign_control"])
                     for pair in scores[key].values()
@@ -234,7 +228,6 @@ def main():
     attack_methods = ordered_methods(found_attacks, EXPECTED_ATTACK_METHODS)
     defense_methods = ordered_methods(found_defenses, EXPECTED_DEFENSE_METHODS)
     contributors = sorted({r["contributor"] for r in rows})
-    metric_names = sorted({r["metric_name"] for r in rows})
 
     print(f"Loaded {len(rows)} rows from {args.raw_dir}/")
     print(
@@ -249,7 +242,10 @@ def main():
     )
     print(f"Contributors: {contributors}")
 
-    cells = build_pivots(rows)
+    qwen_rows = [row for row in rows if row["run_id"].startswith("qwen-r0-")]
+    contributor_rows = [row for row in rows if not row["run_id"].startswith("qwen-r0-")]
+    cells = build_pivots(contributor_rows)
+    metric_names = sorted({row["metric_name"] for row in contributor_rows})
 
     out_lines = [
         "# CompJailBench 4x4 Results Matrix",
@@ -261,8 +257,8 @@ def main():
         f"Defense methods present: "
         f"{len(found_defenses & set(EXPECTED_DEFENSE_METHODS))}/4.",
         "",
-        render_qwen_table(),
-        "The contributor CSV tables below show mean(metric | attack) / mean(metric | benign_control), and the gap (Δ) between them.",
+        render_qwen_table(qwen_rows),
+        "The historical tables below show mean(metric | attack) / mean(metric | benign_control), and the gap (Δ) between them.",
         "For binary flag metrics, the attack mean is detection recall and the benign-control mean is the false-positive rate.",
         "Gap is a placeholder signal, not a validated AUROC -- see README.md.",
         "",
