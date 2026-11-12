@@ -1,0 +1,53 @@
+{
+ "manifest": {
+  "generator_model": "Qwen/Qwen3-32B-AWQ",
+  "generator_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "monitor_model": "Qwen/Qwen3-32B-AWQ",
+  "monitor_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "pilot_pair": "audit_01",
+  "probe_layer": 28,
+  "probe_metric": "peak_suspicion",
+  "decoding": {
+   "do_sample": true,
+   "temperature": 0.7,
+   "top_p": 0.8,
+   "top_k": 20,
+   "sampling_seed": 20260817,
+   "max_new_tokens": 512,
+   "max_format_retries": 1
+  },
+  "monitor_decoding": {
+   "do_sample": false,
+   "enable_thinking": false,
+   "max_new_tokens": 1536,
+   "checker_retries": 2
+  },
+  "profiles": {
+   "agent_to_agent": {
+    "prompt": "compositional_leakage_v1",
+    "scope": "public-utterance-graph-plus-final-output"
+   },
+   "sentinel": {
+    "prompt": "brad_node_edge_checkers_e90d60c_hardened_v2",
+    "scope": "public",
+    "signature": "narcbench_message_paths_v1"
+   },
+   "cot": {
+    "prompt": "general_v2",
+    "scope": "public-action-only"
+   }
+  }
+ },
+ "generation": {
+  "pairs": 50,
+  "reseeded": {
+   "med_02": 20260818
+  },
+  "excluded": []
+ },
+ "inputs": {
+  "trajectories": 100,
+  "complete_pairs": 50,
+  "input_sha256": "9d54c8354ebdf29912e901e11d8c2ffa8810790102b7a552c9dcdb2b8bd85c81"
+ }
+}
