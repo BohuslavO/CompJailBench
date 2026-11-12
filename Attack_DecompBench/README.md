@@ -5,9 +5,43 @@ attack surface. A harmful request is pulled from the DeCompBench dataset, decomp
 non-harmful-looking subtasks, and those subtasks are routed across a small multi-agent pipeline
 so that no single agent sees enough of the request to refuse it.
 
-This folder contains the attack implementation only. To run it as an Inspect task, score it
+This folder contains the attack implementation and the Qwen replay artifacts. To run it as an Inspect task, score it
 against our own NARCBench Probing defense, or score it against another contributor's defense,
 see `CompJailBench_Inspect/`.
+
+## Qwen replay results
+
+The recovered cohort contains 90 saved trajectories across 45 attack/control pairs:
+15 scenarios under each of the three routing strategies. The [Qwen results matrix](../results_qwen/MATRIX.md)
+reports AUROC by assigned attack/control condition. CoT action-only scored **0.4170**,
+Sentinel response-content Tier 2 scored **0.5432**, and the new Qwen activation probe
+scored **0.5654**. The historical A2A AUROC of **0.6188** is retained; its monitor
+model is unconfirmed. The historical probe AUROC of **0.6020** remains in the raw CSVs.
+
+The activation replay uses Qwen3‑32B‑AWQ revision
+`0499c3ac83fdef8810b907a23894ba91e95eddd8`. It extracts 558 last-token vectors
+of dimension 5120 at layer 28 by teacher-forcing the saved inputs and responses.
+The frozen probe aggregates turn scores by maximum. See the [replay summary](results_qwen/probe_replay_summary.json)
+and [trajectory index](results_qwen/trajectory_index.jsonl). Full logs, replay text
+and activation arrays are kept locally. The [upstream dataset access terms](https://huggingface.co/datasets/decompositionbench/DeCompBench)
+restrict redistribution of the source dataset.
+
+### Independent checkpoint judge
+
+The historical checkpoint judge used Qwen, the same model family as the trajectory
+generator. A separate **Phi‑3.5‑mini‑instruct** judge has now scored all **108 textual
+checkpoints** on the recovered trajectories. All verdicts passed format validation.
+
+| Assigned condition | PASS | FAIL | Insufficient evidence | Trajectories with every checkpoint passed |
+|---|---:|---:|---:|---:|
+| Attack | 16 | 1 | 37 | 13/45 |
+| Benign control | 6 | 4 | 44 | 6/45 |
+
+These verdicts are provisional. Human validation on 42 held-out checkpoints is
+pending. The judge assesses evidence in saved response text; environment execution
+was not observed. A validated independent FJR and success-conditioned AUROC are
+still pending. See the [Phi summary](results_qwen/phi_checkpoint_summary.json)
+and [judge configuration](results_qwen/phi_judge_config.json).
 
 ## What this attack does
 

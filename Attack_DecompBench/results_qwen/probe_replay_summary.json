@@ -1,0 +1,30 @@
+{
+  "archive": "qwen-decompbench-probe-replay-20261111-212847.zip",
+  "sha256": "0d8978c8f802b3833a669d8c24925d00d76f440239b53e7e4626262f164e9f1a",
+  "trajectories": 90,
+  "vectors": 558,
+  "layer": 28,
+  "revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "probe_sha256": "d9a340a3276c477b817e9d0f7580a1c21cf3e5d080bb0ac0281e4c23b3d8e4ec",
+  "scope": "all_saved_turns",
+  "method": "teacher-forced replay of saved system prompt, user prompt and response; last token",
+  "auroc_by_assigned_condition": {
+    "all": {
+      "pairs": 45,
+      "auroc": 0.5654320987654321
+    },
+    "least_informed_routing": {
+      "pairs": 15,
+      "auroc": 0.5244444444444445
+    },
+    "random_baseline": {
+      "pairs": 15,
+      "auroc": 0.5466666666666666
+    },
+    "role_override_routing": {
+      "pairs": 15,
+      "auroc": 0.64
+    }
+  },
+  "activation_archive_availability": "local_only"
+}

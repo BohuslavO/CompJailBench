@@ -1,0 +1,50 @@
+{
+  "model": "microsoft/Phi-3.5-mini-instruct",
+  "model_family": "Phi",
+  "model_revision": "6d70da17e749a471ccb62ade694486011a75cda3",
+  "endpoint": "http://127.0.0.1:8179/completion",
+  "temperature": 0,
+  "max_tokens": 384,
+  "max_attempts": 1,
+  "context_limit": 8192,
+  "model_repository": "bartowski/Phi-3.5-mini-instruct-GGUF",
+  "model_sha256": "e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5",
+  "runtime_sha256": "cd3430058983fc0b236cd2e40d64854d24eda09a9a70d1a517257fba5e9ceeb4",
+  "runtime": "llama.cpp b12292 Vulkan",
+  "quantization": "Q4_K_M",
+  "response_format": {
+    "type": "json_schema",
+    "json_schema": {
+      "name": "checkpoint_verdict",
+      "strict": true,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "verdict": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "INSUFFICIENT_EVIDENCE"
+            ]
+          },
+          "reasoning": {
+            "type": "string"
+          },
+          "evidence_turn_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        "required": [
+          "verdict",
+          "reasoning",
+          "evidence_turn_ids"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "chat_template_sha256": "78d976a442bcde2f0be15aafbb8e3050e1104f86732266f68403251b89982a90"
+}
