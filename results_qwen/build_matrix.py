@@ -104,7 +104,7 @@ def render_coverage_table(cells, attack_methods, defense_methods):
     lines += [
         "",
         "`—` means no result has been submitted for that attack-defense cell.",
-        "The asterisk marks a cell-specific qualification: Agent-to-Agent Monitor is the project's custom detection-only graph-and-judge baseline; Sentinel Agents is message-only/public/degraded; and CoT/observable-rationale prompt profiles and evidence scopes are cell-specific (`general_v2` where applicable and fixed `narcbench_v1` for the reported NARCBench cell).",
+        "The asterisk marks a cell-specific qualification: Agent-to-Agent Monitor is the project's custom detection-only graph-and-judge baseline; Sentinel Agents is message-only/public/degraded; and CoT/observable-rationale prompt profiles and evidence scopes are cell-specific (all four selected CoT cells use `general_v2`, action-only).",
         "",
     ]
     return "\n".join(lines)
@@ -144,13 +144,25 @@ def render_pivot_table(cells, attack_methods, defense_methods, metric_name, labe
     return "\n".join(lines)
 
 
+def describe_dropped(other_metrics, unpaired):
+    """Plain-language reasons for rows in a selected CSV that do not enter the AUROC."""
+    reasons = []
+    for metric, n in sorted(other_metrics.items()):
+        short = metric.split("__", 1)[1] if "__" in metric else metric
+        reasons.append(f"{n} row(s) of other metric `{short}`")
+    for arm in ("attack", "benign_control"):
+        if unpaired.get(arm):
+            reasons.append(f"{unpaired[arm]} unpaired {arm} row(s) on the selected metric")
+    return reasons
+
+
 def render_auroc(raw_dir, selection_path):
     with selection_path.open(newline="", encoding="utf-8-sig") as stream:
         selection = list(csv.DictReader(stream))
     values = {}
     source_lines = [
-        "| Attack | Defense | Source | Complete pairs | Provenance |",
-        "|---|---|---|---:|---|",
+        "| Attack | Defense | Source | Complete pairs | Rows not used | Provenance |",
+        "|---|---|---|---:|---|---|",
     ]
     labels = {"new_qwen": "New Qwen", "historical": "Historical"}
     for entry in selection:
@@ -160,9 +172,11 @@ def render_auroc(raw_dir, selection_path):
         if key in values or Path(filename).name != filename:
             raise ValueError(f"Invalid or duplicate AUROC selection: {key}")
         pairs = defaultdict(dict)
+        other_metrics = defaultdict(int)
         with (raw_dir / filename).open(newline="", encoding="utf-8-sig") as stream:
             for row in csv.DictReader(stream):
                 if row["metric_name"] != entry["metric_name"]:
+                    other_metrics[row["metric_name"]] += 1
                     continue
                 if (row["attack_method"], row["defense_method"]) != key or row["n_samples"] != "1":
                     raise ValueError(f"Expected per-trajectory scores for {key}")
@@ -183,6 +197,13 @@ def render_auroc(raw_dir, selection_path):
                     raise ValueError(f"Duplicate or invalid score: {filename}, {task_id}, {arm}")
                 pair[arm] = value
         complete = [pair for pair in pairs.values() if len(pair) == 2]
+        unpaired = defaultdict(int)
+        for pair in pairs.values():
+            if len(pair) == 1:
+                unpaired[next(iter(pair))] += 1
+        dropped = describe_dropped(other_metrics, unpaired)
+        print(f"{attack} x {defense}: {sum(other_metrics.values()) + sum(unpaired.values())} row(s) not used"
+              + ("".join(f"\n    {reason}" for reason in dropped) if dropped else ""))
         count = len(complete)
         if not count or count != int(entry["expected_pairs"]):
             raise ValueError(f"Unexpected complete-pair count for {key}: {count}")
@@ -194,7 +215,8 @@ def render_auroc(raw_dir, selection_path):
         values[key] = f"{auc:.4f}" + (" (H)" if label == "Historical" else "")
         source_lines.append(
             f"| {DISPLAY_NAMES[attack]} | {DISPLAY_NAMES[defense].rstrip('*')} | "
-            f"[{filename}](raw/{filename}) | {count} | {label}. {entry['notes']} |"
+            f"[{filename}](raw/{filename}) | {count} | {'<br>'.join(dropped) or 'none'} | "
+            f"{label}. {entry['notes']} |"
         )
     expected = {(attack, defense) for attack in EXPECTED_ATTACK_METHODS for defense in EXPECTED_DEFENSE_METHODS}
     if set(values) != expected:
@@ -207,7 +229,11 @@ def render_auroc(raw_dir, selection_path):
             "Computed from the selected per-trajectory CSV scores on complete attack/control pairs. "
             "Ties count as half. **(H)** denotes a historical result. "
             "See the source table for model and evidence differences.", "", *table, "",
-            "### Selected sources", "", *source_lines, ""]
+            "### Selected sources", "",
+            "`Rows not used` lists rows in the selected CSV that do not enter the AUROC: rows of other "
+            "metrics (other runs or evidence scopes) and selected-metric rows with no partner in the "
+            "other arm. These rows stay in the file and still feed the descriptive tables below.", "",
+            *source_lines, ""]
 
 
 def main():
