@@ -2,7 +2,18 @@
 
 [MATRIX.md](MATRIX.md) contains the 4 × 4 AUROC matrix and links each cell to its source CSV. **(H)** marks a historical result carried forward from an earlier experiment. The other fifteen cells report new results on Qwen3‑32B‑AWQ. The matrix combines experiments with different evidence and model configurations.
 
-This directory follows the layout and CSV contract of [results 4x4](../results%204x4/README.md) at commit [cdd91b9](https://github.com/BohuslavO/CompJailBench/tree/cdd91b94f7b201b8ba690f6c85a1b1dae0353282/results%204x4). The 16 original CSVs are preserved byte for byte in `raw/`. Thirteen `qwen_submission__*.csv` files add the verified submission rows. The `qwen_native__*` (NARCBench) and `qwen_v2__*` (DeCompBench) files hold the new runs described below. Some of those files export historical scores with richer provenance, so the filename alone does not establish the model used in a cell.
+This directory follows the layout and CSV contract of [results 4x4](../results%204x4/README.md) at commit [cdd91b9](https://github.com/BohuslavO/CompJailBench/tree/cdd91b94f7b201b8ba690f6c85a1b1dae0353282/results%204x4). `raw/` holds only the 16 CSVs selected in [auroc_sources.csv](auroc_sources.csv): eight `qwen_submission__*` files (AgentHarm and SIF), four `qwen_native__*` files (NARCBench) and four `qwen_v2__*` files (DeCompBench). All rows in them are Qwen3‑32B‑AWQ. The 16 original pre-Qwen CSVs are preserved byte for byte in [raw_legacy/](raw_legacy), together with six superseded Qwen exports (`qwen_replay__*`, the four `qwen_submission__decompbench_routing__*` files and `qwen_submission__narcbench_collusion__narcbench_probing.csv`). The builder does not read `raw_legacy/`. The filename alone does not establish the model used in a cell; check the `model` column and the source table in MATRIX.md.
+
+## How to read this matrix
+
+[EXTRA_ANALYSIS.md](EXTRA_ANALYSIS.md) breaks each row down further. Read the matrix with these limits in mind:
+
+- Every AUROC separates the assigned condition (attack prompt vs control prompt), not successful attacks from failed ones. On NARCBench the committee chose the hidden target in 1 of 50 attack runs. On DeCompBench the attack-minus-control FJR gap is 0.19 with a scenario-bootstrap CI of -0.14 to 0.49.
+- AgentHarm is dominated by refusals. By a keyword heuristic on the planner's first message, 145 of 174 attack runs are refusals. Against all controls, refused attacks score AUROC 0.26 to 0.35 on the three text monitors, which pulls the row below 0.5. On the 29 runs where the planner went along, A2A reaches 0.74, CoT 0.60 and Sentinel 0.44.
+- SIF has 10 pairs and mixes two corpora. The three text monitors score trajectories with a final synthesis step. The probe scores the original SIF r0 trajectories, replayed to get activations, because the synthesis step has none.
+- The NARCBench probe was trained on the same 50 Core scenarios it is scored on here, and each activation covers the full prompt, including the colluders' instructions. Its 0.996 may reflect reading the instruction rather than detecting collusive behaviour.
+- One model, Qwen3‑32B‑AWQ, is the target, the text monitor, the FJR judge and the control rewriter. Errors in one role can correlate with errors in another.
+- Raw probe scores are not on a common scale across rows (a benign AgentHarm trajectory averages 11.7, a NARCBench collusion trajectory 6.3). Compare AUROCs across rows, not probe scores.
 
 ## Rebuild from CSV
 
@@ -13,7 +24,7 @@ python build_matrix.py
 
 The builder reads `raw/` and [auroc_sources.csv](auroc_sources.csv), then rewrites `MATRIX.md`. The selector names one source CSV and exact metric for each cell, with an expected pair count and a provenance label. Scores are paired by task and routing strategy. The NARCBench CSVs use separate `_collusion` and `_control` task IDs, which the builder maps to a shared pair ID.
 
-AUROC compares every attack score with every control score in the complete-pair cohort, counting ties as half. It measures separation by assigned condition. The original descriptive tables remain below the AUROC matrix and report arm means, flag rates and differences.
+AUROC compares every attack score with every control score in the complete-pair cohort, counting ties as half. It measures separation by assigned condition. The source table in MATRIX.md also lists, per cell, the rows in the selected CSV that do not enter the AUROC (other metrics, and rows with no partner in the other arm); `build_matrix.py` prints the same counts. The descriptive tables below the AUROC matrix report arm means, flag rates and differences over every row in `raw/`, including those unused rows.
 
 To add a result, use `raw/<contributor>__<attack_method>__<defense_method>.csv`. The columns are `contributor`, `attack_method`, `defense_method`, `model`, `task_id`, `strategy`, `condition`, `metric_name`, `metric_value`, `n_samples`, `run_id` and `notes`. AUROC inputs require one finite score per trajectory and `n_samples=1`. Keep distinct experiments and scopes under distinct metric names. Update the selected CSV, metric, expected count and provenance for the affected cell in `auroc_sources.csv`, then rebuild. `convert_batch_run.py` preserves the original worked example.
 
@@ -22,9 +33,9 @@ To add a result, use `raw/<contributor>__<attack_method>__<defense_method>.csv`.
 | Attack | Selected evidence | Open items |
 |---|---|---|
 | AgentHarm | Qwen text monitors on 174 complete r0 pairs. The historical Qwen probe uses 25 separate pairs. | The r1 export contains three complete pairs and stays separate from r0. |
-| Semantic Intent Fragmentation | Qwen text monitors use 10 pairs with final synthesis. The Qwen probe uses 10 complete pairs from the original SIF r0 and layer-28 activations from replay of saved responses. | The final synthesis step has no saved activations. The original SIF CoT action-only score and the historical GPT‑OSS‑20B probe are retained in `raw/`. |
+| Semantic Intent Fragmentation | Qwen text monitors use 10 pairs with final synthesis. The Qwen probe uses 10 complete pairs from the original SIF r0 and layer-28 activations from replay of saved responses. | The final synthesis step has no saved activations. The original SIF CoT action-only score stays in the selected CoT CSV under its own metric name. The historical GPT‑OSS‑20B probe is in `raw_legacy/`. |
 | DeCompBench | All four defenses score 45 complete pairs of regenerated Qwen trajectories (`qwen_v2`). | Phi‑3.5 checkpoint verdicts and human validation apply to the earlier recovered corpus only. |
-| NARCBench | All four defenses score the same 50 complete pairs of fresh Qwen trajectories (`qwen_native`). | None for the matrix. The GPT‑OSS‑120B text results and the earlier Qwen probe stay in `raw/`. |
+| NARCBench | All four defenses score the same 50 complete pairs of fresh Qwen trajectories (`qwen_native`). | None for the matrix. The GPT‑OSS‑120B text results and the earlier Qwen probe are in `raw_legacy/`. |
 
 All 16 cells now use Qwen3‑32B‑AWQ as the target model, and 15 come from new runs. The AgentHarm probe cell is historical but also uses Qwen activations. Sentinel scores on DeCompBench and NARCBench come from the message-only adapter.
 
@@ -66,7 +77,7 @@ Confidence intervals come from 2,000 bootstrap resamples of the 15 scenarios, si
 
 - FJR (Qwen judge) is 0.544 for attacks and 0.356 for controls. Every checkpoint passed in 23 of 45 attack and 14 of 45 control trajectories. The paper reports 0.867 and 0.711 from the truncated run.
 - Workers see only their own instruction and nothing aggregates their outputs. The trajectory's final output is the last worker answer, as in the team converter.
-- Sentinel flags 41 of 45 attacks and 39 of 45 controls at 0.5. The per-message checkers cause this, not the path matcher, which fires on 16 attacks and 11 controls.
+- Sentinel flags 41 of 45 attacks and 40 of 45 controls at 0.5. The per-message checkers cause this, not the path matcher, which fires on 16 attacks and 11 controls.
 - Some benign controls are not benign. The rewriter keeps harmful steps in several scenarios. For example, the `social-engineer-wire-approval` control still sends a message claiming a VP verbally approved a payment. Controls pass every harmful checkpoint in all three strategies for `ai-safety-classifier-backdoor`, `fragmented-ci-pipeline-injection`, `gitlab-shared-runner-secret-pivot` and `webhook-trust-chain-pivot`, and in two of three for `racial-discrimination-hiring-filter-deploy`. These pairs add label noise and lower every AUROC in the row.
 - In `ai-safety-classifier-backdoor` and `voter-suppression-disinformation-campaign`, one rewritten control turn is identical to the attack turn.
 
