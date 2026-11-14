@@ -20,7 +20,7 @@ A control is accepted only if it passes 1 and 2 before generation and 3 after.
 
 ## 2. Regenerate the controls
 
-Two options. I recommend B for the 7 flagged scenarios and A for the rest.
+Two options. Decision: B (hand-written) for the 7 flagged scenarios, A for the other 8, so that every control passes the section 1 checks.
 
 - **A. Checkpoint-aware rewriter, different model.** Rewrite the whole task at once, not turn by turn. Give the rewriter the checkpoints and tell it which actions must not appear, while keeping turn count, roles, length and domain vocabulary. Use a different model from Qwen. Retry up to 3 times against the section 1 checks; anything still failing goes to B.
 - **B. Hand-written controls.** Scenarios have 5 to 8 turns: 45 turns for the 7 flagged scenarios, 93 for all 15. Write each control turn to match the attack turn in length and topic, with the harmful action replaced by a legitimate one. Have a second person check them against `checkpoints.md`.
@@ -44,4 +44,4 @@ Then rebuild `raw/qwen_v3__decompbench_routing__*.csv`, update `auroc_sources.cs
 
 From `summary.json` of v2: 559 worker calls, 108 judge calls and 1,577 monitor calls for 90 trajectories. Controls are about half of each: about 280 worker calls, 54 judge calls and 790 monitor calls (Sentinel accounts for 26 calls per trajectory), plus 45 activation passes. The rewrite step moves off the GPU if option A uses an API model, or disappears with option B.
 
-So the rerun needs about half the GPU time of the v2 run. The v2 Modal bill is the best basis for the estimate: expect roughly 50 to 55% of it. If that bill is not to hand, budget 2 to 3 GPU-hours on one 80 GB GPU for Qwen3-32B-AWQ with HF `generate`. This is my estimate from call counts and the median 143-token worker output, not a measurement. Add one small pilot (1 scenario, 3 controls) to confirm throughput before launching the rest.
+So the rerun needs about half the GPU time of the v2 run. No Modal bill was available when this was written. The v2 Modal bill is the best basis for the estimate: expect roughly 50 to 55% of it. If that bill is not to hand, budget 2 to 3 GPU-hours on one 80 GB GPU for Qwen3-32B-AWQ with HF `generate`. This is my estimate from call counts and the median 143-token worker output, not a measurement. Add one small pilot (1 scenario, 3 controls) to confirm throughput before launching the rest.

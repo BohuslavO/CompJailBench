@@ -1,6 +1,6 @@
 # Publishing the run artifacts (preparation only)
 
-Nothing in this file has been run. The two new runs (`decompbench_qwen_v2`, `narcbench_qwen`) wrote their raw outputs to the Modal volume `compjailbench-agentharm-scores`. Only the per-sample summaries are in the repo. This file lists what to download, where it goes, and which out-of-repo paths `run_modal.py` depends on.
+Status (2026-11-14): sections 4 and 5 are resolved as far as files on your computer allow. The volume download (sections 1 to 3) is not done: it needs your Modal token, which I did not use. The two new runs (`decompbench_qwen_v2`, `narcbench_qwen`) wrote their raw outputs to the Modal volume `compjailbench-agentharm-scores`. Only the per-sample summaries are in the repo. This file lists what to download, where it goes, and which out-of-repo paths `run_modal.py` depends on.
 
 ## 1. List the volume first
 
@@ -76,9 +76,15 @@ du -sh $STAGE/*/*/activations $STAGE/narc/narcbench_qwen_native_v1/gen
 
 The exact directory layout `modal volume get` creates inside `$STAGE` can differ between Modal client versions; adjust the paths after the first download. Then copy the files listed in section 2 into `run/`, and add `results_qwen/**/activations/` and `*.npy` to `.gitignore`.
 
-## 4. Check before committing trajectories
+## 4. Decision: what goes in the public repo
 
-The DeCompBench task files come from a gated dataset whose terms say not to redistribute it (`Attack_DecompBench/DecompBench x NARCBench Dataset Files/LICENSE_AND_ACCESS.md`). `results.jsonl` and `monitor_calls.jsonl` contain the attack prompts verbatim (`turns[].user_prompt`) and Qwen's responses to them. Publishing them in a public repo may count as redistribution. Options: keep them in a private repo or gated release, publish them with prompts replaced by hashes, or get the dataset owners' agreement. NARCBench trajectories do not have this issue as far as this repo shows, but check the NARCBench licence too.
+The DeCompBench task files come from a gated dataset whose terms say not to redistribute it (`Attack_DecompBench/DecompBench x NARCBench Dataset Files/LICENSE_AND_ACCESS.md`). `results.jsonl` and `monitor_calls.jsonl` contain the attack prompts verbatim (`turns[].user_prompt`) and Qwen's responses to them, and the repo is public.
+
+Decision:
+
+- **DeCompBench:** do not commit `results.jsonl`, `monitor_calls.jsonl` or `generation_calls.jsonl` as downloaded. Commit `run/SHA256SUMS.txt` (hash of every downloaded file) and keep the files themselves in a private location, such as a private repo or a gated Hugging Face dataset. If you want a public version later, write a redacted copy with `user_prompt`, `system_prompt` and `response` replaced by their SHA-256, and commit that instead.
+- **DeCompBench tasks:** [decompbench_qwen_v2/tasks_sha256.txt](decompbench_qwen_v2/tasks_sha256.txt) records the hash of all 109 files in the 15 task folders (dataset revision `716aeed`). This pins the inputs without redistributing them. Turn and checkpoint counts in that local copy match `per_sample_scores.jsonl` for all 15 scenarios.
+- **NARCBench:** commit as listed in section 2. Its scenarios ship in this repo already (`NARCBench_Attack_CoT_Monitor/data/narcbench_core_official.json`).
 
 ## 5. Out-of-repo paths in `run_modal.py`
 
@@ -95,7 +101,20 @@ The DeCompBench task files come from a gated dataset whose terms say not to redi
 | DeCompBench | `ROOT.parent/imports/decompbench_previous/dataset/tasks/tasks/<slug>/` for the 15 scenarios | gated task data | do not commit. Add a loader that reads them from a path given by an env var (e.g. `DECOMPBENCH_TASKS`), and commit a `tasks_sha256.txt` listing the hash of every file used. |
 | DeCompBench | `ROOT.parents[1]/sources/CompJailBench/Attack_DecompBench/results_qwen/trajectory_index.jsonl` | paper trajectory index | `REPO/'Attack_DecompBench/results_qwen/trajectory_index.jsonl'` (in repo, SHA-256 `dfabb22a...`) |
 
-Hash your local copies so we can decide which in-repo file matches:
+### What could be checked on your computer
+
+The tree that `run_modal.py` expects (`decompbench_parallel/`, `imports/decompbench_previous/`, `sources/CompJailBench`) is not in your home folder's top-level directories, `Documents`, `Desktop`, `Downloads`, `Projects` or `PycharmProjects`. `~/CompJailBench` is an older `main` (1e0e0ed) with local edits, not the `sources/` checkout. The closest copies are in `~/decompbench_data/.cache/`:
+
+| File | `~/decompbench_data/.cache/` SHA-256 | Matches in this repo |
+|---|---|---|
+| `benign_rewriter.py` | `163428ff...` | `Attack_DecompBench/benign_rewriter.py` |
+| `checkpoint_scorer.py` | `899dfae8...` | `Attack_DecompBench/checkpoint_scorer.py` |
+| `routing.py` | `f78fc838...` | `Attack_DecompBench/routing.py` |
+| `task_loader.py` | `f6a60531...` | none (top level `47f42e32...`, dataset folder `6985a59e...`) |
+
+These are likely, not confirmed, to be the files the run mounted. `task_loader.py` has to come from the run's own folder or be committed from `.cache` after a diff.
+
+If you find the run folder, hash it the same way:
 
 ```sh
 sha256sum <your path>/decompbench_parallel/qwen_remaining_scoring/score_qwen_pilot_monitors.py \
