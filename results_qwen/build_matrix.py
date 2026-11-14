@@ -227,8 +227,9 @@ def render_auroc(raw_dir, selection_path):
         table.append("| " + " | ".join([DISPLAY_NAMES[attack], *(values[attack, d] for d in EXPECTED_DEFENSE_METHODS)]) + " |")
     return ["## AUROC by assigned condition", "",
             "Computed from the selected per-trajectory CSV scores on complete attack/control pairs. "
-            "Ties count as half. **(H)** denotes a historical result. "
-            "See the source table for model and evidence differences.", "", *table, "",
+            "Ties count as half. "
+            + ("**(H)** denotes a historical result. " if any(v.endswith("(H)") for v in values.values()) else "")
+            + "See the source table for model and evidence differences.", "", *table, "",
             "### Selected sources", "",
             "`Rows not used` lists rows in the selected CSV that do not enter the AUROC: rows of other "
             "metrics (other runs or evidence scopes) and selected-metric rows with no partner in the "
