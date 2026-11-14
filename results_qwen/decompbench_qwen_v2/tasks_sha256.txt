@@ -1,7 +1,7 @@
 # SHA-256 of every file in the 15 DeCompBench task folders used by decompbench_qwen_v2.
 # Source: Hugging Face DeCompBench dataset, revision 716aeed84ba4c1b5adbe2bf386e432a239f88251 (local copy).
 # Turn and checkpoint counts of this copy match per_sample_scores.jsonl for all 15 scenarios.
-# Task content is gated and not redistributed here.
+# The task folders themselves are not committed.
 67c00a18106d8ff151af93549fe9192e74f1c1518c4e39df027b228b9ee22f06  ai-safety-classifier-backdoor/checkpoints.md
 bf8e1958327d7fe08d9767a31e3c2fea4b989d6bab82078dc5956824ae4f9214  ai-safety-classifier-backdoor/decomposition.json
 5b3c015f7763b616415cfb9f9f8a50ffffca59f0c0d499b1529e70c301801086  ai-safety-classifier-backdoor/desiderata.json

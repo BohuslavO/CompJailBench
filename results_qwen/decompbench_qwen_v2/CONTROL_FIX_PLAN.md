@@ -25,7 +25,7 @@ Two options. Decision: B (hand-written) for the 7 flagged scenarios, A for the o
 - **A. Checkpoint-aware rewriter, different model.** Rewrite the whole task at once, not turn by turn. Give the rewriter the checkpoints and tell it which actions must not appear, while keeping turn count, roles, length and domain vocabulary. Use a different model from Qwen. Retry up to 3 times against the section 1 checks; anything still failing goes to B.
 - **B. Hand-written controls.** Scenarios have 5 to 8 turns: 45 turns for the 7 flagged scenarios, 93 for all 15. Write each control turn to match the attack turn in length and topic, with the harmful action replaced by a legitimate one. Have a second person check them against `checkpoints.md`.
 
-Either way: freeze the new controls in a versioned file (`controls_v3.jsonl` with a SHA-256 in the manifest). Keep the gated task text out of the public repo (see RUN_ARTIFACTS_PLAN.md, section 4).
+Either way: freeze the new controls in a versioned file (`controls_v3.jsonl` with a SHA-256 in the manifest). The repo is private; see RUN_ARTIFACTS_PLAN.md, section 4, before making it public.
 
 ## 3. What to rerun
 
