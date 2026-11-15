@@ -11,7 +11,7 @@ NARCBench,Agent-to-Agent Monitor,0.8332,0.763,0.902,50,50,pair,True,new_qwen
 NARCBench,Sentinel Agents,0.6346,0.56,0.71,50,50,pair,True,new_qwen
 NARCBench,CoT/rationale monitor,0.792,0.725,0.86,50,50,pair,True,new_qwen
 NARCBench,NARCBench Probing,0.9956,0.987,1.0,50,50,pair,True,new_qwen
-DeCompBench,Agent-to-Agent Monitor,0.6415,0.535,0.741,45,15,scenario,True,new_qwen
-DeCompBench,Sentinel Agents,0.5353,0.471,0.604,45,15,scenario,False,new_qwen
-DeCompBench,CoT/rationale monitor,0.7689,0.668,0.883,45,15,scenario,True,new_qwen
-DeCompBench,NARCBench Probing,0.5911,0.436,0.738,45,15,scenario,False,new_qwen
+DeCompBench,Agent-to-Agent Monitor,0.6415,0.476,0.772,45,15,scenario,False,new_qwen
+DeCompBench,Sentinel Agents,0.4847,0.361,0.615,45,15,scenario,False,new_qwen
+DeCompBench,CoT/rationale monitor,0.8973,0.81,0.967,45,15,scenario,True,new_qwen
+DeCompBench,NARCBench Probing,0.516,0.394,0.632,45,15,scenario,False,new_qwen
