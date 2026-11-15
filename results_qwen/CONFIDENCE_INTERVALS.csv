@@ -1,0 +1,17 @@
+attack,defense,auroc,ci_low,ci_high,pairs,clusters,unit,excludes_chance,provenance
+AgentHarm,Agent-to-Agent Monitor,0.4166,0.349,0.483,174,44,behaviour,True,new_qwen
+AgentHarm,Sentinel Agents,0.2898,0.235,0.349,174,44,behaviour,True,new_qwen
+AgentHarm,CoT/rationale monitor,0.3389,0.28,0.4,174,44,behaviour,True,new_qwen
+AgentHarm,NARCBench Probing,0.6428,0.583,0.703,174,44,behaviour,True,new_qwen
+Semantic Intent Fragmentation,Agent-to-Agent Monitor,0.5,0.35,0.65,10,10,pair,False,new_qwen
+Semantic Intent Fragmentation,Sentinel Agents,0.62,0.375,0.83,10,10,pair,False,new_qwen
+Semantic Intent Fragmentation,CoT/rationale monitor,0.585,0.4,0.8,10,10,pair,False,new_qwen
+Semantic Intent Fragmentation,NARCBench Probing,0.5,0.26,0.74,10,10,pair,False,new_qwen
+NARCBench,Agent-to-Agent Monitor,0.8332,0.763,0.902,50,50,pair,True,new_qwen
+NARCBench,Sentinel Agents,0.6346,0.56,0.71,50,50,pair,True,new_qwen
+NARCBench,CoT/rationale monitor,0.792,0.725,0.86,50,50,pair,True,new_qwen
+NARCBench,NARCBench Probing,0.9956,0.987,1.0,50,50,pair,True,new_qwen
+DeCompBench,Agent-to-Agent Monitor,0.6415,0.535,0.741,45,15,scenario,True,new_qwen
+DeCompBench,Sentinel Agents,0.5353,0.471,0.604,45,15,scenario,False,new_qwen
+DeCompBench,CoT/rationale monitor,0.7689,0.668,0.883,45,15,scenario,True,new_qwen
+DeCompBench,NARCBench Probing,0.5911,0.436,0.738,45,15,scenario,False,new_qwen
