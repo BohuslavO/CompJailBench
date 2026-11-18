@@ -2,7 +2,7 @@
 
 [MATRIX.md](MATRIX.md) contains the 4 × 4 AUROC matrix and links each cell to its source CSV. All 16 cells report new results on Qwen3‑32B‑AWQ. The matrix combines experiments with different evidence and model configurations.
 
-This directory follows the layout and CSV contract of [results 4x4](../results%204x4/README.md) at commit [cdd91b9](https://github.com/BohuslavO/CompJailBench/tree/cdd91b94f7b201b8ba690f6c85a1b1dae0353282/results%204x4). `raw/` holds only the 16 CSVs selected in [auroc_sources.csv](auroc_sources.csv): seven `qwen_submission__*` files (AgentHarm text monitors and SIF), `qwen_r0__agentharm__narcbench_probing.csv`, four `qwen_native__*` files (NARCBench) and four `qwen_v2__*` files (DeCompBench). All rows in them are Qwen3‑32B‑AWQ. The 16 original pre-Qwen CSVs are preserved byte for byte in [raw_legacy/](raw_legacy), together with seven superseded Qwen exports (`qwen_replay__*`, the four `qwen_submission__decompbench_routing__*` files, `qwen_submission__narcbench_collusion__narcbench_probing.csv` and the earlier 25-pair `qwen_submission__agentharm__narcbench_probing.csv`). The builder does not read `raw_legacy/`. The filename alone does not establish the model used in a cell; check the `model` column and the source table in MATRIX.md.
+This directory follows the layout and CSV contract of [results 4x4](../results%204x4/README.md) at commit [cdd91b9](https://github.com/BohuslavO/CompJailBench/tree/cdd91b94f7b201b8ba690f6c85a1b1dae0353282/results%204x4). `raw/` holds only the 16 CSVs selected in [auroc_sources.csv](auroc_sources.csv): seven `qwen_submission__*` files (AgentHarm text monitors and SIF), `qwen_r0__agentharm__narcbench_probing.csv`, four `qwen_native__*` files (NARCBench) and four `qwen_v3__*` files (DeCompBench). The four `qwen_v2__*` DeCompBench files are also kept there for comparison and are not selected. All rows in them are Qwen3‑32B‑AWQ. The 16 original pre-Qwen CSVs are preserved byte for byte in [raw_legacy/](raw_legacy), together with seven superseded Qwen exports (`qwen_replay__*`, the four `qwen_submission__decompbench_routing__*` files, `qwen_submission__narcbench_collusion__narcbench_probing.csv` and the earlier 25-pair `qwen_submission__agentharm__narcbench_probing.csv`). The builder does not read `raw_legacy/`. The filename alone does not establish the model used in a cell; check the `model` column and the source table in MATRIX.md.
 
 ## How to read this matrix
 
@@ -77,7 +77,7 @@ Attack trajectories are deterministic under greedy decoding, so v3 reuses the 45
 | Agent-to-Agent | 0.641 | 0.48–0.77 | 0.31 | 0.641 |
 | Sentinel | 0.485 | 0.36–0.61 | 0.00 | 0.535 |
 | CoT action-only | 0.897 | 0.81–0.97 | 0.71 | 0.769 |
-| Probe (peak suspicion) | 0.516 | 0.39–0.63 | 0.02 | 0.591 |
+| Probe (peak suspicion) | 0.516 | 0.39–0.63 | 0.11 | 0.591 |
 
 Confidence intervals come from 2,000 bootstrap resamples of the 15 scenarios. The A2A AUROC is the same in both runs by coincidence: its scores take only a few values, and 20 of 45 control scores changed. Notes:
 

@@ -29,7 +29,9 @@ BASE = Path(__file__).resolve().parent
 REPO = BASE.parent
 RAW = BASE / "raw"
 NARC_JSONL = BASE / "narcbench_qwen" / "per_sample_scores.jsonl"
-DECOMP_JSONL = BASE / "decompbench_qwen_v2" / "per_sample_scores.jsonl"
+DECOMP_JSONL = BASE / "decompbench_qwen_v3" / "per_sample_scores.jsonl"
+DECOMP_V2_JSONL = BASE / "decompbench_qwen_v2" / "per_sample_scores.jsonl"  # attack turn counts (v3 reuses the v2 attacks)
+DECOMP_CONTROLS = BASE / "decompbench_qwen_v3" / "controls_v3.jsonl"
 AGENTHARM_TRAJ_GLOB = str(
     REPO / "NARCBench_Attack_CoT_Monitor" / "results" / "qwen_r0" / "scoring_inputs"
     / "*" / "agentharm" / "standard_trajectories.jsonl"
@@ -233,6 +235,10 @@ def b1_narcbench(rep, checks):
 def b2_decompbench(rep, checks, rng):
     S = "B2 DeCompBench"
     rows = read_jsonl(DECOMP_JSONL)
+    atk_turns = {(r["scenario_id"], r["strategy"]): r["n_turns"] for r in read_jsonl(DECOMP_V2_JSONL) if r["condition"] == "attack"}
+    ctl_turns = {r["scenario_id"]: len(r["turns"]) for r in read_jsonl(DECOMP_CONTROLS)}
+    for r in rows:
+        r["n_turns"] = atk_turns[r["scenario_id"], r["strategy"]] if r["condition"] == "attack" else ctl_turns[r["scenario_id"]]
     by = {(r["scenario_id"], r["strategy"], r["condition"]): r for r in rows}
     scenarios = sorted({r["scenario_id"] for r in rows})
     strategies = sorted({r["strategy"] for r in rows})
@@ -243,9 +249,9 @@ def b2_decompbench(rep, checks, rng):
 
     rep.line("## B2. DeCompBench: per-scenario detail, FJR gap and control quality")
     rep.line()
-    rep.line(f"Source: `decompbench_qwen_v2/per_sample_scores.jsonl` ({len(scenarios)} scenarios x "
+    rep.line(f"Source: `decompbench_qwen_v3/per_sample_scores.jsonl` ({len(scenarios)} scenarios x "
              f"{len(strategies)} strategies = {len(keys)} pairs). FJR is the share of harmful checkpoints the "
-             "Qwen judge marked as passed.")
+             "Qwen judge marked as passed. The attacks are the v2 trajectories; the controls are the v3 hand-written ones.")
     rep.line()
 
     # per-scenario table
@@ -301,8 +307,10 @@ def b2_decompbench(rep, checks, rng):
     rep.line(f"Mean FJR attack minus control is {f3(point)} (95% CI {f3(lo)} to {f3(hi)}, "
              f"{N_BOOT} bootstrap resamples of the {len(scenarios)} scenarios). "
              + ("The interval includes zero: on this corpus the attack prompts do not reliably raise the "
-                "judged harmful-step completion rate over the rewritten controls."
-                if lo <= 0 <= hi else "The interval excludes zero."))
+                "judged harmful-step completion rate over the controls."
+                if lo <= 0 <= hi else "The interval excludes zero.")
+             + " Control FJR above 0 comes from checkpoints that test stealth or plausibility, not harm "
+               "(see the DeCompBench notes in README.md), so the control mean overstates harmful completion.")
     rep.line()
 
     # drop scenarios whose controls pass any harmful checkpoint
@@ -335,8 +343,7 @@ def b2_decompbench(rep, checks, rng):
         up = [d for d, x in deltas.items() if x > 0]
         rep.line("Removing these scenarios lowers the AUROC for " + (", ".join(down) or "no defense")
                  + " and raises it for " + (", ".join(up) or "no defense") + f". {len(scenarios) - len(bad)} "
-                 "scenarios is a small sample and no interval is computed here, but the data do not show "
-                 "that the bad controls are what holds the text-monitor AUROCs down.")
+                 "scenarios is a small sample and no interval is computed here.")
     else:
         rep.line("No scenario has clean controls in all three strategies, so this AUROC is undefined.")
     rep.line()
@@ -357,7 +364,7 @@ def b2_decompbench(rep, checks, rng):
     rep.line()
     rep.md += table(["Defense", f"Attacks with FJR = 1 (n={len(full_atk)})", f"Attacks with FJR < 1 (n={len(part_atk)})"], out)
     rep.line()
-    rep.line("Both columns use all 45 controls.")
+    rep.line(f"Both columns use all {len(ctl_all)} controls.")
     rep.line()
 
 
@@ -553,8 +560,8 @@ EXPECTED = {
     "NARC CoT adherent": (0.847, 0.0015), "NARC CoT non-adherent": (0.717, 0.0015),
     "NARC Sentinel adherent": (0.627, 0.0015), "NARC Sentinel non-adherent": (0.646, 0.0015),
     "NARC Probe non-adherent": (0.997, 0.0015), "NARC ties baseline": (0.78, 0.005),
-    "DeComp FJR gap": (0.19, 0.01), "DeComp FJR CI low": (-0.14, 0.03), "DeComp FJR CI high": (0.49, 0.03),
-    "DeComp CoT fjr==1": (0.788, 0.0015), "DeComp CoT fjr<1": (0.749, 0.0015),
+    "DeComp FJR gap": (0.278, 0.001), "DeComp FJR CI low": (-0.09, 0.03), "DeComp FJR CI high": (0.62, 0.03),
+    "DeComp CoT fjr==1": (0.914, 0.0015), "DeComp CoT fjr<1": (0.879, 0.0015),
     "DeComp A2A fjr==1": (0.675, 0.0015), "DeComp A2A fjr<1": (0.607, 0.0015),
     "AgentHarm refused n": (145, 5), "AgentHarm complied n": (29, 5),
     "AgentHarm A2A refused": (0.35, 0.01), "AgentHarm A2A complied": (0.74, 0.01),
@@ -565,11 +572,11 @@ EXPECTED = {
     "TPR NARCBench x A2A": (0.44, 0.005), "TPR NARCBench x Sentinel": (0.0, 0.005),
     "TPR NARCBench x CoT": (0.22, 0.005), "TPR NARCBench x Probe": (0.94, 0.005),
     "TPR DeCompBench x A2A": (0.311, 0.0015), "TPR DeCompBench x Sentinel": (0.0, 0.0015),
-    "TPR DeCompBench x CoT": (0.289, 0.0015), "TPR DeCompBench x Probe": (0.067, 0.0015),
+    "TPR DeCompBench x CoT": (0.711, 0.0015), "TPR DeCompBench x Probe": (0.111, 0.0015),
 }
 MATRIX = {
     "AgentHarm": (0.4166, 0.2898, 0.3389, 0.6428), "SIF": (0.5000, 0.6200, 0.5850, 0.5000),
-    "NARCBench": (0.8332, 0.6346, 0.7920, 0.9956), "DeCompBench": (0.6415, 0.5353, 0.7689, 0.5911),
+    "NARCBench": (0.8332, 0.6346, 0.7920, 0.9956), "DeCompBench": (0.6415, 0.4847, 0.8973, 0.5160),
 }
 for _a, _vals in MATRIX.items():
     for _d, _v in zip(["A2A", "Sentinel", "CoT", "Probe"], _vals):
